@@ -1,0 +1,19 @@
+{
+  "scientific_core_file": "mbmf_q1_final_v7.py",
+  "sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
+  "symbol_sha256": {
+    "spherical_to_cartesian": "354e8adfbe3602354e132ff5987c7168ff1e14fdde853dabace4569e36090ed2",
+    "PaperMBMF": "dd84d1d9e65ae5fd2767c71fb7f209cf8867f6f8bdd7e32a35187c83c65b646c",
+    "train_paper_mbmf": "c16313b94cfe542a9141efa92c8f98e46c4834d336459d4f761797bfc9192407",
+    "ThesisMethod1": "57ec2871c1c636cd5b6dc2938d94dc26671ea5d7afebedaf799130fadbef4719",
+    "ThesisMethod2": "bb706f29ff9889a23dc3ffd8947ea81e9c30b9cbaa97e3fe1fc0733571d031fe",
+    "ProposedMethod3": "acae86fd80b5c494daea2d83b47c1a0130be2c9f287a733db1919f303b59f1f3",
+    "train_thesis_model": "d875019ed6e1734396ea786464e90358d48217027efb55436b3aa3101d9313b6",
+    "apply_q1_safe_preset": "375f676287093761d2d142449a864b33a502e2abf36a26ceadfe759010b1b640",
+    "ProposedMethod4": "c92825c37d9190276b4e02a44f1285ccba6c73a5741abc25eab292ca9f483ec8",
+    "DecoderCoupledDualViewMBMF": "33121f85e634f01b9979ac0af24a7e03a07ecaad97ecd0826d9befe9315bf3bb",
+    "ProposedMethod7": "49d1edafd8e4485c3177ca612696b0b983208b8ad8e0ce9e991cfd7b787bed4a",
+    "train_method7_minibatch": "3ee3347b7d81cd7d100265d7828626c6a7c757c1ae0ba93f054d7902371d6326"
+  },
+  "v8_policy": "Infrastructure-only. V8 does not modify or monkey-patch the scientific core."
+}

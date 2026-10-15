@@ -1,0 +1,18 @@
+Method,Synthetic,Jester,BookCrossing,ML-100K,ML-1M,ML-10M,Implementation
+BiasMF,1,1,1,1,1,1,internal
+MF,1,1,1,1,1,1,internal
+BMC-ADMM,1,1,1,1,1,1,external author/official adapter
+MBMF-F,1,1,1,1,1,1,frozen V7/paper baseline
+MBMF-C,1,1,1,1,1,1,frozen V7 reimplementation
+MBMF-N,1,1,1,1,1,1,frozen V7 reimplementation
+AutoRec,0,0,0,1,1,1,internal reimplementation
+AEMC-NE,0,0,0,1,1,1,internal reimplementation
+Deep-MMMF,0,0,0,0,1,0,external author/official adapter
+DRPRA,0,0,0,1,0,0,external author/official adapter
+Method1,1,1,1,1,1,1,proposed frozen V7
+Method2,1,1,1,1,1,1,proposed frozen V7
+Method3,1,1,1,1,1,1,proposed frozen V7
+Method4,1,1,1,1,1,1,proposed frozen V7
+Method5,1,1,1,1,1,1,proposed frozen V7
+Method6,1,1,1,1,1,1,proposed frozen V7
+Method7,1,1,1,1,1,1,proposed frozen V7

@@ -1,0 +1,27 @@
+Metric,Applies_to,Purpose
+MSE,train/val/test,rating accuracy/optimization
+RMSE,train/val/test,primary rating accuracy
+MAE,train/val/test,primary rating accuracy
+MedianAE,train/val/test,robust central error
+P90/P95/P99 AE,train/val/test,tail errors
+NMAE_range / NRMSE_range,train/val/test,range-normalized errors
+NMAE_ordinal_uniform,eligible ordinal datasets,Deep-MMMF-style ordinal normalization
+Pearson / Spearman,train/val/test,association
+Mean signed error,train/val/test,systematic bias
+Global OOB Rate,train/val/test,rating-range violation
+Mean OOB Violation,train/val/test,average violation magnitude
+Max OOB Violation,train/val/test,worst violation magnitude
+Individual-bound violation rate,MBMF/proposed where available,analytical structural bound
+Mean/Max individual-bound violation,MBMF/proposed where available,structural violation magnitude
+Mean bound width,MBMF/proposed where available,constraint tightness
+F1 train-threshold,held-out explicit ratings,leakage-safe MBMF-like relevance
+F1 MBMF reproduction,optional reproduction only,literal paper-style threshold
+NDCG@K,held-out explicit ratings,graded ranking
+Precision/Recall/F1/MAP/MRR@K,held-out explicit ratings,ranking
+Gaussian NLL / PICP / MPIW,Method7,uncertainty
+Prediction std across seeds,selected predictions,stability
+Prediction std across K,validation predictions,K sensitivity without test peeking
+Training wall time,all trainable methods,efficiency
+Inference time,all trainable methods,efficiency
+Peak RSS/GPU memory,all trainable methods,resource efficiency
+Parameter count,internal methods,model size

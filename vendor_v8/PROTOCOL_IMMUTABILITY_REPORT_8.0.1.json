@@ -1,0 +1,67 @@
+{
+  "make_ablation_variants_v8": {
+    "original_ast_sha256": "9726ca4dec0d01584e2dec83db270d0f5e5965f3e330c08fa95bf67c8f3d03fe",
+    "fixed_ast_sha256": "9726ca4dec0d01584e2dec83db270d0f5e5965f3e330c08fa95bf67c8f3d03fe",
+    "unchanged": true
+  },
+  "make_hyperparameter_scan_jobs_v8": {
+    "original_ast_sha256": "0f521aae36350e4223890344a9e151ca5beb4894db6166d29470bdffb9122075",
+    "fixed_ast_sha256": "0f521aae36350e4223890344a9e151ca5beb4894db6166d29470bdffb9122075",
+    "unchanged": true
+  },
+  "HyperparameterScanPlanV8": {
+    "original_ast_sha256": "23eec20dd72908caf730499452987ceb4213abafea8c2bb5d709249431e7856f",
+    "fixed_ast_sha256": "23eec20dd72908caf730499452987ceb4213abafea8c2bb5d709249431e7856f",
+    "unchanged": true
+  },
+  "PublicationDataConfig": {
+    "original_ast_sha256": "4590d64fa0c07e59d04e3150997c89c02c600b1703b366418bc10c5a57fc9d8f",
+    "fixed_ast_sha256": "4590d64fa0c07e59d04e3150997c89c02c600b1703b366418bc10c5a57fc9d8f",
+    "unchanged": true
+  },
+  "method_dataset_matrix_v8.csv": {
+    "original_sha256": "489818ffd02e66315edaf551c11d16164bb8bf5119e3b8e052e74853c7b1f07f",
+    "fixed_sha256": "489818ffd02e66315edaf551c11d16164bb8bf5119e3b8e052e74853c7b1f07f",
+    "unchanged": true
+  },
+  "metric_dictionary_v8.csv": {
+    "original_sha256": "8965e532e8daf61d4095407ef4aab3c0b6e5f25edbe889d6ce4522cfd13662bb",
+    "fixed_sha256": "8965e532e8daf61d4095407ef4aab3c0b6e5f25edbe889d6ce4522cfd13662bb",
+    "unchanged": true
+  },
+  "SCIENTIFIC_CORE_MANIFEST_V8.json": {
+    "original_sha256": "c79e3c99f14851ef08d25ac53467823b9cf75c92c61566418bddd5893693ee80",
+    "fixed_sha256": "c79e3c99f14851ef08d25ac53467823b9cf75c92c61566418bddd5893693ee80",
+    "unchanged": true
+  },
+  "mbmf_q1_final_v7.py": {
+    "original_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
+    "fixed_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
+    "unchanged": true
+  },
+  "mbmf_q1_final_v8.ipynb": {
+    "original_sha256": "646d3b4312b27bb282a6c9bfee9137724f40c66d935cf3c95fc27c34bc20e134",
+    "fixed_sha256": "646d3b4312b27bb282a6c9bfee9137724f40c66d935cf3c95fc27c34bc20e134",
+    "unchanged": true
+  },
+  "download_datasets_q1_v8.ipynb": {
+    "original_sha256": "216562534ef98c22b6feb8c994ecbbc6705aeba0e7da92a7570b07853d76b2a9",
+    "fixed_sha256": "216562534ef98c22b6feb8c994ecbbc6705aeba0e7da92a7570b07853d76b2a9",
+    "unchanged": true
+  },
+  "DATASET_SPECS": {
+    "original_ast_sha256": "4bbec478e3f770a1cdfd9afb0fa9146f2ec4234a422d3b8306ff6c9bbe04daa6",
+    "fixed_ast_sha256": "4bbec478e3f770a1cdfd9afb0fa9146f2ec4234a422d3b8306ff6c9bbe04daa6",
+    "unchanged": true
+  },
+  "METHOD_DATASET_MATRIX_V8": {
+    "original_ast_sha256": "0c0a08e618c48609ba11b11fb29136bf4aca125709c4954920565d5b8df072a7",
+    "fixed_ast_sha256": "0c0a08e618c48609ba11b11fb29136bf4aca125709c4954920565d5b8df072a7",
+    "unchanged": true
+  },
+  "EXTERNAL_COMPETITORS_V8": {
+    "original_ast_sha256": "3472992e1798721136b903a529dd67f32ef980827e48ade2b4d5d23e5a5b6e46",
+    "fixed_ast_sha256": "3472992e1798721136b903a529dd67f32ef980827e48ade2b4d5d23e5a5b6e46",
+    "unchanged": true
+  }
+}
