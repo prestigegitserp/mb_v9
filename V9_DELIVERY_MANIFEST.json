@@ -1,0 +1,34 @@
+{
+  "version": "9.0.0-beta",
+  "source_v8_repository": "prestigegitserp/mb_v8",
+  "source_v8_commit": "f58ec7b95ddc802561cbc1399bcc17be226b10de",
+  "frozen_v7_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
+  "verified_tests": "7 local unit tests passed; compiled Python source; zip integrity verified",
+  "not_done": [
+    "remote GitHub mb_v9 creation unavailable via connected GitHub actions",
+    "scientific V8 runtime has not been bootstrapped in this sandbox",
+    "no actual dataset training has been executed"
+  ],
+  "files": {
+    ".github/workflows/unit-tests.yml": "8e0d1975de8474c3c4d5b04fd264c023a154bb4fe44ffe0366b02c62c6e0aa9c",
+    ".gitignore": "b5b6f4c34b22d9f4b82e88f57087848327226ec5600a6c58ca7416e5c3446b09",
+    "PUBLISH_NEW_REPO.ps1": "7d9490f61d427af6103acfe0409e74825d915d1cb6b0e21ca8f10ed7376ff4bb",
+    "README.md": "ee47f6af58c6e1f7393158a13a465c6c14ac6cf36d1320198b3a25f113b04b92",
+    "README_FA.md": "7758e3fd503bf2598a8213a7b5ecafe94db9b29a678002226752865469b3c7a3",
+    "RUN_EVERYTHING_WINDOWS.ps1": "f6af44519f0463ed5e1ab15da914b8a89f91b520918298693fe40c811e62dc2e",
+    "SETUP_WINDOWS.ps1": "8d14d4b8c462370498b01fc295da7d7313128bc6830375e2775692d9de237dfe",
+    "VERSION": "ed5f1c9fd77f4c788c3a5364995d98a9a97fff9a57b7f4f37a715e1a989063c2",
+    "bootstrap_v8.py": "6c8f49709b06499b3a610b78fad72d4f099618178c1018725b4dc3b9e3ca103a",
+    "docs/V9_RESEARCH_AUDIT_FA.md": "833dd457a7004761affe3de3afd358c3d5e8bfb847b77b12e676b3b2c48605b8",
+    "requirements.txt": "5c213af2a30b29e44483ac20cb056dc29c3c67a1381c891e460aa06ceecfffe7",
+    "run_v9.py": "d6f93ee6402b9470a51efae4bda9be9a47070900578d7fd9d9e49cfb8efc7b51",
+    "tests/test_v9_validation.py": "5292fa4acba1b21c2210b991150d16e5f37112817e96485648bd8ed2af2f7ef2",
+    "v9/__init__.py": "6c916fdd918e8c30ad6080c92dcfea064c980ae1f5f8589e4332a4a017448bdd",
+    "v9/audit.py": "3a4fdd174ee8030c2600ded22002f1a7df561236ebc4c6dbc9837bfa6a8ce106",
+    "v9/engine.py": "5904703eb2a7512bf0a92c42e789e8cec57d645e796ef46b1414e1da8ff89f6d",
+    "v9/figures.py": "92a7a5f3a4d8821e423aa226c77067a7a09207ecfda555efe59b67f1f99bdd33",
+    "v9/progress.py": "82842241a6471862d139cd26d233ce823f28df8b27bc089ddfaa61678302212f",
+    "v9/search.py": "e38497ff1b12d61b2c0185074cfb65f86f17ab1e0337ff9cf233e0c4a3e6cd0c",
+    "v9/selection.py": "1e30f9845b718b17aa52a2eb976efeb40e49c17cddedba98489d05ca00084605"
+  }
+}

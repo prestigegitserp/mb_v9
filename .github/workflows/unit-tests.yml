@@ -1,0 +1,28 @@
+name: MBMF V9 protocol regression tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  protocol-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install testing packages
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+      - name: Validate V9 selector and leakage guards
+        run: python -m pytest -q tests/
+      - name: Validate pinned scientific core when vendored
+        run: |
+          if [ -f vendor_v8/mbmf_q1_final_v7.py ]; then
+            python run_v9.py self-test
+          else
+            echo 'NOTE: vendor_v8 not yet installed; scientific smoke test skipped.'
+          fi

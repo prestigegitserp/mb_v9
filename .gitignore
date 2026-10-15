@@ -1,0 +1,11 @@
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+*.pyc
+results_v9/
+results_q1_v8/
+datasets/
+*.pt
+*.pth
+*.zip
