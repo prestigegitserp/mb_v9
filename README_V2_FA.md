@@ -24,12 +24,18 @@ python run_v9.py plan --datasets ml-100k --methods Method1,Method2,Method3,Metho
 
 > روی شاخهٔ V2، اسکریپت معمول `run_v9.py` از **هفت مدل بازطراحی‌شده** استفاده می‌کند. نام‌های Method1...Method7 تغییر نکرده؛ هفت Variant اضافی ایجاد نشده‌اند.
 
-### مقایسهٔ تنظیم ظرفیت (فقط Validation، بدون انتخاب با Test)
+### مقایسهٔ ظرفیت: فقط Validation، نه Test
+
+**هشدار:** فرمان `main` برای مدل‌های منتخب Test هم محاسبه می‌کند؛ بنابراین مقایسهٔ سه پروفایل با `main` برای انتخاب برنده، Test Leakage ایجاد می‌کند. در مرحلهٔ تنظیم فقط `scan` اجرا کن. انتخاب پروفایل را پیش از هر اجرای `final` و تنها با Validation انجام بده.
+
 ```powershell
-python run_v9.py main --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --v2-profile regularized --output ./results_v2/regularized
-python run_v9.py main --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --v2-profile balanced --output ./results_v2/balanced
-python run_v9.py main --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --v2-profile capacity --output ./results_v2/capacity
+python run_v9.py plan --datasets ml-100k --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --k 20 --scan-mode one-factor
+python run_v9.py scan --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --scan-mode one-factor --v2-profile regularized --output ./results_v2/regularized --resume
+python run_v9.py scan --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --scan-mode one-factor --v2-profile balanced --output ./results_v2/balanced --resume
+python run_v9.py scan --datasets ml-100k --data-root ./datasets --split-seeds 2026 --model-seeds 1,11,22 --k 20 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --scan-mode one-factor --v2-profile capacity --output ./results_v2/capacity --resume
 ```
+
+جدول‌های `search/hyperparameter_validation_all.csv` این سه مطالعه را برای هر روش و هر Split مقایسه کن، سپس فقط پروفایل برندهٔ ازپیش‌تعیین‌شده با Validation را به `final` بده. انتخاب خودکار «بهترین پروفایل بین این سه اسکن» هنوز در V2 RC پیاده نشده است؛ تا قبل از اجرای آن نباید با دیدن Test تصمیم گرفت.
 
 برای غربال اولیه `--quick` مجاز است؛ **نتایج آن سه Epoch دارند و برای مقاله معتبر نیستند**.
 
