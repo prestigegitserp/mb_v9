@@ -1,4 +1,4 @@
-name: V2 research unit tests
+name: V2 research unit and synthetic integration
 on:
   push:
     branches: [v2-development, v2]
@@ -17,5 +17,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
-      - name: Unit tests (not an end-to-end ML-100K benchmark)
+      - name: Unit tests
         run: python -m pytest -q tests/test_v2_research.py tests/test_v9_validation.py
+      - name: Real V7/V8 synthetic model integration
+        run: python -m pytest -q tests/test_v2_vendor_integration.py
+      - name: CLI smoke, all seven REPLACEMENT V2 models (not publication)
+        run: |
+          python run_v9.py main --datasets synthetic --quick --split-seeds 2026 --model-seeds 11 --k 4 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --output ./results_v2_ci
