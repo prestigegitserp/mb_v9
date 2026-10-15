@@ -5,7 +5,6 @@
   "frozen_v7_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
   "verified_tests": "7 local unit tests passed; compiled Python source; zip integrity verified",
   "not_done": [
-    "remote GitHub mb_v9 creation unavailable via connected GitHub actions",
     "scientific V8 runtime has not been bootstrapped in this sandbox",
     "no actual dataset training has been executed"
   ],
@@ -30,5 +29,12 @@
     "v9/progress.py": "82842241a6471862d139cd26d233ce823f28df8b27bc089ddfaa61678302212f",
     "v9/search.py": "e38497ff1b12d61b2c0185074cfb65f86f17ab1e0337ff9cf233e0c4a3e6cd0c",
     "v9/selection.py": "1e30f9845b718b17aa52a2eb976efeb40e49c17cddedba98489d05ca00084605"
+  },
+  "github": {
+    "repository": "prestigegitserp/mb_v9",
+    "branch": "main",
+    "source_published": true,
+    "vendor_v8_included": true,
+    "ci": "GitHub Actions workflow present; results must be checked independently"
   }
 }
