@@ -51,3 +51,21 @@ def test_real_v7_v8_instance_model_and_checkpoint(method):
     with torch.no_grad():
         p2=model.predict_raw_pairs(data,data.val_users,data.val_items)
     assert torch.allclose(p1,p2,atol=1e-6)
+
+    # The locked TEST protocol reloads exactly the validation-selected checkpoint.
+    # An old V8-only loader would reject V2 keys or silently rebuild old geometry.
+    from v2.checkpoints import install_checkpoint_hooks
+    from pathlib import Path
+    from tempfile import TemporaryDirectory
+    install_checkpoint_hooks(core,pub,"balanced")
+    with TemporaryDirectory() as tmp:
+        cp=Path(tmp)/("v2_"+method+".pt")
+        pub.save_model_checkpoint_v8(cp,model,config=mcfg,data=data,train_info=info,
+                                     extra={"method":method,"dataset":"synthetic"})
+        restored,ck=pub.load_model_checkpoint_v8(cp,data,device)
+        assert ck["extra"]["v2_architecture_version"]=="2.0.0-rc1"
+        assert restored.v2_method==method
+        with torch.no_grad():
+            restored_pred=restored.predict_raw_pairs(data,data.val_users,data.val_items)
+            original_pred=model.predict_raw_pairs(data,data.val_users,data.val_items)
+        assert torch.allclose(original_pred,restored_pred,atol=1e-6),method

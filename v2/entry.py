@@ -5,6 +5,7 @@ from . import __version__
 from .adapters import PROFILES, adapt, apply_profile
 from .training import train_v2
 from .calibration import calibrate_method7,nll_on_disjoint_selection_half
+from .checkpoints import install_checkpoint_hooks
 
 
 def run(argv=None):
@@ -54,6 +55,7 @@ def run(argv=None):
                 return result
             core.apply_q1_safe_preset=v2_safe_preset
             core._v2_safe_preset_installed=True
+        install_checkpoint_hooks(core,pub,v2args.v2_profile)
         old_inst=pub.instantiate_model_v8
         old_train=pub.train_model_v8
         old_bound=pub.individual_bound_arrays

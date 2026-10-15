@@ -307,3 +307,8 @@ def test_v2_runner_directs_default_v9_cli_to_replacement():
     code=src.read_text()
     assert 'from v2.entry import run' in code
     assert 'from v9.engine import main' not in code
+
+
+def test_checkpoints_module_present_and_strict_policies():
+    from v2.checkpoints import install_checkpoint_hooks
+    assert callable(install_checkpoint_hooks)
