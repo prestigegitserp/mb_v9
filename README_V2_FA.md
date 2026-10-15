@@ -55,7 +55,13 @@ python run_v9.py scan --datasets ml-100k --data-root ./datasets --split-seeds 20
 
 برای پایهٔ $c_{ui}\in[r_{min},r_{max}]$، جهت $s\in[-1,1]$ و Gain $g\in[0,1]$:
 
-$$\hat r=c+g segin{cases}r_{max}-c&s\ge0\c-r_{min}&s<0\end{cases}$$
+$$
+\hat r_{ui}=c_{ui}+g_{ui}\,s_{ui}
+\begin{cases}
+r_{\max}-c_{ui},&s_{ui}\ge 0\\
+c_{ui}-r_{\min},&s_{ui}<0
+\end{cases}
+$$
 
 در نتیجه $r_{min}\le\hat r\le r_{max}$ **بدون Output Clipping**. این کران **کران حاصل‌ضرب شعاع‌های MBMF قدیم نیست**. متریک‌های مبتنی بر کران فردی قدیمی برای V2 مقدار NA دارند و Metric مستقل `v2_max_global_range_violation` گزارش می‌شود.
 
@@ -69,7 +75,7 @@ $$\hat r=c+g segin{cases}r_{max}-c&s\ge0\c-r_{min}&s<0\end{cases}$$
 
 ### میزان اعتماد به تست‌ها
 
-`21 passed` روی آزمون‌های **Unit/Mock محلی**: کران ریاضی، Gradients، قطع گرادیان شاخهٔ حذف‌شده، Fusion Gate، کالیبراسیون، Checkpoint و آزمون‌های V9. اجرای End-to-End روی vendor واقعی V8 و دیتاست واقعی در این محیط ممکن نشده، پس **نتیجهٔ عملکرد تجربی V2 فعلاً نامعلوم است**.
+`22 passed` روی آزمون‌های **Unit/Mock محلی**: کران ریاضی، Gradients، قطع گرادیان شاخهٔ حذف‌شده، Fusion Gate، کالیبراسیون، Checkpoint و آزمون‌های V9. هفت تست یکپارچهٔ واقعی Synthetic روی کلاس‌های V7/V8 هم در GitHub Actions پاس شده‌اند؛ اجرای کامل MovieLens هنوز انجام نشده، پس **نتیجهٔ عملکرد تجربی V2 فعلاً نامعلوم است**.
 
 ### محدودیت‌ها و برنامهٔ لازم پیش از انتشار Q1
 
