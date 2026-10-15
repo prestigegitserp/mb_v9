@@ -43,18 +43,12 @@ def run(argv=None):
     def load_v2():
         core,pub=old_load()
         if getattr(pub,'_v2_runtime_installed',False):return core,pub
-        # Preserve Method2 consistency as an independently searchable V2 knob.
-        # The V7 preset algebraically couples it to gamma and would silently
-        # invalidate candidate labels in a V2 hyperparameter scan.
-        if not getattr(core,'_v2_safe_preset_installed',False):
-            original_preset=core.apply_q1_safe_preset
-            def v2_safe_preset(experiment):
-                requested=float(experiment.method2.consistency_weight)
-                result=original_preset(experiment)
-                experiment.method2.consistency_weight=requested
-                return result
-            core.apply_q1_safe_preset=v2_safe_preset
-            core._v2_safe_preset_installed=True
+        # Preserve the frozen V7 preset itself. V2 applies its independent
+        # consistency coefficient *after* the V1 base config was constructed.
+        # Monkeypatching the global preset here breaks V8's baseline ablation
+        # uniqueness contract: m2_full == m2_no_consistency.
+        # V2 scan configurations modify the post-preset copy and are respected
+        # by instantiate_v2 without changing this global source function.
         install_checkpoint_hooks(core,pub,v2args.v2_profile)
         old_inst=pub.instantiate_model_v8
         old_train=pub.train_model_v8
