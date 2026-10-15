@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0-rc1",
+  "branch": "v2-development",
+  "target_branch": "v2",
+  "untouched_branch": "main",
+  "base_commit": "ab18aa2f52d11ef2227c720116492c1497306629",
+  "base_scientific_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c",
+  "replacement_methods": [
+    "Method1",
+    "Method2",
+    "Method3",
+    "Method4",
+    "Method5",
+    "Method6",
+    "Method7"
+  ],
+  "validation": "21 local mock/unit tests passed; real dataset and vendor E2E not verified",
+  "selection": "Validation only; no test driven tuning",
+  "publication_status": "RC; no Q1 improvement claim yet"
+}
