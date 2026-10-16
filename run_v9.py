@@ -1,3 +1,5 @@
 #!/usr/bin/env python3
-from v9.engine import main
-if __name__=='__main__':main()
+"""V2 branch: run_v9.py executes seven REPLACEMENT V2 methods by default."""
+from v2.entry import run
+if __name__ == "__main__":
+    run()
