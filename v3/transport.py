@@ -90,7 +90,7 @@ class _MomentProjection(torch.autograd.Function):
 
 
 class AngularTransport(nn.Module):
-    def __init__(self, k, nodes=33, slope_margin=3.0, grid=257, learned=True):
+    def __init__(self, k, nodes=33, slope_margin=3.0, grid=257, learned=True, groups=4):
         super().__init__()
         self.learned = learned
         positions = 0.5*(1-np.cos(np.linspace(0, np.pi, nodes)))
@@ -105,8 +105,8 @@ class AngularTransport(nn.Module):
         cdf = betainc((k-1)/2, (k-1)/2, (angle_grid+1)/2)
         self.register_buffer("angle_grid", torch.tensor(angle_grid, dtype=torch.float32))
         self.register_buffer("isotropic_cdf", torch.tensor(cdf, dtype=torch.float32))
-        self.register_buffer("reference_cdf", torch.tensor(cdf, dtype=torch.float32).repeat(2, 4, 1))
-        self.register_buffer("reference_sizes", torch.zeros(2, 4, dtype=torch.long))
+        self.register_buffer("reference_cdf", torch.tensor(cdf, dtype=torch.float32).repeat(2, groups, 1))
+        self.register_buffer("reference_sizes", torch.zeros(2, groups, dtype=torch.long))
 
     def projected_values(self):
         masses = _MomentProjection.apply(self.mass, self.matrix, self.target,
@@ -176,9 +176,24 @@ class AngularTransport(nn.Module):
         bank = (self.reference_cdf if reference is None else reference)[view]
         return bank[group, j]+t*(bank[group, j+1]-bank[group, j])
 
+    def anchored_residual(self, cosine, p, base, lo, hi, view, group, reference, values=None):
+        """Monotone bounded residual with an exact zero-cosine anchor.
+
+        An empirical CDF need not have F(0)=.5. Center at Q_p(F(0)) and
+        normalize each side by its available range instead of assuming it.
+        The separate gain-weighted balancing step supplies the head's finite
+        reference moment; the spline integral alone is insufficient for it.
+        """
+        value = self.quantile(self.angular_cdf(cosine, view, group, reference), p, values)
+        neutral = self.quantile(self.angular_cdf(torch.zeros_like(cosine), view, group, reference), p, values)
+        delta = value-neutral
+        eps = torch.finfo(value.dtype).eps
+        score = torch.where(delta >= 0, delta/(1-neutral).clamp_min(eps), delta/neutral.clamp_min(eps)).clamp(-1, 1)
+        return score*torch.where(score >= 0, hi-base, base-lo)
+
     @torch.no_grad()
     def update_reference(self, scores, groups, view, weight):
-        for group in range(4):
+        for group in range(self.reference_cdf.shape[1]):
             c = scores[groups == group].sort().values
             self.reference_sizes[view, group] = len(c)
             if len(c) < 32:

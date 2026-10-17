@@ -14,6 +14,7 @@ from types import SimpleNamespace
 
 import torch
 from torch import nn
+from . import __version__
 
 from .history import masked_targets
 from .models import instantiate, Method1, Method2, Method3, Method4, Method6, Method7
@@ -80,19 +81,29 @@ def _backward(model, prediction, auxiliary):
         gr = torch.autograd.grad(auxiliary, shared, retain_graph=True, allow_unused=True)
         pnorm = sum(g.square().sum() for g in gp if g is not None)
         rnorm = sum(g.square().sum() for g in gr if g is not None)
-        if cfg.auxiliary_gradient_ratio > 0 and float(rnorm) > 0:
+        if float(rnorm) > 0:
             scale = min(1., cfg.auxiliary_gradient_ratio*math.sqrt(float(pnorm)/(float(rnorm)+1e-30)))
         dot = sum((a*b).sum() for a, b in zip(gp, gr) if a is not None and b is not None)
         conflict = float(dot) < 0 and float(pnorm) > 1e-20
-    loss = prediction+scale*auxiliary
+    # The gradient budget concerns only the shared encoder coordinates.
+    # Decoder reconstruction and other priors keep their declared loss weights.
+    loss = prediction+auxiliary
     if not torch.isfinite(loss):
         raise FloatingPointError("Nonfinite V3 training objective")
     loss.backward()
-    if surgery and conflict:
-        coefficient = scale*dot/pnorm
-        for p, a in zip(shared, gp):
-            if a is not None and p.grad is not None:
-                p.grad.sub_(coefficient*a)
+    if surgery:
+        coefficient = scale*dot/pnorm if conflict else 0.
+        for p, a, b in zip(shared, gp, gr):
+            if a is None and b is None:
+                continue
+            gradient = torch.zeros_like(p)
+            if a is not None:
+                gradient.add_(a)
+            if b is not None:
+                gradient.add_(b, alpha=scale)
+            if conflict and a is not None:
+                gradient.sub_(coefficient*a)
+            p.grad = gradient
     # This is an Euclidean gradient-interference filter. Adam momentum and weight
     # decay prevent a claimed guarantee of descent for the actual finite update.
     return float(loss.detach()), scale, float(conflict)
@@ -182,6 +193,8 @@ def train_mean(pub, model, data):
     model.load_state_dict(best_state)
     model.eval()
     return dict(best_epoch=best_epoch, best_val_RMSE=best, history=history,
+                last_epoch=epoch, stopping_reason="validation_patience" if epoch < cfg.max_epochs else "epoch_budget",
+                best_checkpoint_at_budget=(best_epoch == cfg.max_epochs),
                 mean_optimizer_steps=step_count, prediction_targets_seen=target_count,
                 bias_warmup_steps=cfg.warmup_steps,
                 radius_block_updates=radius_updates,
@@ -257,6 +270,9 @@ def fit_router(pub, model, data):
         # This is a model-based sensitivity threshold, NOT a certified
         # conditional confidence interval. No distribution-free safety claim.
         router.noise_floor.copy_(target[fit].std(unbiased=False)/math.sqrt(max(1, int(fit.sum())/50)))
+        if cfg.router_counts_only:
+            router.target_scale.fill_(1.)
+            router.noise_floor.zero_()
     router.requires_grad_(True)
     opt = torch.optim.AdamW(router.heads.parameters(), lr=cfg.lr, weight_decay=.001)
     best, best_state, wait = float("inf"), None, 0
@@ -265,25 +281,35 @@ def fit_router(pub, model, data):
     weights /= weights.mean(-1, keepdim=True)
     xfit, xhold = features[fit], features[hold]
     optimizer_steps = 0
-    fit_target, hold_target = target[fit], target[hold]
+    if cfg.router_counts_only:
+        # Fit eta(counts) directly by OOF point risk. Unlike the full moment
+        # router, its inference denominator must NOT use pair predictions.
+        residual = data.train_ratings_raw-p0
+        fit_target, hold_target = residual[fit], residual[hold]
+        fit_difference, hold_difference = difference[fit], difference[hold]
+        regression_scale = model.width
+    else:
+        fit_target, hold_target = target[fit], target[hold]
+        fit_difference, hold_difference = torch.ones_like(fit_target), torch.ones_like(hold_target)
+        regression_scale = router.target_scale
     for epoch in range(cfg.router_epochs):
         order = torch.randperm(len(xfit), device=pairs.device)
         for start in range(0, len(order), cfg.batch_size):
             index = order[start:start+cfg.batch_size]
             opt.zero_grad(set_to_none=True)
             prediction = router.moments(xfit[index])
-            loss = (weights[:, index]*((prediction-fit_target[index])/router.target_scale).square()).mean()
+            loss = (weights[:, index]*((prediction*fit_difference[index]-fit_target[index])/regression_scale).square()).mean()
             if not torch.isfinite(loss):
                 raise FloatingPointError("Nonfinite routing moment regression")
             loss.backward()
-            nn.utils.clip_grad_norm_(router.heads.parameters(), cfg.grad_clip)
+            nn.utils.clip_grad_norm_(router.heads.parameters(), cfg.grad_clip or float("inf"), error_if_nonfinite=True)
             opt.step()
             optimizer_steps += 1
         with torch.no_grad():
             total = 0.
             for start in range(0, len(xhold), cfg.batch_size):
                 sl = slice(start, start+cfg.batch_size)
-                total += float(((router.moments(xhold[sl]).mean(0)-hold_target[sl])/router.target_scale).square().sum())
+                total += float(((router.moments(xhold[sl]).mean(0)*hold_difference[sl]-hold_target[sl])/regression_scale).square().sum())
             value = total/len(xhold)
         if value < best-1e-7:
             best, wait = value, 0
@@ -310,7 +336,8 @@ def fit_router(pub, model, data):
     return dict(folds=folds, oof_pairs=n, oof_expert_optimizer_steps=total_steps,
                 router_optimizer_steps=optimizer_steps,
                 selected_lambda0=lambda0, selected_router_strength=selected[1],
-                threshold_status="model-based, not a certified conditional interval",
+                threshold_status=("count-only OOF point-risk control" if cfg.router_counts_only
+                                  else "model-based, not a certified conditional interval"),
                 final_refit_distribution_shift="OOF experts use smaller training contexts; strength selected on validation only")
 
 
@@ -348,7 +375,7 @@ def fit_probability(model, data):
             if not torch.isfinite(loss):
                 raise FloatingPointError("Nonfinite probability objective")
             loss.backward()
-            nn.utils.clip_grad_norm_(heads.parameters(), model.cfg.grad_clip)
+            nn.utils.clip_grad_norm_(heads.parameters(), model.cfg.grad_clip or float("inf"), error_if_nonfinite=True)
             opt.step()
             optimizer_steps += 1
         with torch.no_grad():
@@ -390,5 +417,5 @@ def train_v3(pub, model, data, config, study):
             result["v3_routing"] = fit_router(pub, model, data)
         if isinstance(model, Method7):
             result["v3_probability"] = fit_probability(model, data)
-    result["architecture_version"] = "3.0.0-research"
+    result["architecture_version"] = __version__
     return result

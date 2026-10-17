@@ -12,6 +12,10 @@ def unit(x):
 
 def sphere_exp(q, v, max_angle=0.5):
     q = unit(q)
+    if max_angle == 0:
+        # Keep an explicit zero derivative to v, including a zero-information
+        # cold entity. Multiplying v by 0/||v|| would be undefined at v=0.
+        return q+v*0
     v = v-(q*v).sum(-1, keepdim=True)*q
     length = v.norm(dim=-1, keepdim=True)
     v = v*(max_angle/length.clamp_min(max_angle)).clamp_max(1)
@@ -30,6 +34,27 @@ def smooth_gain(ru, ri, half, offset):
     log_product = (ru.clamp_min(1e-8).log()+ri.clamp_min(1e-8).log()
                    -math.log(half))
     return torch.sigmoid(log_product+offset)
+
+
+def residual_balance(residual, gain, groups, count):
+    """Bounded sign scales giving zero gain-weighted reference residual per cell.
+
+    The larger aggregate side is reduced (both may shrink below the shared
+    numerical floor). Both scales are in [0,1],
+    retaining range bounds, angular order and the zero-residual anchor. A
+    one-sided nonzero reference necessarily becomes flat on that side; an
+    empty or identically zero cell retains identity scales. This is a finite
+    reference identity, not an assertion about unseen rating calibration.
+    """
+    weighted = gain.double()*residual.double()
+    positive = weighted.new_zeros(count).index_add(0, groups, weighted.clamp_min(0))
+    negative = weighted.new_zeros(count).index_add(0, groups, (-weighted).clamp_min(0))
+    # A shared floor also preserves P*s+ = N*s- when BOTH sides are tiny.
+    # Avoid overflowing the inactive ratio and its backward expression.
+    floor = 1e-12
+    up = torch.where(positive > 0, (negative/positive.clamp_min(floor)).clamp_max(1), torch.ones_like(positive))
+    down = torch.where(negative > 0, (positive/negative.clamp_min(floor)).clamp_max(1), torch.ones_like(negative))
+    return torch.stack([up, down], -1).to(residual.dtype)
 
 
 def spectral_filter(hessian, proposal, ridge):
