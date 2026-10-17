@@ -1,0 +1,25 @@
+name: V3 research verification
+on:
+  push:
+    branches: [v3-development, v3]
+  pull_request:
+    branches: [v3-development, v3]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: '2'
+      MKL_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install tested CPU PyTorch and project dependencies
+        run: |
+          python -m pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements.txt
+      - run: python verify_v3.py
+      - run: python -m pytest -q tests
+      - name: Seven replacement models, smoke only
+        run: python run_v3.py main --dataset synthetic --quick --split-seeds 2026 --model-seeds 1 --k 4 --methods Method1,Method2,Method3,Method4,Method5,Method6,Method7 --v3-no-plots --output ./results_v3_ci
