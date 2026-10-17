@@ -70,20 +70,29 @@ def build_jobs(pub, base, ks, mode="hybrid"):
 def ablations(base):
     changes = {
         "Method1": {"no_information_filter": dict(information_filter=False),
-                    "no_gradient_surgery": dict(gradient_surgery=False)},
+                    "no_gradient_surgery": dict(gradient_surgery=False),
+                    "no_steering": dict(steering_enabled=False),
+                    "fixed_radii": dict(radius_enabled=False)},
         "Method2": {"fixed_gate": dict(router_enabled=False),
+                    "count_only_gate": dict(router_counts_only=True),
                     "no_within_view_consistency": dict(consistency_weight=0.)},
         "Method3": {"no_graph_uncertainty": dict(graph_uncertainty=False),
                     "strong_radius_prior": dict(radius_precision=20.)},
         "Method4": {"single_signed_head": dict(signed_moments=False),
                     "no_moment_polygon": dict(project_moments=False)},
         "Method5": {"independent_posterior": dict(joint_posterior=False),
+                    "zero_cross_covariance": dict(posterior_cross_covariance=False),
                     "no_reconstruction": dict(reconstruction_weight=0.)},
         "Method6": {"analytic_transport": dict(learned_transport=False),
                     "no_transport": dict(transport_enabled=False),
-                    "isotropic_reference": dict(angular_reference_weight=0.)},
+                    "isotropic_reference": dict(angular_reference_weight=0.),
+                    "no_reference_balance": dict(balance_transport=False),
+                    "degree_only_reference": dict(conditional_reference=False),
+                    "fixed_radii": dict(radius_enabled=False),
+                    "no_decoder_coupling": dict(decoder_coupling=False)},
         "Method7": {"one_mean_member": dict(ensemble_members=1),
-                    "restricted_shape": dict(shape_full=False)},
+                    "restricted_shape": dict(shape_full=False),
+                    "fixed_radii": dict(radius_enabled=False)},
     }
     result = []
     for method in base.methods:

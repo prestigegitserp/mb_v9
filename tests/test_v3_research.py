@@ -13,7 +13,7 @@ from v3.config import ModelConfig, StudyConfig
 from v3.history import masked_targets
 from v3.models import instantiate, Method7
 from v3.numerics import (conjugate_gradient, spectral_filter, sphere_exp, unit,
-                         signed_moment_projection, gaussian_bilinear_moments)
+                         signed_moment_projection, gaussian_bilinear_moments, residual_balance)
 from v3.laws import mean_tilt, mixture_variance, ordinal_nll
 from v3.protocol import validation_roles, data_signature
 from v3.transport import AngularTransport
@@ -440,7 +440,8 @@ def test_mean_tilt_brackets_large_nonlinear_logits():
 
 @pytest.mark.parametrize("overrides", [{"lr": float("nan")}, {"lr": float("inf")},
     {"max_epochs": 2.5}, {"max_epochs": True}, {"angular_grid": 1},
-    {"lr": ".001"}, {"learned_transport": "false"}])
+    {"lr": ".001"}, {"learned_transport": "false"}, {"reference_baseline_bins": 0},
+    {"reference_gain_bins": 1.5}, {"conditional_reference": "true"}, {"balance_transport": 1}])
 def test_invalid_configuration_fails_before_training(overrides):
     with pytest.raises(ValueError):
         ModelConfig(**overrides).validate()
@@ -530,3 +531,237 @@ def test_locked_runtime_rechecks_actual_data_and_selected_config(tmp_path, monke
         with pytest.raises(ValueError, match="Locked refit"):
             engine.run_final(pub, core, base, tmp_path, args,
                              ({"default__Method7": candidate}, winners))
+
+
+def test_zero_tangent_angle_has_identity_gradient_and_finite_cold_predictions():
+    q = torch.tensor([[1., 0., 0., 0.], [0., 1., 0., 0.]])
+    tangent = torch.tensor([[0., 0., 0., 0.], [3., 2., 1., 0.]], requires_grad=True)
+    result = sphere_exp(q, tangent, 0.)
+    torch.testing.assert_close(result, q)
+    result.sum().backward()
+    torch.testing.assert_close(tangent.grad, torch.zeros_like(tangent))
+    data = tiny_data()
+    data.num_items += 1  # No context edge exists for the new item.
+    model = instantiate(data, replace(config("Method1"), tangent_limit=0.)).eval()
+    pred = model.predict_raw_pairs(data, torch.tensor([0, 1]), torch.tensor([16, 16]))
+    assert torch.isfinite(pred).all() and ((pred >= 1) & (pred <= 5)).all()
+    pred.sum().backward()
+    assert all(torch.isfinite(p.grad).all() for p in model.parameters() if p.grad is not None)
+
+
+def test_no_steering_removes_all_history_to_direction_paths():
+    data = tiny_data()
+    model = instantiate(data, replace(config("Method1"), steering_enabled=False)).eval()
+    include = torch.arange(len(data.train_users)) % 2 == 0
+    h1, h2 = model.history(), model.history(include)
+    s1, s2 = model.prepare(h1), model.prepare(h2)
+    for key in ("qu", "qi"):
+        torch.testing.assert_close(s1[key], s2[key])
+    torch.testing.assert_close(s1["qu"], unit(model.user_direction.weight))
+    torch.testing.assert_close(s1["qi"], unit(model.item_direction.weight))
+    # Removing the information filter alone retains history-dependent steering.
+    filtered = instantiate(data, replace(config("Method1"), information_filter=False)).eval()
+    a, b = filtered.prepare(h1), filtered.prepare(h2)
+    assert (a["qu"]-b["qu"]).abs().max() > 1e-4
+
+
+def test_zero_auxiliary_gradient_budget_really_protects_prediction_gradient():
+    from v3.training import _backward, _shared_encoder_parameters
+    model = instantiate(tiny_data(), replace(config("Method1"), auxiliary_gradient_ratio=0.))
+    params = _shared_encoder_parameters(model)
+    prediction = sum((p-1).square().mean() for p in params)
+    decoder = model.user_decoder.weight
+    auxiliary = 10*prediction+.5*decoder.square().sum()
+    expected = torch.autograd.grad(prediction, params, retain_graph=True)
+    _, scale, _ = _backward(model, prediction, auxiliary)
+    assert scale == 0.
+    for p, gradient in zip(params, expected):
+        torch.testing.assert_close(p.grad, gradient)
+    torch.testing.assert_close(decoder.grad, decoder.detach())
+
+
+@pytest.mark.parametrize("logit", [-1000., -120., -17., 17., 120., 1000.])
+def test_continuous_mixture_saturated_logits_have_finite_shape_gradients(logit):
+    data = tiny_data(continuous=True)
+    model = instantiate(data, config("Method7"), 4).eval()
+    model.shape_heads.requires_grad_(True)
+    with torch.no_grad():
+        for head in model.shape_heads:
+            head[-1].weight.zero_()
+            head[-1].bias.copy_(torch.tensor([0., 2., logit]))
+    h, state = model.eval_state()
+    labels = data.val_ratings_raw.clone()
+    labels[:2] = torch.tensor([1., 5.])  # Exercise the declared endpoint likelihood too.
+    loss = model.probability_loss(h, state, data.val_users, data.val_items, labels)
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.shape_heads.parameters())
+    assert all(p.grad is None for name, p in model.named_parameters() if not name.startswith("shape_heads."))
+    dist = model.distribution(data, data.val_users, data.val_items)
+    assert torch.isfinite(dist["variance"]).all()
+    means, _, beta = model.probability_members(h, state, data.val_users, data.val_items)
+    for mean, (a, b, _) in zip(means, beta):
+        torch.testing.assert_close(1+4*a/(a+b), mean[:, None].expand_as(a), atol=5e-7, rtol=1e-6)
+
+
+def test_independent_posterior_inverts_its_own_blocks(monkeypatch, tmp_path):
+    data = tiny_data()
+    model = instantiate(data, replace(config("Method5"), joint_posterior=False)).eval()
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Independent control must not use the joint solve")
+    monkeypatch.setattr(model, "_joint_response", forbidden)
+    h = model.history()
+    state = model.prepare(h)
+    # Independently form one entity's conditional design matrix.
+    for user in (0, 3):
+        design = state["du"][h.i[h.u == user]].detach()
+        hessian = design.T@design/model.cfg.posterior_noise**2+model.cfg.posterior_precision*torch.eye(model.k)
+        factor = state["lu"][user]
+        torch.testing.assert_close(factor@factor.T, torch.linalg.inv(hessian), atol=2e-7, rtol=2e-6)
+    _, extra = model.predict(h, state, data.val_users, data.val_items)
+    assert not extra["joint_score_correction"].any()
+    path = tmp_path/"independent.pt"
+    checkpoints.save(path, model, config=model.cfg, data=data, train_info={})
+    restored, _ = checkpoints.load(path, data, torch.device("cpu"))
+    torch.testing.assert_close(restored.predict_raw_pairs(data, data.val_users, data.val_items),
+                               model.predict_raw_pairs(data, data.val_users, data.val_items))
+
+
+def test_zero_cross_covariance_keeps_joint_marginals_as_separate_control():
+    data = tiny_data()
+    full = instantiate(data, config("Method5"), 8).eval()
+    control = instantiate(data, replace(config("Method5"), posterior_cross_covariance=False), 8).eval()
+    h = full.history()
+    a, b = full.prepare(h), control.prepare(h)
+    for name in ("lu", "ld", "li", "le"):
+        torch.testing.assert_close(a[name], b[name])
+    _, extra = control.predict(h, b, data.val_users, data.val_items)
+    assert not extra["joint_score_correction"].any()
+
+
+def test_count_only_gate_ignores_every_prediction_feature_and_difference():
+    from v3.models import RiskRouter
+    router = RiskRouter(replace(config("Method2"), router_counts_only=True))
+    with torch.no_grad():
+        router.strength.fill_(1.)
+        for head in router.heads:
+            head[-1].weight.fill_(.1)
+    features = torch.zeros(20, 8)
+    features[:, 0] = torch.linspace(0, 2, len(features))
+    first, _ = router(features, torch.ones(20))
+    changed = features.clone()
+    changed[:, 2:] = 1000.
+    second, _ = router(changed, torch.linspace(-100, 100, len(features)))
+    torch.testing.assert_close(first, second)
+    assert first.std() > 1e-5
+
+
+def test_count_only_gate_fits_on_oof_predictions_with_test_poisoned(tmp_path):
+    data = validation_roles(tiny_data(), StudyConfig())
+    data.test_ratings_raw[:] = float("nan")
+    model = instantiate(data, replace(config("Method2"), router_counts_only=True))
+    info = train_v3(training_pub(), model, data, model.cfg, None)
+    assert info["v3_routing"]["folds"] == 3
+    assert info["v3_routing"]["threshold_status"] == "count-only OOF point-risk control"
+    assert torch.isfinite(model.predict_raw_pairs(data, data.val_users, data.val_items)).all()
+    path = tmp_path/"count_gate.pt"
+    checkpoints.save(path, model, config=model.cfg, data=data, train_info=info)
+    restored, _ = checkpoints.load(path, data, torch.device("cpu"))
+    torch.testing.assert_close(restored.predict_raw_pairs(data, data.val_users, data.val_items),
+                               model.predict_raw_pairs(data, data.val_users, data.val_items))
+
+
+def test_gain_dependent_reference_counterexample_is_balanced_without_range_loss():
+    v = (torch.arange(2000, dtype=torch.double)+.5)/2000
+    residual = (4*v-2).requires_grad_()
+    gain = v.clone().requires_grad_()
+    group = torch.zeros(len(v), dtype=torch.long)
+    assert abs(float((3+gain*residual).mean())-3) > .3
+    scales = residual_balance(residual, gain, group, 1)
+    adjusted = residual*scales[group, (residual < 0).long()]
+    prediction = 3+gain*adjusted
+    assert abs(float(prediction.mean())-3) < 1e-12
+    assert prediction.min() >= 1 and prediction.max() <= 5
+    assert adjusted.diff().min() >= 0
+    (v*prediction.square()).mean().backward()
+    assert torch.isfinite(residual.grad).all() and torch.isfinite(gain.grad).all()
+
+
+def test_residual_balance_handles_zero_one_sided_tiny_and_empty_cells():
+    residual = torch.tensor([0., 1., 2., -3., -2., 1e-20, -2e-20], requires_grad=True)
+    gain = torch.ones_like(residual, requires_grad=True)
+    groups = torch.tensor([0, 1, 1, 2, 2, 3, 3])
+    scales = residual_balance(residual, gain, groups, 5)
+    assert ((scales >= 0) & (scales <= 1)).all()
+    adjusted = gain*residual*scales[groups, (residual < 0).long()]
+    total = adjusted.new_zeros(5).index_add(0, groups, adjusted)
+    torch.testing.assert_close(total, torch.zeros_like(total), atol=1e-12, rtol=0)
+    adjusted.square().sum().backward()
+    assert torch.isfinite(residual.grad).all() and torch.isfinite(gain.grad).all()
+
+
+def test_asymmetric_angular_reference_preserves_zero_cosine_anchor():
+    transport = AngularTransport(3)
+    transport.update_reference(torch.linspace(.1, 1, 1000), torch.zeros(1000, dtype=torch.long), 0, .5)
+    group = torch.zeros(301, dtype=torch.long)
+    cosine = torch.linspace(-1, 1, len(group))
+    base, p = torch.full_like(cosine, 3.), torch.full_like(cosine, .5)
+    reference = transport.reference_cdf.clone()
+    assert abs(float(transport.angular_cdf(torch.tensor([0.]), 0, group[:1], reference))-.25) < 1e-6
+    residual = transport.anchored_residual(cosine, p, base, 1., 5., 0, group, reference)
+    assert residual[len(group)//2].abs() < 1e-6
+    assert residual.diff().min() >= -1e-6
+    assert residual.min() >= -2 and residual.max() <= 2
+
+
+@pytest.mark.parametrize("learned,conditional", [(True, True), (False, True), (True, False)])
+def test_m6_complete_head_has_zero_reference_residual_with_varying_baselines(learned, conditional):
+    data = tiny_data()
+    cfg = replace(config("Method6"), angular_reference_pairs=1024,
+                  learned_transport=learned, conditional_reference=conditional)
+    model = instantiate(data, cfg, 7).eval()
+    with torch.no_grad():
+        model.bias.user.weight.copy_(torch.linspace(-2, 2, data.num_users)[:, None])
+        model.bias.item.weight.copy_(torch.linspace(-1, 1, data.num_items)[:, None])
+    h, state = model.eval_state()
+    u, i = state["reference_users"], state["reference_items"]
+    prediction = model.predict(h, state, u, i)[0]
+    base = model.base(h, u, i)
+    assert base.std() > .1
+    assert abs(float((prediction-base).mean())) < 2e-7
+    assert prediction.min() >= 1 and prediction.max() <= 5
+    # The two views also balance separately in each of their own cells.
+    _, residuals, gains, groups = model._transport_residuals(h, state, u, i)
+    for view, (residual, gain, group) in enumerate(zip(residuals, gains, groups)):
+        adjusted = gain*residual*state["transport_balance"][view, group, (residual < 0).long()]
+        count = torch.bincount(group, minlength=model.reference_groups).clamp_min(1)
+        error = adjusted.new_zeros(model.reference_groups).index_add(0, group, adjusted)/count
+        assert error.abs().max() < 2e-7
+    # Preparing another context cannot overwrite the saved state's reference.
+    model.prepare(model.history(torch.arange(len(data.train_users)) % 2 == 0))
+    torch.testing.assert_close(model.predict(h, state, u, i)[0], prediction)
+
+
+@pytest.mark.parametrize("method", ["Method1", "Method6", "Method7"])
+def test_fixed_radius_control_does_not_change_radii_with_context(method):
+    data = tiny_data()
+    model = instantiate(data, replace(config(method), radius_enabled=False)).eval()
+    a = model.prepare(model.history())
+    b = model.prepare(model.history(torch.arange(len(data.train_users)) % 2 == 0))
+    states = zip(a["members"], b["members"]) if method == "Method7" else [(a, b)]
+    for first, second in states:
+        for key in ("ru", "ri")+(("rd", "re") if method == "Method6" else ()):
+            torch.testing.assert_close(first[key], second[key])
+            assert first[key].std(unbiased=False) < 1e-6
+
+
+def test_no_decoder_coupling_control_actually_removes_decoder_from_prediction():
+    data = tiny_data()
+    model = instantiate(data, replace(config("Method6"), decoder_coupling=False)).eval()
+    before = model.predict_raw_pairs(data, data.val_users, data.val_items).detach().clone()
+    with torch.no_grad():
+        model.user_decoder.weight.add_(10.)
+        model.item_decoder.weight.mul_(100.)
+    model.clear_cache()
+    after = model.predict_raw_pairs(data, data.val_users, data.val_items)
+    torch.testing.assert_close(before, after)

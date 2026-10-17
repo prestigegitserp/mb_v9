@@ -17,7 +17,7 @@ from .config import ModelConfig
 from .history import make_history, HistoryEncoder, scatter_sum
 from .numerics import (unit, sphere_exp, bounded_residual, smooth_gain,
                        spectral_filter, conjugate_gradient,
-                       signed_moment_projection, gaussian_bilinear_moments)
+                       signed_moment_projection, gaussian_bilinear_moments, residual_balance)
 from .transport import AngularTransport
 from .laws import mean_tilt, ordinal_nll, mixture_variance
 
@@ -190,6 +190,8 @@ class Method1(BaseModel):
         self.gain_offset = nn.Parameter(torch.tensor(0.0))
 
     def _steer(self, q, z, radius, owners, counterparts, decoder, proposal, entities):
+        if not self.cfg.steering_enabled:
+            return unit(q)
         # Population/amortized prior survives even in a locally unobserved direction.
         q = unit(q+self.cfg.context_strength*unit(z))
         v = proposal(z)
@@ -207,6 +209,8 @@ class Method1(BaseModel):
         zu, zi = self.encode(h)
         ru = math.sqrt(self.half)*(F.softplus(self.user_radius(zu)).squeeze(-1)+1e-4)
         ri = math.sqrt(self.half)*(F.softplus(self.item_radius(zi)).squeeze(-1)+1e-4)
+        if not self.cfg.radius_enabled:
+            ru, ri = torch.full_like(ru, math.sqrt(self.half)*.5), torch.full_like(ri, math.sqrt(self.half)*.5)
         qu = self._steer(self.user_direction.weight, zu, ru, h.u, h.i,
                          self.user_decoder, self.user_proposal, self.nu)
         qi = self._steer(self.item_direction.weight, zi, ri, h.i, h.u,
@@ -245,11 +249,18 @@ class RiskRouter(nn.Module):
 
     def moments(self, features):
         x = (features-self.center)/self.scale
+        if self.cfg.router_counts_only:
+            # No prediction, disagreement, bias or rating-spread input survives
+            # into this control's gate. Its OOF objective fits the gate directly.
+            x = torch.cat([x[..., :2], torch.zeros_like(x[..., 2:])], -1)
         return torch.stack([head(x).squeeze(-1) for head in self.heads])*self.target_scale
 
     def forward(self, features, difference):
         estimates = self.moments(features)
         mean = estimates.mean(0)
+        if self.cfg.router_counts_only:
+            eta = torch.maximum(-self.lambda0, torch.minimum(1-self.lambda0, mean))
+            return self.lambda0+self.strength*eta, torch.zeros_like(mean)
         beta = self.cfg.router_uncertainty*estimates.std(0, unbiased=False)+self.noise_floor
         soft = mean.sign()*F.relu(mean.abs()-beta)
         eta = soft/(difference.square()+self.cfg.router_ridge)
@@ -600,18 +611,41 @@ class Method5(DualDecoderBase):
         factors = torch.stack(samples, -1)/math.sqrt(len(samples))
         return factors[:nz], factors[nz:]
 
+    @torch.no_grad()
+    def _independent_response(self, z, d, owners, counterparts):
+        """Exact covariance factors for a block-diagonal working precision.
+
+        Each code conditions on its decoder mean and vice versa. This actually
+        removes the cross blocks BEFORE inversion; simply zeroing a joint
+        covariance afterwards retains different marginals and is a separate
+        ablation. Network weights and the plug-in means stay fixed in both.
+        """
+        precision, noise = self.cfg.posterior_precision, self.cfg.posterior_noise
+        eye = torch.eye(self.k, device=z.device, dtype=z.dtype)
+        hz = sum_outer(d[counterparts], owners, len(z), self.cfg.batch_size)/noise**2+precision*eye
+        hd = sum_outer(z[owners], counterparts, len(d), self.cfg.batch_size)/noise**2+precision*eye
+        def factor(hessian):
+            lower = torch.linalg.cholesky(hessian)
+            inverse = torch.linalg.solve_triangular(lower, eye.expand_as(lower), upper=False)
+            return inverse.transpose(-1, -2)
+        return factor(hz), factor(hd)
+
     def prepare(self, h):
         zu, zi = self.encode(h)
         self.posterior_cg_residual = 0.
         target = ((h.y-self.base(h, h.u, h.i))/self.width).detach()
         du = self._ridge(zu, self.user_decoder.weight, h.u, h.i, target, self.ni)
         di = self._ridge(zi, self.item_decoder.weight, h.i, h.u, target, self.nu)
-        lu, ld = self._joint_response(zu, du, h.u, h.i, 0)
-        li, le = self._joint_response(zi, di, h.i, h.u, 1)
+        if self.cfg.joint_posterior:
+            lu, ld = self._joint_response(zu, du, h.u, h.i, 0)
+            li, le = self._joint_response(zi, di, h.i, h.u, 1)
+        else:
+            lu, ld = self._independent_response(zu, du, h.u, h.i)
+            li, le = self._independent_response(zi, di, h.i, h.u)
         return dict(zu=zu, zi=zi, du=du, di=di, lu=lu, ld=ld, li=li, le=le)
 
     def _view(self, h, z, d, lz, ld, u, i, base, reverse=False):
-        corr = torch.sigmoid(self.correlation) if self.cfg.joint_posterior else 0.0
+        corr = torch.sigmoid(self.correlation) if self.cfg.joint_posterior and self.cfg.posterior_cross_covariance else 0.0
         mean, variance, correction = gaussian_bilinear_moments(z, d, lz, ld, corr)
         p = ((base-self.lo)/self.width).clamp(1e-6, 1-1e-6)
         anchor = math.sqrt(2)*torch.erfinv(2*p-1)
@@ -640,11 +674,14 @@ class Method6(DualDecoderBase):
         nn.init.zeros_(self.counter_user.weight)
         nn.init.zeros_(self.counter_item.weight)
         self.coupling = nn.Parameter(torch.tensor(0.0))
+        self.reference_groups = 4*(cfg.reference_baseline_bins*cfg.reference_gain_bins if cfg.conditional_reference else 1)
         self.transport = AngularTransport(self.k, cfg.transport_nodes,
                                            cfg.transport_slope_margin, cfg.angular_grid,
-                                           cfg.learned_transport and cfg.transport_enabled)
+                                           cfg.learned_transport and cfg.transport_enabled, self.reference_groups)
 
     def _radius(self, x):
+        if not self.cfg.radius_enabled:
+            return x.new_full(x.shape[:-1], math.sqrt(self.half)*.5)
         temperature = self.cfg.radius_temperature or .5*math.sqrt(self.k)
         return math.sqrt(self.half)*torch.tanh(x.norm(dim=-1)/temperature)
 
@@ -657,15 +694,28 @@ class Method6(DualDecoderBase):
         # Both operands of the convex radius coupling have the SAME valid cap.
         rd = eta*self._radius(du)+(1-eta)*cap*torch.sigmoid(self.counter_item.weight[:, 0])
         re = eta*self._radius(di)+(1-eta)*cap*torch.sigmoid(self.counter_user.weight[:, 0])
+        if not self.cfg.decoder_coupling:
+            rd, re = cap*torch.sigmoid(self.counter_item.weight[:, 0]), cap*torch.sigmoid(self.counter_user.weight[:, 0])
+        if not self.cfg.radius_enabled:
+            rd, re = torch.full_like(rd, cap*.5), torch.full_like(re, cap*.5)
         state = dict(zu=zu, zi=zi, du=du, di=di, ru=ru, ri=ri, rd=rd, re=re,
                     qu=unit(self.uv_user_direction.weight+self.cfg.context_strength*zu),
-                    qi=unit(self.uv_item_direction.weight+self.cfg.context_strength*du),
-                    pu=unit(self.iv_user_direction.weight+self.cfg.context_strength*di),
+                    qi=unit(self.uv_item_direction.weight+(self.cfg.context_strength*du if self.cfg.decoder_coupling else 0)),
+                    pu=unit(self.iv_user_direction.weight+(self.cfg.context_strength*di if self.cfg.decoder_coupling else 0)),
                     pi=unit(self.iv_item_direction.weight+self.cfg.context_strength*zi),
                     transport_values=self.transport.projected_values() if self.transport.learned else None)
         if self.cfg.transport_enabled:
-            self._update_reference(h, state)
+            u, i = self._update_reference(h, state)
+            state["reference_users"], state["reference_items"] = u, i
             state["reference_cdf"] = self.transport.reference_cdf.clone()
+            state["reference_sizes"] = self.transport.reference_sizes.clone()
+            if self.cfg.balance_transport:
+                _, residuals, gains, groups = self._transport_residuals(h, state, u, i)
+                state["transport_balance"] = torch.stack([
+                    residual_balance(residual, gain, group, self.reference_groups)
+                    for residual, gain, group in zip(residuals, gains, groups)])
+            else:
+                state["transport_balance"] = zu.new_ones(2, self.reference_groups, 2)
         return state
 
     @staticmethod
@@ -676,23 +726,46 @@ class Method6(DualDecoderBase):
         return ((s["qu"][u]*s["qi"][i]).sum(-1).clamp(-1, 1),
                 (s["pu"][u]*s["pi"][i]).sum(-1).clamp(-1, 1))
 
-    def predict(self, h, s, u, i):
+    def _gains(self, s, u, i):
+        return ((s["ru"][u]*s["rd"][i]/self.half).clamp(0, 1),
+                (s["ri"][i]*s["re"][u]/self.half).clamp(0, 1))
+
+    def _reference_groups(self, h, u, i, p, gain):
+        degree = self.groups(h, u, i)
+        if not self.cfg.conditional_reference:
+            return degree
+        bp, bg = self.cfg.reference_baseline_bins, self.cfg.reference_gain_bins
+        baseline_cell = (p.detach()*bp).long().clamp(0, bp-1)
+        gain_cell = (gain.detach()*bg).long().clamp(0, bg-1)
+        return (degree*bp+baseline_cell)*bg+gain_cell
+
+    def _transport_residuals(self, h, s, u, i):
         base = self.base(h, u, i)
-        c1, c2 = self.angular_scores(s, u, i)
-        a = (s["ru"][u]*s["rd"][i]/self.half).clamp(0, 1)
-        b = (s["ri"][i]*s["re"][u]/self.half).clamp(0, 1)
+        p = (base-self.lo)/self.width
+        gains = self._gains(s, u, i)
+        groups = [self._reference_groups(h, u, i, p, gain) for gain in gains]
+        residuals = [self.transport.anchored_residual(cosine, p, base, self.lo, self.hi,
+                     view, group, s["reference_cdf"], s["transport_values"])
+                     for view, (cosine, group) in enumerate(zip(self.angular_scores(s, u, i), groups))]
+        return base, residuals, gains, groups
+
+    def predict(self, h, s, u, i):
         if self.cfg.transport_enabled:
-            group = self.groups(h, u, i)
-            p = (base-self.lo)/self.width
-            t1 = self.transport.quantile(self.transport.angular_cdf(c1, 0, group, s["reference_cdf"]), p, s["transport_values"])
-            t2 = self.transport.quantile(self.transport.angular_cdf(c2, 1, group, s["reference_cdf"]), p, s["transport_values"])
-            p1 = (1-a)*base+a*(self.lo+self.width*t1)
-            p2 = (1-b)*base+b*(self.lo+self.width*t2)
+            base, residuals, gains, groups = self._transport_residuals(h, s, u, i)
+            predictions = []
+            for view, (residual, gain, group) in enumerate(zip(residuals, gains, groups)):
+                scale = s["transport_balance"][view, group, (residual < 0).long()]
+                predictions.append(base+gain*scale*residual)
+            p1, p2 = predictions
         else:
+            base = self.base(h, u, i)
+            c1, c2 = self.angular_scores(s, u, i)
+            gains = self._gains(s, u, i)
+            a, b = gains
             p1 = bounded_residual(base, c1, a, self.lo, self.hi)
             p2 = bounded_residual(base, c2, b, self.lo, self.hi)
         gate = torch.sigmoid(self.mix)
-        return gate*p1+(1-gate)*p2, {"gain": .5*(a+b), "radius_user": s["ru"][u]}
+        return gate*p1+(1-gate)*p2, {"gain": .5*(gains[0]+gains[1]), "radius_user": s["ru"][u]}
 
     @torch.no_grad()
     def refresh_reference(self):
@@ -706,9 +779,11 @@ class Method6(DualDecoderBase):
         n = self.cfg.angular_reference_pairs
         u = torch.randint(self.nu, (n,), generator=gen, device=h.u.device)
         i = torch.randint(self.ni, (n,), generator=gen, device=h.u.device)
-        groups = self.groups(h, u, i)
-        for view, cosine in enumerate(self.angular_scores(s, u, i)):
+        p = (self.base(h, u, i)-self.lo)/self.width
+        for view, (cosine, gain) in enumerate(zip(self.angular_scores(s, u, i), self._gains(s, u, i))):
+            groups = self._reference_groups(h, u, i, p, gain)
             self.transport.update_reference(cosine, groups, view, self.cfg.angular_reference_weight)
+        return u, i
 
 
 class MeanMember(nn.Module):
@@ -732,6 +807,8 @@ class MeanMember(nn.Module):
         code = encoder(features)
         q = unit(directions+self.cfg.context_strength*code[:, :-1])
         radius = math.sqrt(self.half)*torch.sigmoid(code[:, -1])
+        if not self.cfg.radius_enabled:
+            radius = torch.full_like(radius, math.sqrt(self.half)*.5)
         return q, radius
 
     def prepare(self, h):
@@ -820,12 +897,29 @@ class Method7(BaseModel):
         return torch.cat([h.user_features[u], h.item_features[i],
                            ((mean-self.mid)/self.width)[:, None], cosine[:, None]], -1).detach()
 
-    def probability_members(self, h, state, u, i):
+    def _shape_states(self, h, state, u, i):
         means = self.member_predictions(h, state, u, i)
+        shapes = [head(self._shape_features(h, member_state, means[j], u, i))
+                  for j, (head, member_state) in enumerate(zip(self.shape_heads, state["members"]))]
+        return means, shapes
+
+    def _beta_parameters(self, shape, mean):
+        eps = torch.finfo(mean.dtype).eps
+        p = ((mean.detach()-self.lo)/self.width).clamp(eps, 1-eps)
+        concentration = F.softplus(shape[:, :2])+0.1
+        if not self.cfg.shape_full:
+            concentration = concentration.expand(-1, 2)
+        logit = shape[:, 2] if self.cfg.shape_full else torch.zeros_like(p)
+        # Never recover a log-weight from a rounded sigmoid. Sigmoid(17) is
+        # already exactly 1 in float32, while these log-weights and gradients
+        # remain finite for either sign and for strongly saturated logits.
+        log_weights = torch.stack([F.logsigmoid(logit), F.logsigmoid(-logit)], -1)
+        return p[:, None]*concentration, (1-p)[:, None]*concentration, torch.sigmoid(logit), log_weights
+
+    def probability_members(self, h, state, u, i):
+        means, shapes = self._shape_states(h, state, u, i)
         probabilities, beta_parameters = [], []
-        for j, (head, member_state) in enumerate(zip(self.shape_heads, state["members"])):
-            feature = self._shape_features(h, member_state, means[j], u, i)
-            shape = head(feature)
+        for j, shape in enumerate(shapes):
             if self.ordinal:
                 if not self.cfg.shape_full:
                     r = (self.levels-self.mid)/self.half
@@ -835,15 +929,7 @@ class Method7(BaseModel):
                 # Continuous fallback: two beta components have the SAME mean.
                 # It is a different, explicitly labelled law, not a fictitious PMF
                 # for continuous Jester/synthetic labels.
-                eps = torch.finfo(means.dtype).eps
-                p = ((means[j].detach()-self.lo)/self.width).clamp(eps, 1-eps)
-                concentration = F.softplus(shape[:, :2])+0.1
-                if not self.cfg.shape_full:
-                    concentration = concentration.expand(-1, 2)
-                alpha = p[:, None]*concentration
-                beta = (1-p)[:, None]*concentration
-                mix = (torch.sigmoid(shape[:, 2]) if self.cfg.shape_full
-                       else torch.full_like(p, .5))
+                alpha, beta, mix, _ = self._beta_parameters(shape, means[j])
                 beta_parameters.append((alpha, beta, mix))
         return means, probabilities, beta_parameters
 
@@ -865,15 +951,17 @@ class Method7(BaseModel):
                     between_variance=between, beta_parameters=beta)
 
     def probability_loss(self, h, state, u, i, y):
-        means, prob, beta = self.probability_members(h, state, u, i)
         if self.ordinal:
+            _, prob, _ = self.probability_members(h, state, u, i)
             return ordinal_nll(torch.stack(prob).mean(0), y, self.levels).mean()
+        means, shapes = self._shape_states(h, state, u, i)
         t = ((y-self.lo)/self.width).clamp(1e-5, 1-1e-5)
         logs = []
-        for a, b, mix in beta:
+        for mean, shape in zip(means, shapes):
+            a, b, _, log_weights = self._beta_parameters(shape, mean)
             logpdf = ((a-1)*t[:, None].log()+(b-1)*torch.log1p(-t[:, None])
                       -torch.lgamma(a)-torch.lgamma(b)+torch.lgamma(a+b)-math.log(self.width))
-            logs.append(torch.logsumexp(logpdf+torch.stack([mix.log(), torch.log1p(-mix)], -1), -1))
+            logs.append(torch.logsumexp(logpdf+log_weights, -1))
         return -(torch.logsumexp(torch.stack(logs), 0)-math.log(len(logs))).mean()
 
 

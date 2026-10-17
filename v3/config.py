@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 import hashlib
 import math
 from pathlib import Path
+from . import __version__
 
 
 def implementation_signature():
@@ -45,6 +46,8 @@ class ModelConfig:
     count_tau: float = 10.0
     context_strength: float = 0.35
     tangent_limit: float = 0.50
+    steering_enabled: bool = True
+    radius_enabled: bool = True
     information_filter: bool = True
     information_ridge: float = 1.0
     gradient_surgery: bool = True
@@ -57,6 +60,7 @@ class ModelConfig:
     router_ridge: float = 0.02
     router_uncertainty: float = 1.0
     router_enabled: bool = True
+    router_counts_only: bool = False
     log_radius_bound: float = 2.0
     radius_precision: float = 2.0
     radius_noise: float = 0.25
@@ -74,6 +78,7 @@ class ModelConfig:
     posterior_cg_steps: int = 12
     posterior_correlation_init: float = 0.05
     joint_posterior: bool = True
+    posterior_cross_covariance: bool = True
     score_temperature: float = 0.40
     radius_temperature: float = 0.0
     transport_enabled: bool = True
@@ -83,6 +88,11 @@ class ModelConfig:
     angular_grid: int = 257
     angular_reference_pairs: int = 8192
     angular_reference_weight: float = 0.50
+    conditional_reference: bool = True
+    reference_baseline_bins: int = 3
+    reference_gain_bins: int = 3
+    balance_transport: bool = True
+    decoder_coupling: bool = True
     ensemble_members: int = 3
     mean_interior_epsilon: float = 1e-5
     feature_dropout: float = 0.15
@@ -93,7 +103,9 @@ class ModelConfig:
     batch_size: int = 4096
 
     def validate(self):
-        flags = {"information_filter", "gradient_surgery", "router_enabled", "graph_uncertainty",
+        flags = {"information_filter", "gradient_surgery", "router_enabled", "router_counts_only",
+                 "steering_enabled", "radius_enabled", "posterior_cross_covariance",
+                 "conditional_reference", "balance_transport", "decoder_coupling", "graph_uncertainty",
                  "signed_moments", "project_moments", "joint_posterior", "transport_enabled",
                  "learned_transport", "shape_full"}
         for name, value in vars(self).items():
@@ -111,7 +123,8 @@ class ModelConfig:
                           "steps_per_epoch", "warmup_steps", "router_folds", "router_expert_epochs",
                           "router_epochs", "router_width", "router_replicates", "radius_refresh",
                           "cg_steps", "graph_probes", "posterior_probes", "posterior_cg_steps",
-                          "transport_nodes", "angular_grid", "angular_reference_pairs", "ensemble_members",
+                          "transport_nodes", "angular_grid", "angular_reference_pairs", "reference_baseline_bins",
+                          "reference_gain_bins", "ensemble_members",
                           "shape_epochs", "shape_patience", "batch_size")
         for name in integer_fields:
             if not isinstance(getattr(self, name), int) or isinstance(getattr(self, name), bool):
@@ -126,7 +139,8 @@ class ModelConfig:
                      "cg_steps", "graph_probes", "posterior_probes", "batch_size",
                      "router_epochs", "router_expert_epochs", "router_width", "router_replicates",
                      "shape_epochs", "shape_patience", "ensemble_members", "posterior_cg_steps",
-                     "radius_refresh", "angular_reference_pairs", "angular_grid"):
+                     "radius_refresh", "angular_reference_pairs", "angular_grid", "reference_baseline_bins",
+                     "reference_gain_bins"):
             if getattr(self, name) < 1:
                 raise ValueError(f"{name} must be positive")
         if not 0 < self.mask_fraction < 1:
@@ -174,7 +188,7 @@ def default_models():
 
 @dataclass
 class StudyConfig:
-    architecture_version: str = "3.0.0-research"
+    architecture_version: str = __version__
     implementation_sha256: str = field(default_factory=implementation_signature)
     profile: str = "balanced"
     role_seed: int = 73019

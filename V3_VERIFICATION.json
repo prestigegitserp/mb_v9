@@ -1,16 +1,16 @@
 {
-  "architecture_version": "3.0.0-research",
-  "implementation_sha256": "3d854b0e0e4806053bcf0f50787606865fe10c0b8c66ecd61b78927600ea51da",
+  "architecture_version": "3.0.1-research",
+  "implementation_sha256": "d0784c21d23135a0c5dc2c21267e6bd1bbcbe93aaeeb8db5b6477c3cea86e3bd",
   "git": {
     "development_branch": "v3-development",
     "release_branch": "v3",
     "base_commit": "61097d772620e97fff7ec64a9f21b74a6eb9f913",
+    "release_parent": "7cbff1c0b80016a169f926a14357eeec9eaaa089",
     "commit_and_merge_authorized": true,
-    "unchanged_heads_before_publication": {
+    "unchanged_legacy_heads": {
       "main": "ab18aa2f52d11ef2227c720116492c1497306629",
       "v2-development": "c4d58285d36e27d5e86b6575dbdece881a85e165",
-      "v2": "61097d772620e97fff7ec64a9f21b74a6eb9f913",
-      "v3-development": "61097d772620e97fff7ec64a9f21b74a6eb9f913"
+      "v2": "61097d772620e97fff7ec64a9f21b74a6eb9f913"
     }
   },
   "preservation": {
@@ -21,19 +21,14 @@
       "v9",
       "vendor_v8"
     ],
-    "intentional_original_file_changes": [
-      ".gitignore",
-      "README.md",
-      "VERSION",
-      "run_v9.py",
-      "tests/test_v2_research.py"
-    ]
+    "old_test_sources_unchanged_in_this_fix": true
   },
   "unit_tests": {
-    "tests": 104,
+    "tests": 131,
     "errors": 0,
     "failures": 0,
     "skipped": 0,
+    "new_regression_cases": 27,
     "command": "python -m pytest -q tests",
     "result": "PASS"
   },
@@ -55,13 +50,7 @@
         "Method7"
       ],
       "candidate_trainings": 8,
-      "epoch_events": 24,
-      "original_split_rows_identical_to_V2": 100000,
-      "split_counts": {
-        "train": 80053,
-        "test": 9980,
-        "val": 9967
-      },
+      "split_rows_identical_to_v2": 100000,
       "protocol": {
         "split_seed": 2026,
         "role_seed": 73019,
@@ -85,36 +74,29 @@
           "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9"
         }
       },
-      "environment": {
-        "python": "3.12.14",
-        "torch": "2.6.0+cpu",
-        "numpy": "2.3.5",
-        "pandas": "2.2.3",
-        "device": "cpu",
-        "v8": "8.0.1-infrastructure-fixes",
-        "frozen_v7_core_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c"
-      },
-      "data_origin": "Materialized from the user-provided V2 split assignments; +1 external IDs remap to the same internal IDs."
+      "M7_PMF_mean_max_error": 7.152557373046875e-07,
+      "M7_variance_decomposition_max_error": 5.960464477539063e-08,
+      "all_split_columns_identical": true
     },
-    "synthetic_validation_only": {
+    "matched_K_ablations": {
       "result": "PASS",
-      "candidate_trainings": 7,
-      "test_metric_columns": false,
-      "actual_M7_likelihood_verified": true,
-      "exact_config_completed_job_resume": "PASS"
+      "smoke_only": true,
+      "trainings": 31,
+      "K": 4,
+      "all_new_controls_executed": true
     },
-    "prediction_archives": {
-      "M2_expert_predictions_and_gate": "PASS",
-      "M7_PMF_mean_matches_point_prediction": "PASS",
-      "M7_exact_total_variance_identity": "PASS"
-    },
-    "synthetic_scan_final_calibration": {
+    "scan_final_probability": {
       "result": "PASS",
       "validation_only_candidates": 7,
-      "same_process_scan_flags_in_final": "PASS",
-      "final_selected_checkpoint_and_predictions_retained": true,
-      "secondary_actual_likelihood_selected_refit": "PASS",
-      "source_identity_matches_current": true
+      "no_test_columns": true,
+      "final_checkpoint_predictions_retained": true,
+      "probability_selected_checkpoint_retained": true
+    },
+    "source_identity_matches_current": true,
+    "environment": {
+      "python": "3.12.14",
+      "torch": "2.6.0+cpu",
+      "device": "cpu"
     }
   },
   "coverage": [
@@ -138,17 +120,41 @@
     "Nonfinite, fractional integer and mistyped configurations are rejected before training",
     "Frozen final refit rejects changed settings, seed sets, source identity, data protocol and actual train data",
     "Same-process final restores selected model/prediction retention after scan",
-    "M3 additional full-training radius updates and target exposure are counted"
+    "M3 additional full-training radius updates and target exposure are counted",
+    "M1 zero tangent angle has finite cold-entity predictions and identity/zero tangent derivative",
+    "M1 no-steering control removes both history-to-direction paths",
+    "M1 auxiliary budget applies only to shared encoder gradients; zero retains decoder learning",
+    "M7 continuous mixture logit +/-17, +/-120 and +/-1000 has finite likelihood and protected shape gradients",
+    "M5 independent conditional covariance blocks are inverted independently and restore from checkpoint",
+    "M5 zero-cross-covariance control retains the joint marginal covariance factors",
+    "M2 count-only gate ignores pair predictions, disagreement, bias and spread and restores after OOF fitting",
+    "M6 asymmetric empirical reference retains its zero-cosine baseline anchor",
+    "M6 gain-correlated counterexample and varying-baseline complete head satisfy finite-reference residual balance",
+    "M6 zero, tiny, one-sided and empty reference cells retain finite balance gradients and bounds",
+    "M1/M6/M7 fixed-radius and M6 no-decoder-coupling controls alter the intended computation",
+    "All 31 matched-K full/control variants complete the real training and evaluation CLI"
+  ],
+  "debug_fixes": [
+    "Return the sphere identity before any zero-angle tangent division",
+    "Compute beta mixture log weights directly from logits",
+    "Condition M6 reference cells on baseline and gain as well as degree and view",
+    "Center M6 transport at Q(F(0)) and gain-balance finite-reference signed residuals without violating range bounds",
+    "Separate independent precision-block covariance from post-hoc removal of joint cross covariance",
+    "Add real no-steering, fixed-radius, count-only, no-decoder-coupling and transport-balance controls",
+    "Restrict M1 auxiliary gradient surgery to shared encoder coordinates and implement its zero budget",
+    "Reject nonfinite router/shape gradients immediately and record epoch-budget termination"
   ],
   "limitations": [
-    "No full V2-versus-V3 benchmark or publication novelty claim",
-    "Smoke results do not establish accuracy improvement",
-    "V3 selection validation uses a documented 60/20/20 role protocol; historical V2 validation is not the same population",
-    "M2 routing threshold is model-based, not a certified conditional confidence interval",
-    "M3/M5 uncertainty is conditional on a working linearization and finite numerical budgets",
-    "M6 mean anchoring is relative to its declared angular reference",
-    "Continuous M7 uses an explicitly endpoint-clipped beta-mixture likelihood",
+    "No full V2-versus-V3 multi-seed benchmark or verified publication novelty claim",
+    "Quick integrations establish execution contracts, not accuracy superiority or convergence",
+    "V3 selection validation uses 60/20/20 roles; historical full-V2 validation metrics are not matched",
+    "M2 routing threshold remains model-based, not a certified conditional confidence interval",
+    "M3/M5 uncertainty remains conditional on a working linearization; M5 conditions on encoder weights and uses plug-in means, not a joint nonlinear MAP",
+    "M6 head balance is exact on its sampled finite catalogue reference, not on unseen conditional rating distributions; one-sided cells contract and empty cells have no calibration guarantee",
+    "M6 uses hard binned conditioning and finite empirical references; sensitivity and generalization require experiments",
+    "Continuous M7 retains its explicitly endpoint-clipped beta-mixture likelihood",
     "CPU verified; GPU parity has not been tested",
+    "V3.0.1 intentionally rejects V3.0.0 checkpoints; new output directory and retraining required",
     "Resume skips identical completed jobs; optimizer-state mid-epoch restart is not implemented"
   ],
   "delivery": {
@@ -160,14 +166,6 @@
     ],
     "V1_V2_heads_must_remain_unchanged": true
   },
-  "verification_phase": "Release audit completed before commit; commit and merge are explicitly authorized",
-  "verified_at_utc": "2026-10-17T20:41:45.149602+00:00",
-  "debug_fixes": [
-    "Prevent inactive analytic-transport branches from overflowing during backward",
-    "Remove affine gauge and bracket mean-tilt roots adaptively, with convergence verification",
-    "Validate configuration types, finite values and angular grid dimensions",
-    "Restore final artifact retention after in-process scans",
-    "Freeze and verify selected settings and train/validation data before final and calibration refits",
-    "Record full-training Gauss-Newton update budgets separately from Adam steps"
-  ]
+  "verification_phase": "Local debug and integration passed before commit; GitHub CI is checked before merge",
+  "verified_at_utc": "2026-10-17T22:13:23.383003+00:00"
 }

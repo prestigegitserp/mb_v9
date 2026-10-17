@@ -28,7 +28,9 @@ $$H=r^2P\left(\sum_{j\in C_u}D_jD_j^T\right)P,\qquad v=(H+\lambda I)^{-1}Hv_0.$$
 
 The proposal is reprojected into the tangent space and applied with a capped spherical exponential map. Zero-information directions retain the amortized/ID prior instead of inventing data-supported steering. H is a stopped working information matrix; the code does not differentiate through its construction. Reconstruction directly uses the same polar state, so its gradient can interfere with prediction.
 
-Shared encoder auxiliary gradients are capped relative to prediction gradients and, when conflicting, projected off the negative prediction component. This is a Euclidean gradient-interference operation. Adam momentum, decay and finite step size prevent a theorem that the actual optimizer update always improves prediction loss. Ablations remove the filter and the surgery separately.
+A zero tangent limit returns the input direction with a zero tangent derivative, including a zero-information cold entity. The separate `no_steering` control removes **both** the history-conditioned prior-direction adjustment and the tangent proposal. Removing the information filter alone does not remove steering. Fixed-radius controls retain constant radii at half the radius cap for M1/M6/M7.
+
+Shared encoder auxiliary gradients are capped relative to prediction gradients and, when conflicting, projected off the negative prediction component. The cap modifies only shared encoder coordinates; decoder reconstruction and nonshared priors retain their declared loss weights. A zero auxiliary-gradient budget makes the shared encoder gradient prediction-only. This is a Euclidean gradient-interference operation. Adam momentum, decay and finite step size prevent a theorem that the actual optimizer update always improves prediction loss. Ablations remove the filter and the surgery separately.
 
 ## M2: risk-based routing of distinct views
 
@@ -41,6 +43,8 @@ $$B(x)\approx E[(Y-p_0)d\mid x],\qquad
 \frac{\operatorname{softthreshold}(\widehat B,\beta)}{d^2+\epsilon}.$$
 
 This comes from the conditional squared-risk change $-2\eta B+\eta^2d^2$. Bootstrap router disagreement plus a model-based floor supplies $\beta$. The final gate is $\lambda_0+s\eta$, with $s\in\{0,.25,.5,1\}$ chosen on selection validation. The explicit zero-strength candidate retains the fixed mixture. This is validation protection, not a conditional risk guarantee. OOF experts use smaller histories than the final refit; this remaining distribution shift is recorded in checkpoint metadata. All OOF and router updates are budgeted and reported.
+
+The count-only control directly fits $\eta(n_u,n_i)$ by OOF squared prediction risk. Its gate reads only the two log-count features, including at inference: it does not divide by the current pair's expert disagreement. The full risk router and this count-only control therefore have genuinely different information sets. `fixed_gate` retains the learned **global scalar** mixture; it is not an assertion that the scalar equals .5.
 
 ## M3: neural log-radius priors and graph uncertainty
 
@@ -73,13 +77,13 @@ $$E[z^Td]=\mu_z^T\mu_d+\operatorname{tr}C,$$
 $$\operatorname{Var}(z^Td)=\mu_d^T\Sigma_z\mu_d+\mu_z^T\Sigma_d\mu_z
 +2\mu_d^TC\mu_z+\operatorname{tr}(\Sigma_z\Sigma_d)+\operatorname{tr}(C^2).$$
 
-The implementation computes these moments directly in low-rank factors; independent-posterior ablation sets alpha=0. The anchored probit score uses variance along the relevant bilinear direction. That probit head is a defined prediction rule; it is **not** the exact integral of a nonlinear/non-Gaussian posterior. Exported latent variances are not labelled calibrated rating variances. Probe count, CG tolerance/budget and prior strength require sensitivity analysis.
+The implementation computes these moments directly in covariance factors. Two distinct controls are provided. `zero_cross_covariance` sets alpha=0 **after** the joint solve, retaining its marginal covariance estimates. `independent_posterior` instead removes code/decoder cross blocks **before** inversion and uses exact Cholesky covariance factors for the resulting conditional entity blocks. The same plug-in means are retained to isolate covariance inference. This block-diagonal working Gaussian still does not integrate network weights or optimize a joint nonlinear MAP. The anchored probit score uses variance along the relevant bilinear direction. That probit head is a defined prediction rule; it is **not** the exact integral of a nonlinear/non-Gaussian posterior. Exported latent variances are not labelled calibrated rating variances. Probe count, CG tolerance/budget and prior strength require sensitivity analysis.
 
 ## M6: globally valid radii and constrained angular transport
 
 Every encoder, decoder and free counterpart radius has the same cap $\sqrt h$, including both operands of convex radius coupling. Thus products divided by h stay in [0,1]. The temperature is dimension-aware; radii actively affect both reconstruction-linked views and their final predictions.
 
-A train-context angular CDF combines the isotropic K-dimensional reference with an empirical catalogue-pair reference, separately for two views and four degree cohorts. Uniform catalogue IDs use no held-out labels. Small reference cohorts fall back to the isotropic law. References are rebuilt from each context and stored with that state's CDF so one context cannot overwrite another state's prediction rule.
+A train-context angular CDF combines the isotropic K-dimensional reference with an empirical catalogue-pair reference, separately for two views and cells of degree cohort, baseline and gain. Defaults use four degree cohorts, three baseline bins and three gain bins, giving 36 cells per view. This is binned conditioning, not exact conditioning on continuous covariates. Uniform catalogue IDs use no held-out labels. Small reference cells fall back to the isotropic CDF. References are rebuilt from each context and stored with that state's CDF and balance factors so one context cannot overwrite another state's prediction rule.
 
 For $p=(b-L)/W$, a learned monotone quantile Q satisfies
 
@@ -89,7 +93,17 @@ Cosine-spaced nodes include .5. Interval masses $\delta_j=\Delta Q_j$ are projec
 
 Outside the bank's [.02,.98] baseline range, a continuous convex closure combines the edge bank with an analytic finite-slope ramp law. For p<=.5 that law has left-half slope 2p and a terminal ramp of width $p/[2(1-p)]$; reflection supplies the other half. Its half-value and integral are both p. The closure mixing weight solves the target mean exactly and tends to 1 at the bank edge. Its finite slope bound is the weighted sum of its component bounds, rather than the interior bank's single cap. The analytic-power ablation intentionally uses the historical unconstrained endpoint-slope law.
 
-The output $(1-a)b+a[L+WQ(F_C(c))]$ is globally bounded and mean-anchored **under the declared angular reference and ideal uniform transform**. Empirical CDF estimation/interpolation and finite catalogue populations introduce approximation; observed user-specific calibration is not guaranteed.
+The spline integral is a property for fixed p under a uniform transformed angle. It alone does **not** anchor the whole predictor when p or gain a varies with angle. For example, Q(v)=v, p=.5 and a=v give mean b+W/12, not b. The implemented head therefore adds the following explicit steps rather than claiming that independence.
+
+First set $q=Q_p(F(c))$, $q_0=Q_p(F(0))$ and
+
+$$s=\begin{cases}(q-q_0)/(1-q_0)&q\geq q_0\\(q-q_0)/q_0&q<q_0,\end{cases}\qquad R=s\begin{cases}U-b&s\geq0\\b-L&s<0.\end{cases}$$
+
+Denominators have explicit numerical floors. Thus R is bounded, monotone in c for fixed baseline/reference, and R(0)=0 even for an asymmetric empirical CDF. For each view/cell on the sampled context reference, compute $P=\sum a_j(R_j)_+$ and $N=\sum a_j(-R_j)_+$. Outside a shared numerical floor, take $t_+=\min(1,N/P)$ and $t_-=\min(1,P/N)$, with identity for an empty/zero side where its ratio is undefined. Both scales stay in [0,1]. Below the shared floor both may shrink; the equality $Pt_+=Nt_-$ still holds. Predict
+
+$$\mu=b+a\{t_+(R)_+-t_-(-R)_+\}.$$
+
+This preserves global bounds and the zero-angle anchor, and enforces $\sum(\mu_j-b_j)=0$ on the actual finite reference **including correlated p, gain and angle**. The factors are differentiable almost everywhere through P and N; CDF estimation and bin membership are stopped working quantities. A one-sided nonzero reference must contract that side to zero to satisfy all these constraints. Empty cells have identity scales, and no unseen-cell calibration guarantee is asserted. The identity concerns the sampled catalogue reference, not observed ratings or unknown user-specific calibration. Binned conditioning, small cells, shrinkage and sampling error require sensitivity analysis. Ablations separately remove balancing, continuous-covariate bins, learned spline, radii and direct decoder coupling.
 
 ## M7: protected means and a full ordinal law
 
@@ -105,7 +119,7 @@ A double-precision scalar root solve determines lambda. The forward solve remove
 
 The ensemble mixes member probabilities and retains the ensemble point mean. Total variance is exactly within-member variance plus variance of member means. Metrics include actual ordinal NLL, multiclass Brier, RPS and discrete interval coverage; no Gaussian NLL is fabricated for an ordinal PMF.
 
-Continuous train labels are detected even when a dataset manifest declares a nominal step. That path uses two beta components with the **same member mean**, learned concentrations and mixture weight. A fixed inward affine map of size 1e-5 is part of the trained point head, ensuring an interior mean even if its bias sigmoid saturates numerically; probability fitting does not subsequently move that mean. Density NLL clips normalized endpoint labels by 1e-5 and is labelled accordingly. This is a distinct parametric law, not the full ordinal family; continuous and discrete NLL values must not be compared as the same likelihood. Shape and router fitting use minibatches and log their extra optimizer budgets. The restricted-shape ablation uses quadratic ordinal logits or a single beta law on continuous datasets.
+Continuous train labels are detected even when a dataset manifest declares a nominal step. That path uses two beta components with the **same member mean**, learned concentrations and mixture weight. Log mixture weights are computed directly as log-sigmoid(logit) and log-sigmoid(-logit); taking logs of a rounded sigmoid is avoided so saturated logits retain finite gradients. A fixed inward affine map of size 1e-5 is part of the trained point head, ensuring an interior mean even if its bias sigmoid saturates numerically; probability fitting does not subsequently move that mean. Density NLL clips normalized endpoint labels by 1e-5 and is labelled accordingly. This is a distinct parametric law, not the full ordinal family; continuous and discrete NLL values must not be compared as the same likelihood. Shape and router fitting use minibatches and log their extra optimizer budgets. The restricted-shape ablation uses quadratic ordinal logits or a single beta law on continuous datasets.
 
 ## Experiment and recovery contracts
 
@@ -114,3 +128,5 @@ Original train/test are unchanged. Original validation is partitioned by unique 
 Scoped runtime hooks are restored even after exceptions. Baseline constructors, trainers and checkpoint formats are delegated to the preserved implementation. Config fingerprints include nested V3 settings. V3 checkpoint signatures include train data/timestamps and all validation roles, while intentionally excluding test labels. Strict restoration rejects incompatible data, versions and state shapes.
 
 Search changes actual V3 settings and removes obsolete angle/old-loss sweeps. Ablations disable implemented mechanisms. Probability-NLL model selection is a secondary study with its own label. Before a locked refit, archived scan settings, seeds, implementation identity, selected config key and train/validation data signatures must match. Final retention flags are restored after scans so `all` retains its selected models and predictions. No test statistic enters selection, OOF, shape fitting or stopping. CPU test coverage checks these contracts; GPU parity and publication-grade improvement remain unverified.
+
+V3.0.1 changes the source identity, configuration and M6 forward rule. Strict restoration intentionally rejects old V3 checkpoints; use a fresh output directory and retrain. Training records the actual last epoch, whether patience or the epoch budget ended fitting, and whether the best checkpoint lies at the budget boundary. Reaching that boundary is not evidence of convergence.
