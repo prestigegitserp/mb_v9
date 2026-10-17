@@ -1,0 +1,173 @@
+{
+  "architecture_version": "3.0.0-research",
+  "implementation_sha256": "3d854b0e0e4806053bcf0f50787606865fe10c0b8c66ecd61b78927600ea51da",
+  "git": {
+    "development_branch": "v3-development",
+    "release_branch": "v3",
+    "base_commit": "61097d772620e97fff7ec64a9f21b74a6eb9f913",
+    "commit_and_merge_authorized": true,
+    "unchanged_heads_before_publication": {
+      "main": "ab18aa2f52d11ef2227c720116492c1497306629",
+      "v2-development": "c4d58285d36e27d5e86b6575dbdece881a85e165",
+      "v2": "61097d772620e97fff7ec64a9f21b74a6eb9f913",
+      "v3-development": "61097d772620e97fff7ec64a9f21b74a6eb9f913"
+    }
+  },
+  "preservation": {
+    "protected_original_files": 40,
+    "all_hashes_match": true,
+    "original_implementation_directories": [
+      "v2",
+      "v9",
+      "vendor_v8"
+    ],
+    "intentional_original_file_changes": [
+      ".gitignore",
+      "README.md",
+      "VERSION",
+      "run_v9.py",
+      "tests/test_v2_research.py"
+    ]
+  },
+  "unit_tests": {
+    "tests": 104,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "command": "python -m pytest -q tests",
+    "result": "PASS"
+  },
+  "integration": {
+    "ml100k": {
+      "result": "PASS",
+      "smoke_only": true,
+      "split_seed": 2026,
+      "model_seed": 1,
+      "K": 20,
+      "methods": [
+        "BiasMF",
+        "Method1",
+        "Method2",
+        "Method3",
+        "Method4",
+        "Method5",
+        "Method6",
+        "Method7"
+      ],
+      "candidate_trainings": 8,
+      "epoch_events": 24,
+      "original_split_rows_identical_to_V2": 100000,
+      "split_counts": {
+        "train": 80053,
+        "test": 9980,
+        "val": 9967
+      },
+      "protocol": {
+        "split_seed": 2026,
+        "role_seed": 73019,
+        "validation_original": 9967,
+        "selection": 5980,
+        "calibration_fit": 1993,
+        "calibration_hold": 1994,
+        "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9",
+        "train_and_test_preserved": true,
+        "assignment_uses_ratings": false,
+        "data_signature": {
+          "num_users": 943,
+          "num_items": 1682,
+          "rating_min": 1.0,
+          "rating_max": 5.0,
+          "rating_step": 1.0,
+          "train_sha256": "a1764ed4960f6711b4381b6d55d8f1a12a255f50bb31a3ae6ca90f32102d181e",
+          "selection_sha256": "6fc0262a86e37ebe7ba87ee8d6db677272b070bf114961130d791baaaec7dc00",
+          "calibration_fit_sha256": "21e261ac139e6b215d8ecd02a26467a2ee2f39c79f45499dc1dd33d8b4e0c191",
+          "calibration_hold_sha256": "c4707569ffbc69cde177f1ba86fab576c23d7aebd62fc2fdcd44c21e48b26e85",
+          "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9"
+        }
+      },
+      "environment": {
+        "python": "3.12.14",
+        "torch": "2.6.0+cpu",
+        "numpy": "2.3.5",
+        "pandas": "2.2.3",
+        "device": "cpu",
+        "v8": "8.0.1-infrastructure-fixes",
+        "frozen_v7_core_sha256": "6da726cb155ab6ad291f5f608febc37f42d1c25ac3924910f56917908c1f124c"
+      },
+      "data_origin": "Materialized from the user-provided V2 split assignments; +1 external IDs remap to the same internal IDs."
+    },
+    "synthetic_validation_only": {
+      "result": "PASS",
+      "candidate_trainings": 7,
+      "test_metric_columns": false,
+      "actual_M7_likelihood_verified": true,
+      "exact_config_completed_job_resume": "PASS"
+    },
+    "prediction_archives": {
+      "M2_expert_predictions_and_gate": "PASS",
+      "M7_PMF_mean_matches_point_prediction": "PASS",
+      "M7_exact_total_variance_identity": "PASS"
+    },
+    "synthetic_scan_final_calibration": {
+      "result": "PASS",
+      "validation_only_candidates": 7,
+      "same_process_scan_flags_in_final": "PASS",
+      "final_selected_checkpoint_and_predictions_retained": true,
+      "secondary_actual_likelihood_selected_refit": "PASS",
+      "source_identity_matches_current": true
+    }
+  },
+  "coverage": [
+    "All seven models learn a fixed masked objective with finite gradients",
+    "Poisoned TEST ratings are ignored during all training phases",
+    "Poisoned excluded target ratings and timestamps do not alter context predictions",
+    "Duplicate pairs never cross context/query or validation roles",
+    "Dense/sparse data backends predict equivalently for all seven methods",
+    "Strict checkpoint round trips for all seven models and full-catalog/pair equivalence",
+    "Checkpoint rejects source drift and changes to train/selection/calibration labels",
+    "M3 conditional block objective does not increase after its line search",
+    "M4 exact continuous/ordinal partial-moment feasibility",
+    "M5 joint Gaussian moments agree with Monte Carlo for cross-correlation 0/.4/1",
+    "M6 equality/slope/mean constraints, feasible learning gradient and continuous extreme closure",
+    "M7 implicit Jacobian gradcheck, full J-2 shape rank, protected means and total variance",
+    "M7 continuous laws retain saturated-bias means",
+    "Runtime hooks restore after exceptions; search fingerprints include active V3 changes",
+    "Method-order-independent CPU seeded training",
+    "Analytic M6 transport has finite gradients at extreme baselines",
+    "M7 prescribed means and gauge invariance hold for large affine/nonlinear logits",
+    "Nonfinite, fractional integer and mistyped configurations are rejected before training",
+    "Frozen final refit rejects changed settings, seed sets, source identity, data protocol and actual train data",
+    "Same-process final restores selected model/prediction retention after scan",
+    "M3 additional full-training radius updates and target exposure are counted"
+  ],
+  "limitations": [
+    "No full V2-versus-V3 benchmark or publication novelty claim",
+    "Smoke results do not establish accuracy improvement",
+    "V3 selection validation uses a documented 60/20/20 role protocol; historical V2 validation is not the same population",
+    "M2 routing threshold is model-based, not a certified conditional confidence interval",
+    "M3/M5 uncertainty is conditional on a working linearization and finite numerical budgets",
+    "M6 mean anchoring is relative to its declared angular reference",
+    "Continuous M7 uses an explicitly endpoint-clipped beta-mixture likelihood",
+    "CPU verified; GPU parity has not been tested",
+    "Resume skips identical completed jobs; optimizer-state mid-epoch restart is not implemented"
+  ],
+  "delivery": {
+    "source_only_commit": true,
+    "cache_dataset_checkpoint_and_result_files_excluded": true,
+    "publication_targets": [
+      "v3-development",
+      "v3"
+    ],
+    "V1_V2_heads_must_remain_unchanged": true
+  },
+  "verification_phase": "Release audit completed before commit; commit and merge are explicitly authorized",
+  "verified_at_utc": "2026-10-17T20:41:45.149602+00:00",
+  "debug_fixes": [
+    "Prevent inactive analytic-transport branches from overflowing during backward",
+    "Remove affine gauge and bracket mean-tilt roots adaptively, with convergence verification",
+    "Validate configuration types, finite values and angular grid dimensions",
+    "Restore final artifact retention after in-process scans",
+    "Freeze and verify selected settings and train/validation data before final and calibration refits",
+    "Record full-training Gauss-Newton update budgets separately from Adam steps"
+  ]
+}

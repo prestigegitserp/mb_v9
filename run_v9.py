@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""V2 branch: run_v9.py executes seven REPLACEMENT V2 methods by default."""
-from v2.entry import run
+"""V3 branch: execute seven V3 replacements; run_v2.py retains V2 behavior."""
+from v3.entry import run
 if __name__ == "__main__":
     run()

@@ -9,3 +9,6 @@ datasets/
 *.pt
 *.pth
 *.zip
+results_v3*/
+pytest-of-root/
+V3_VERIFY_OUTPUT/

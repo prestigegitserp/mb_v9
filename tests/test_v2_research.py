@@ -301,9 +301,11 @@ def test_method7_no_bias_ablation_uses_only_geometric_expert():
     assert torch.allclose(pred,m.midpoint+m.half_range*aux['cosine'],atol=1e-6)
 
 
-def test_v2_runner_directs_default_v9_cli_to_replacement():
+def test_v2_runner_keeps_explicit_v2_cli_to_replacement():
     from pathlib import Path
-    src=Path(__file__).resolve().parents[1]/'run_v9.py'
+    # V3 owns the default entry point on its branch. The explicit V2 runner
+    # must continue importing exactly the preserved V2 implementation.
+    src=Path(__file__).resolve().parents[1]/'run_v2.py'
     code=src.read_text()
     assert 'from v2.entry import run' in code
     assert 'from v9.engine import main' not in code
