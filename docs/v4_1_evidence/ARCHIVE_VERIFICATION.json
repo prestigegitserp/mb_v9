@@ -1,0 +1,9 @@
+{
+  "archives_verified": 144,
+  "unique_pairs": 100000,
+  "truth_and_partitions_match_assignment": true,
+  "common_validation_pairs": 5980,
+  "note": "Historical v2/v3 baselines with identical predictions are reused results, not independent replications.",
+  "missing_attachment": "figures_v1.rar",
+  "new_test_evaluated": false
+}

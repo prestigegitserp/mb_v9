@@ -1,0 +1,13 @@
+{
+  "method": "Blend[AutoRec+Method4]",
+  "second_weight": 0.3941872032548338,
+  "validation_RMSE": 0.8825631976293004,
+  "validation_RMSE_clipped_1_5": 0.882518925123009,
+  "components": [
+    "v4_2_capacity/AutoRec__H146__l2_100.0",
+    "v4_2_regularized/Method4__l2_1000.0"
+  ],
+  "test_evaluated": false,
+  "novelty_claim": false,
+  "validation_selection": "exploratory one-scalar convex MSE fit; same validation also used for component settings"
+}

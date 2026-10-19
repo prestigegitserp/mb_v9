@@ -1,0 +1,88 @@
+{
+  "entries": [
+    {
+      "method": "AutoRec",
+      "result": "evidence/v4_2_capacity/AutoRec__H146__l2_100.0/result.json",
+      "checkpoint": "evidence/v4_2_capacity/AutoRec__H146__l2_100.0/checkpoint.pt",
+      "validation": "evidence/v4_2_capacity/AutoRec__H146__l2_100.0/validation.npz"
+    },
+    {
+      "method": "Method6",
+      "result": "evidence/v4_2_regularized/Method6__l2_1000.0/result.json",
+      "checkpoint": "evidence/v4_2_regularized/Method6__l2_1000.0/checkpoint.pt",
+      "validation": "evidence/v4_2_regularized/Method6__l2_1000.0/validation.npz"
+    },
+    {
+      "method": "Method4",
+      "result": "evidence/v4_2_regularized/Method4__l2_1000.0/result.json",
+      "checkpoint": "evidence/v4_2_regularized/Method4__l2_1000.0/checkpoint.pt",
+      "validation": "evidence/v4_2_regularized/Method4__l2_1000.0/validation.npz"
+    },
+    {
+      "method": "Method5",
+      "result": "evidence/v4_2_runs/Method5__coupled/result.json",
+      "checkpoint": "evidence/v4_2_runs/Method5__coupled/checkpoint.pt",
+      "validation": "evidence/v4_2_runs/Method5__coupled/validation.npz"
+    },
+    {
+      "method": "Method7",
+      "result": "evidence/review_runs/Method7__density/result.json",
+      "checkpoint": "evidence/review_runs/Method7__density/checkpoint.pt",
+      "validation": "evidence/review_runs/Method7__density/validation.npz"
+    },
+    {
+      "method": "MBMF-N",
+      "result": "evidence/v4_2_baselines/MBMF-N__adam__0.01/result.json",
+      "checkpoint": "evidence/v4_2_baselines/MBMF-N__adam__0.01/checkpoint.pt",
+      "validation": "evidence/v4_2_baselines/MBMF-N__adam__0.01/validation.npz"
+    },
+    {
+      "method": "Method3",
+      "result": "evidence/v4_2_runs/Method3__coupled/result.json",
+      "checkpoint": "evidence/v4_2_runs/Method3__coupled/checkpoint.pt",
+      "validation": "evidence/v4_2_runs/Method3__coupled/validation.npz"
+    },
+    {
+      "method": "MBMF-F",
+      "result": "evidence/v4_2_baselines/MBMF-F__adam__0.01/result.json",
+      "checkpoint": "evidence/v4_2_baselines/MBMF-F__adam__0.01/checkpoint.pt",
+      "validation": "evidence/v4_2_baselines/MBMF-F__adam__0.01/validation.npz"
+    },
+    {
+      "method": "Method1",
+      "result": "evidence/review_runs/Method1__density/result.json",
+      "checkpoint": "evidence/review_runs/Method1__density/checkpoint.pt",
+      "validation": "evidence/review_runs/Method1__density/validation.npz"
+    },
+    {
+      "method": "MF",
+      "result": "evidence/previous_baseline_budgets/mf_budget_0.0001/result.json",
+      "checkpoint": "evidence/previous_baseline_budgets/mf_budget_0.0001/checkpoint.pt",
+      "validation": "evidence/previous_baseline_budgets/mf_budget_0.0001/validation.npz"
+    },
+    {
+      "method": "Method2",
+      "result": "evidence/v4_2_runs/Method2__coupled/result.json",
+      "checkpoint": "evidence/v4_2_runs/Method2__coupled/checkpoint.pt",
+      "validation": "evidence/v4_2_runs/Method2__coupled/validation.npz"
+    },
+    {
+      "method": "BiasMF",
+      "result": "evidence/review_runs/BiasMF__control/result.json",
+      "checkpoint": "evidence/review_runs/BiasMF__control/checkpoint.pt",
+      "validation": "evidence/review_runs/BiasMF__control/validation.npz"
+    },
+    {
+      "method": "AEMC-NE",
+      "result": "evidence/v4_2_baselines/AEMC-NE__1.0__100.0/result.json",
+      "checkpoint": "evidence/v4_2_baselines/AEMC-NE__1.0__100.0/checkpoint.pt",
+      "validation": "evidence/v4_2_baselines/AEMC-NE__1.0__100.0/validation.npz"
+    },
+    {
+      "method": "MBMF-C",
+      "result": "evidence/previous_baseline_budgets/mbmf_budget_C/result.json",
+      "checkpoint": "evidence/previous_baseline_budgets/mbmf_budget_C/checkpoint.pt",
+      "validation": "evidence/previous_baseline_budgets/mbmf_budget_C/validation.npz"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+trial,method,role,status,last_flushed_epoch,last_flushed_optimizer_step,cause,reason,test_evaluated
+v4_2_runs/Method5__decoder_null,Method5,null,NO_VALID_RESULT_AT_EVIDENCE_CUTOFF,13,64,unverified,"No result.json, checkpoint or prediction archive. The execution session is unavailable and the log contains no traceback. Retain the partial trace; do not infer OOM, accuracy or convergence.",False

@@ -1,0 +1,12 @@
+{
+  "fresh_completed_trainings": 54,
+  "planned_canonical_trainings": 55,
+  "declared_failed_or_censored": 1,
+  "pending": [],
+  "matched_validation_pairs": 5980,
+  "split_seed": 2026,
+  "model_seed": 1,
+  "test_evaluated": false,
+  "historical_controls_are_not_new_repetitions": true,
+  "original_m7_failures": "replaced by corrected same-config runs; failure logs retained"
+}

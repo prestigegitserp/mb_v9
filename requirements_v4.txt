@@ -1,0 +1,3 @@
+-r requirements.txt
+# Optional device-wide telemetry becomes available on NVIDIA hosts with NVML.
+nvidia-ml-py

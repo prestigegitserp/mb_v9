@@ -1,0 +1,3 @@
+AutoRec_trial,Method4_trial,Method4_weight,validation_RMSE,primary_family_winner_rule,test_evaluated
+v4_2_capacity/AutoRec__H146__l2_100.0,v4_2_regularized/Method4__l2_1000.0,0.3941872033,0.8825631976,True,False
+v4_2_baselines/AutoRec__100.0,v4_2_regularized/Method4__l2_1000.0,0.4167385624,0.8804698603,False,False

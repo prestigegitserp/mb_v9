@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "version": "4.1.0-research",
+  "branch": "v4-development",
+  "base_commit": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011",
+  "committed": false,
+  "merged": false,
+  "code_pushed": false,
+  "remote_branch_created": true,
+  "protected_legacy_files": 66,
+  "final_tests_passed": 241,
+  "real_validation_candidates": 41,
+  "checkpoints_verified": 13,
+  "selection_pairs_per_checkpoint": 5980,
+  "maximum_delivered_prediction_difference": 0.0,
+  "new_real_test_evaluated": false,
+  "release_implementation_sha256": "5bb23d234002d0b0d59ec4ebe92d821d9f4f7c32d55cad96e736d4235ab021ea",
+  "source_weights_rebound_with_explicit_provenance": true,
+  "primary_evidence": "one split_seed=2026/model_seed=1 CPU validation; not confirmatory test or SOTA",
+  "packages": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "torch": "2.14.1+cpu",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "pytest": "9.1.1"
+  },
+  "python": "3.12.14",
+  "missing_attachment": "figures_v1.rar"
+}

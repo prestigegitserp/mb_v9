@@ -1,0 +1,14 @@
+{
+  "url": "https://github.com/roboticcam/publications/blob/master/papers/bound_matrix.pdf",
+  "git_blob_sha": "2f06966a4e7f92c888fd8ee055846221a73672c1",
+  "sha256": "36e0c0dac0a2ef75caf171c583f28feb62839557fd30a238083a7ecd2259dd39",
+  "pages": 13,
+  "scope": "author accepted preprint linked as accepted May 2020; not assumed byte-identical to publisher layout",
+  "experimental_datasets": [
+    "Synthetic",
+    "Jester",
+    "BookCrossing",
+    "Ali Mob"
+  ],
+  "experiment_table_page": 9
+}

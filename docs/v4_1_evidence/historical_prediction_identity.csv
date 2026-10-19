@@ -1,0 +1,15 @@
+method,v2_v3_test_identical
+AEMC-NE,True
+AutoRec,True
+BiasMF,True
+MBMF-C,True
+MBMF-F,True
+MBMF-N,True
+MF,True
+Method1,False
+Method2,False
+Method3,False
+Method4,False
+Method5,False
+Method6,False
+Method7,False
