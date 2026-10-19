@@ -1,0 +1,12 @@
+{
+  "v4_2_runs/Method5__decoder_null": {
+    "method": "Method5",
+    "role": "null",
+    "status": "NO_VALID_RESULT_AT_EVIDENCE_CUTOFF",
+    "last_flushed_epoch": 13,
+    "last_flushed_optimizer_step": 64,
+    "cause": "unverified",
+    "reason": "No result.json, checkpoint or prediction archive. The execution session is unavailable and the log contains no traceback. Retain the partial trace; do not infer OOM, accuracy or convergence.",
+    "test_evaluated": false
+  }
+}

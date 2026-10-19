@@ -1,0 +1,124 @@
+{
+  "stage": "COMPLETE_UNCOMMITTED_REVIEW_HANDOFF",
+  "version": "4.0.0",
+  "base_commit": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011",
+  "protected_files_verified": 66,
+  "pytest": {
+    "total": 209,
+    "passed": 209,
+    "expected_warnings": 2,
+    "scope": "CPU; complete suite passed after final code changes"
+  },
+  "CUDA_hardware_available": false,
+  "CUDA_speedup_claim": false,
+  "CUDA_bitwise_parity_verified": false,
+  "invariants": [
+    "poisoned test labels",
+    "excluded target/timestamp isolation",
+    "all seven fixed-mask objectives learn",
+    "all seven cold-entity finite support",
+    "dense/sparse predictions",
+    "resident/host/SSD exact Adam parity",
+    "multi-backward saved hooks",
+    "whole-candidate OOM/RNG rollback simulation",
+    "true PCG residual",
+    "mean-protected probability phase",
+    "validation-only scan to frozen final",
+    "resume skips completed training",
+    "legacy file preservation"
+  ],
+  "source_sha256": {
+    "v4/execution.py": "a05bdd8d087499c47b5b4430940a3c7c0fee881b7cc73645d3a3d300602311e4",
+    "v4/laws.py": "0fc139e7e21826c016100f46f24fc2121ca7215078e568804b9e86de06060cc1",
+    "v4/protocol.py": "83b6e69e514fe4c8c92e6f95a5b9b33dd26c7d6089e0f1747b2f349c159aaab9",
+    "v4/transport.py": "e946392668734e36eec9f9febb2038a23a33019dbd315981557355ef9b523d27",
+    "v4/evaluation.py": "24e76fbe69ccbecc028de3f76769fb15f0ebe4ed270ac0419fa2992eb9c2bcc1",
+    "v4/telemetry.py": "d30b64035d04003ded24c7053120f65bb76205546733867c757a2d71da4ee8a7",
+    "v4/config.py": "495097a2a9fd6a51e8e550324af3a11b281e1f0e071b67645b75693d926c16a3",
+    "v4/training.py": "4040cb05f4181fb48dbf5b7e60d589252ba141beab2a75b9155d5b8678e64d7a",
+    "v4/entry.py": "fca61f7bbffb08e6c42bcacbc9adfc8ed02a3612d7977c68993eb9a30ef304a0",
+    "v4/figures.py": "f4178e932ff5c2a87288dd5bb2afcd04b5cffc7b1707fb61720828edba8c0616",
+    "v4/engine.py": "77d5c86e43320fa331a5d0f3fce4652d7965e27f6f4e6c69f472d202ba477108",
+    "v4/reporting.py": "1f8c815938cee5da35ce51c6155f19576a898948b9ec4ed9bdfc02c8c0368db3",
+    "v4/search.py": "06c1d062aa8c3d8b8092f47919c4f96bc60a90278af5a3f5b8c91f591946fcd4",
+    "v4/bounds.py": "b56b47acc854712f9f0868caf2de8e3d6ebaa1a562c2dd8c73a7d03a3faeb34d",
+    "v4/models.py": "44d81f6ffd77c113c57b8cb5b443695a1f613ae688f3a9cfb6706b425d9cd932",
+    "v4/selection.py": "af0e825f53d3b6d139b2e4a93325f0a11310cc0bd030323fb744375bd17415f7",
+    "v4/runtime.py": "d783d617e30980bd9adf4deeb41a2615e649873668341c0c86a0f2e238308738",
+    "v4/numerics.py": "42a800e4ca6a25a15308784444a7dec729147e73efa228bba0e732b926c123c0",
+    "v4/history.py": "24949909018e22e578489cf7d6f1359c99c1dbbeb5f4f33b47c84c2f1568ec19",
+    "v4/__init__.py": "3961e873595f395c935542957622d3566ec8f42f631ef2e659ad1fde4723bdcf",
+    "v4/checkpoints.py": "d5a4c921e935ab49d1aca5c35596f70e50435041b36b2761a365bed962a2c306",
+    "experiments/v4_controlled_pilot.py": "89121cc2414cb9cd0182398a612a3b66e32ea3bb1b12f4b8510cfbac746e5a68",
+    "run_v4.py": "d1cf810e1319a5e6debc35023f808271f08ac92750c81e7bcead0689b6931013",
+    "run_v9.py": "7411c3e1aedc2b0f5dc9fef87ec3eedf298c25a8dc4ff542c21c7e36ac9a5a2c",
+    "verify_v4.py": "bba3ec37c25a66bd7e578928566c224141f1f38119d991f7484ece1bc08345e2"
+  },
+  "manual_smoke": {
+    "ML100K_methods": 14,
+    "selected_archives": 42,
+    "support_certificates": 21,
+    "PMF_archives": 3,
+    "main_report_PNGs_opened": 32,
+    "scan_report_PNGs_opened": 96
+  },
+  "known_limits": [
+    "single split/seed CPU pilot",
+    "no full hyperparameter scan",
+    "no author-code AEMC-NE reproduction",
+    "original V3 attachment archives unavailable",
+    "reused test exploratory only"
+  ],
+  "commit_created": false,
+  "merge_performed": false,
+  "push_performed": false,
+  "full_budget_native_trainings": 14,
+  "full_budget_focused_baseline_trainings": 4,
+  "native_test_status": "exploratory reused holdout, frozen configurations; not confirmatory",
+  "empirical_result": "5 of 7 improve validation RMSE; M5/M6 regress; tuned AutoRec diagnostic remains stronger",
+  "snapshot_release_tiny_training_bitwise_parity": {
+    "status": "PASS",
+    "scope": "tiny native training, full state including M2 router and M7 shape; snapshot versus release logging/validation changes",
+    "results": [
+      {
+        "method": "Method1",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method2",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method3",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method4",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method5",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method6",
+        "CPU_state_dict_bitwise_equal": true
+      },
+      {
+        "method": "Method7",
+        "CPU_state_dict_bitwise_equal": true
+      }
+    ]
+  },
+  "git_branch": "v4-development",
+  "git_HEAD": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011",
+  "git_staged_changes": "",
+  "native_evaluation_plan_sha256": "e731ac2582dab42cbe9b272262a8d432d7a34f3b41a9e18b34ed52ea9b666bcb",
+  "evidence_tables": {
+    "docs/v4_evidence/native_metrics.csv": "fdebf9b8a0f0441d70b9e6cdc3a7ce85c91d46dab42f5cdb57115c3abab4ac07",
+    "docs/v4_evidence/historical_v1_v2_comparison.csv": "2f6445e21b67adbec8e7c50ae75b5776041715a007c2e6bda1b4339575c1fa79",
+    "docs/v4_evidence/focused_baseline_validation.csv": "0841352bf542fbc18841a00de300ca5bff9eb6a37a7de13831dfc93909caa642",
+    "docs/v4_evidence/native_v3_v4_comparison.csv": "52c019271ea78ce86ed88b53f2d571121eb21fba77811f6dd0df2d7d14b11c51"
+  },
+  "final_format_change": "Removed a blank EOF line from v4/numerics.py; AST equality verified after passing full tests."
+}

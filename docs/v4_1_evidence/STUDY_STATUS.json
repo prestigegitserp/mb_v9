@@ -1,0 +1,13 @@
+{
+  "completed_candidates": 41,
+  "fixed_split_seed": 2026,
+  "fixed_model_seed": 1,
+  "selection_pairs": 5980,
+  "source_plan_sha256": "aed1dff29faf28d7c1d42870978bb15b3b0eea79fd21bd5e4b94fd54aed600bb",
+  "all_new_training_test_labels_poisoned": true,
+  "new_real_test_evaluated": false,
+  "statistical_claim": "descriptive one-split, one-seed validation only",
+  "capacity_matched_within_each_proposed_method": true,
+  "equal_compute_claim": false,
+  "reason": "Early stopping, target counts and OOF costs differ; raw concurrent wall times are descriptive."
+}

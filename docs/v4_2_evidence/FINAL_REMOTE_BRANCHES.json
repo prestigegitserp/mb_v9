@@ -1,0 +1,12 @@
+{
+  "fetched_on": "2026-10-19",
+  "url": "https://api.github.com/repos/prestigegitserp/mb_v9/branches?per_page=100",
+  "branches": {
+    "main": "ab18aa2f52d11ef2227c720116492c1497306629",
+    "v2-development": "c4d58285d36e27d5e86b6575dbdece881a85e165",
+    "v2": "61097d772620e97fff7ec64a9f21b74a6eb9f913",
+    "v3-development": "b32636cb91af4a03e0a61526df63705feb415526",
+    "v3": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011",
+    "v4-development": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011"
+  }
+}

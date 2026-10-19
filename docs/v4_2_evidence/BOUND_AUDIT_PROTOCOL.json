@@ -1,0 +1,30 @@
+{
+  "test_evaluated": false,
+  "test_labels_poisoned": true,
+  "protocol": {
+    "split_seed": 2026,
+    "role_seed": 73019,
+    "validation_original": 9967,
+    "selection": 5980,
+    "calibration_fit": 1993,
+    "calibration_hold": 1994,
+    "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9",
+    "train_and_test_preserved": true,
+    "assignment_uses_ratings": false,
+    "validation_roles_split": true,
+    "protocol": "common",
+    "data_signature": {
+      "num_users": 943,
+      "num_items": 1682,
+      "rating_min": 1.0,
+      "rating_max": 5.0,
+      "rating_step": 1.0,
+      "train_sha256": "a1764ed4960f6711b4381b6d55d8f1a12a255f50bb31a3ae6ca90f32102d181e",
+      "selection_sha256": "6fc0262a86e37ebe7ba87ee8d6db677272b070bf114961130d791baaaec7dc00",
+      "calibration_fit_sha256": "21e261ac139e6b215d8ecd02a26467a2ee2f39c79f45499dc1dd33d8b4e0c191",
+      "calibration_hold_sha256": "c4707569ffbc69cde177f1ba86fab576c23d7aebd62fc2fdcd44c21e48b26e85",
+      "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9"
+    }
+  },
+  "config": "TRAIN-only original radii, rho=.05; no fitted directions needed for support bound"
+}

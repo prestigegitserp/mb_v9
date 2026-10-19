@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
-"""V3 branch: execute seven V3 replacements; run_v2.py retains V2 behavior."""
-from v3.entry import run
+"""Versioned entry point; explicit legacy entries retain their original behavior."""
+import argparse
+
+
+def run(argv=None):
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--code-version", choices=("2", "3", "4"), default="4")
+    options, remaining = parser.parse_known_args(argv)
+    if options.code_version == "2":
+        from v2.entry import run
+    elif options.code_version == "3":
+        from v3.entry import run
+    else:
+        from v4.entry import run
+    return run(remaining)
+
+
 if __name__ == "__main__":
     run()

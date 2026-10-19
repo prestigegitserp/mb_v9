@@ -1,0 +1,8 @@
+method,prior_validation_RMSE,validation_RMSE,relative_improvement_percent,selected_trial,prior_parameters,selected_parameters
+Method1,0.9367405444,0.9367405444,0,v4_1_selected_reference/Method1__density,447325,447325
+Method2,0.9469044323,0.9377221248,0.9697184975,v4_2_runs/Method2__coupled,280853,333353
+Method3,0.9265285469,0.9251702347,0.1466023078,v4_2_runs/Method3__coupled,277117,277117
+Method4,0.9065715859,0.897919917,0.9543282583,v4_2_regularized/Method4__l2_1000.0,277158,277158
+Method5,0.9114313884,0.9039536195,0.8204423242,v4_2_runs/Method5__coupled,732800,732800
+Method6,0.9407910738,0.897743663,4.575661053,v4_2_regularized/Method6__l2_1000.0,501897,501897
+Method7,0.9228833754,0.9228833754,0,v4_1_selected_reference/Method7__density,528762,528762

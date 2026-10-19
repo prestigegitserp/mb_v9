@@ -1,0 +1,11 @@
+{
+  "models": {
+    "Method1": {"cavity_strength": 0.5},
+    "Method2": {"router_context_penalty": 0.25},
+    "Method3": {"radius_precision": 2.0},
+    "Method4": {"moment_dispersion_weight": 0.1},
+    "Method5": {"posterior_relaxation": 0.25, "posterior_solver_tolerance": 0.0001},
+    "Method6": {"transport_moment_weight": 0.02},
+    "Method7": {"ensemble_mean_weight": 0.25, "probability_rps_weight": 0.05}
+  }
+}

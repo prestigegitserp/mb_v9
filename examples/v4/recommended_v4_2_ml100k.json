@@ -1,0 +1,36 @@
+{
+  "mf_max_epochs": 1000,
+  "mbmf_max_epochs": 5000,
+  "models": {
+    "Method1": {
+      "mask_fraction_jitter": 0.15
+    },
+    "Method2": {
+      "mask_fraction_jitter": 0.15,
+      "readout_mode": "coupled"
+    },
+    "Method3": {
+      "mask_fraction_jitter": 0.15,
+      "readout_mode": "coupled"
+    },
+    "Method4": {
+      "mask_fraction_jitter": 0.15,
+      "moment_refinement_link": "linear",
+      "moment_refinement_scale": 1.0,
+      "collaborative_l2": 1000.0
+    },
+    "Method5": {
+      "mask_fraction_jitter": 0.15,
+      "readout_mode": "coupled"
+    },
+    "Method6": {
+      "context_strength": 2.0,
+      "angular_reference_weight": 0.0,
+      "readout_mode": "coupled",
+      "collaborative_l2": 1000.0
+    },
+    "Method7": {
+      "mask_fraction_jitter": 0.15
+    }
+  }
+}

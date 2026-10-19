@@ -1,0 +1,7 @@
+method,partition,n,outside_support_fraction,RMSE_support_lower_bound,mean_support_width,interpretation
+MBMF-F,train,80053,0.0,0.0,4.0,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
+MBMF-F,val,5980,0.0,0.0,4.0,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
+MBMF-C,train,80053,0.0,0.0,5.609425067901611,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
+MBMF-C,val,5980,0.0,0.0,5.614121913909912,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
+MBMF-N,train,80053,0.19037388265132904,0.1420765221118927,4.551793575286865,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
+MBMF-N,val,5980,0.1884615421295166,0.14799979329109192,4.555605888366699,entrywise lower bound only; joint low-rank constraints can cause larger unavoidable error
