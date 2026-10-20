@@ -1,0 +1,64 @@
+{
+  "status": "PASS_WITH_DECLARED_LIMITATIONS",
+  "timestamp_utc": "2026-10-20T15:56:04.832592+00:00",
+  "architecture_version": "5.0.0-research",
+  "implementation_sha256": "7e5a77999a81711141d1072394e21f2f4aacc5466b540d079b89e6041565a51d",
+  "base_commit": "3e8bd23024a4c2f934a934695a86b89f737d5927",
+  "local_branch": "v5-development",
+  "committed": false,
+  "merged": false,
+  "code_pullable_from_branch": false,
+  "protected_old_source_files": 194,
+  "old_remote_branches_unchanged": 7,
+  "full_suite": {
+    "passed": 310,
+    "skipped": 3,
+    "notes": "Snapshot before the last small reporting/recipe regression additions; all legacy code retained. Two CUDA tests unavailable, obsolete V4 default-dispatch test superseded by explicit V5 test."
+  },
+  "final_v5_suite": {
+    "passed": 49,
+    "skipped": 1,
+    "notes": "Final V5 source, includes no-op ablation prevention, CPU spill, replay, table interruption and temporary gallery handling"
+  },
+  "cpu_storage_parity": {
+    "cases": 84,
+    "readouts": [
+      "geometric",
+      "coupled",
+      "decoder"
+    ],
+    "all_weights_and_adam_states_bitwise_equal": true,
+    "max_absolute_difference": 0.0,
+    "scope": "synthetic fixed masks, two updates; not full-size CUDA proof"
+  },
+  "uploaded_prediction_audit": {
+    "archives": 42,
+    "max_RMSE_difference": 1.1102230246251565e-16
+  },
+  "fresh_validation_trainings": 35,
+  "real_dataset_test_evaluated_in_new_training": false,
+  "test_labels_poisoned_in_all_pilots": true,
+  "unresolved": [
+    "AEMC-NE paper performance not reproduced; official-code parity not established",
+    "Final multi-split V5 TEST benchmark not run",
+    "CUDA hardware parity and GPU speedup not measured",
+    "No validated claim that all proposed models beat the stronger AutoRec baseline"
+  ],
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "torch": "2.14.1+cpu",
+    "cuda_available": false
+  },
+  "publication_QA": {
+    "valid_pngs": 62,
+    "valid_compressed_pair_tables": 42,
+    "excel_bytes": 3548483,
+    "real_xlsx_replot_tested": true
+  },
+  "github_actions": {
+    "workflow_prepared": true,
+    "executed": false,
+    "reason": "No V5 commit/push by explicit user request"
+  }
+}

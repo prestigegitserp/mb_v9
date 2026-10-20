@@ -1,0 +1,8 @@
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/scratch/a86a6cc36b33/mb_v9/run_v5.py plan --datasets ml-100k --data-root /workspace/scratch/a86a6cc36b33/mb_v9/datasets --output /workspace/scratch/a86a6cc36b33/v5_checks/final_plan --split-seeds 3031,3032,3033 --model-seeds 11,22,33 --k 10,20,50 --scan-mode hybrid --analysis-source winners --v5-threads 4 --v5-retain-candidates metrics --v5-protocol common --v5-config /workspace/scratch/a86a6cc36b33/mb_v9/examples/v5/recommended_v5_ml100k.json --include-blend
+
+ml-100k: 14 supported methods | scan jobs=250 (6,381 candidate trainings) | ablations=92 (2,484)
+  K=10: 162 candidate trainings
+  K=20: 162 candidate trainings
+  K=50: 162 candidate trainings
+  NOTE: validation, final, ablation and K-study are distinct stages; no test used in tuning
+V5 completed requested stages. Root=/workspace/scratch/a86a6cc36b33/v5_checks/final_plan

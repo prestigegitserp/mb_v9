@@ -1,0 +1,13 @@
+# V5 development evidence
+
+`validation_trials.csv` contains all 35 fresh validation fits, including failed hypotheses with worse accuracy. None evaluated the real TEST labels: TEST was replaced by NaN before model construction; the evaluator accepts only validation. The original user-supplied split was already observed previously, so this is exploratory development, not independent test confirmation.
+
+`validation_evidence.tar.gz` contains original plans, complete result/config JSON, all validation prediction NPZs and the exact frozen Python source used for each phase. There are three phases: initial 18 fits, RNG-corrected follow-up 13 fits, and four matched-budget Method5 controls. Before interpreting the selected seven-row comparison, inspect the complete trial table. Its selections have validation selection optimism.
+
+`split_assignments_2026.csv.gz` retains the exact public ML-100K assignment supplied in the output ZIP, with the SHA-256 of the uncompressed CSV in `EVIDENCE_MANIFEST.json`. No user ZIP is republished as if it were new V5 output. `UPLOAD_AUDIT.json` and `prediction_integrity.csv` record independent recomputation of all 42 uploaded selected archives. The V4 TEST values in `observed_v4_results.csv` are historical, already observed values.
+
+To replay a pilot, unpack the evidence into a separate directory, decompress the assignment, and copy its original PLAN.json. Change only its `assignment` and `source_directory` paths to those extracted locations; keep the assignment/source hashes and all jobs unchanged. Then run `python experiments/v5_validation_pilot.py --plan /absolute/path/to/PLAN.json --workers 2`. The plan must be placed in an empty output directory; completed `result.json` files are deliberately not overwritten. `source_directory` points to the phase's `source_snapshot` directory, which contains its own `v5` package. This preserves both the negative prototypes and their original scientific settings. The current `v4` package is the original unchanged V4 reference.
+
+`parity_*.json` are real CPU measurements: 28 cases per readout, 84 total, including model and AdamW state. No CUDA device was available. The skipped CUDA tests and a simulated fallback control-flow test must not be reported as real GPU tests.
+
+`preview_*` files, when present, are **rerenderings of the uploaded V4 results** using V5 figure code. They are visual QA, not V5 test improvements. Full Excel, pair data and further figures can be rebuilt with `experiments/v5_audit_uploaded_results.py` from the original ZIPs. The paper workflow guide explains generating new V5 results separately.

@@ -1,0 +1,39 @@
+{
+  "architecture_version": "5.2.0-research",
+  "date": "2026-10-20",
+  "repository": "prestigegitserp/mb_v9",
+  "requested_branch": "v5.2-development",
+  "parent_source_tree_sha": "99f8b50952101a13be67873a5dce3872c033b327",
+  "branch_commit_base": "3e8bd23024a4c2f934a934695a86b89f737d5927",
+  "publication_state": "Uncommitted Git tree object on GitHub; branch remains at unchanged base commit; ordinary pull does not include this source",
+  "source_scope": "Additive v52 namespace and entrypoints; all 272 parent blobs protected",
+  "commit_created": false,
+  "merge_performed": false,
+  "other_branches_modified": false,
+  "execution_environment_available": false,
+  "python_runtime_tests_executed": false,
+  "pytorch_tests_executed": false,
+  "new_training_executed": false,
+  "cuda_tests_executed": false,
+  "new_validation_rmse": null,
+  "new_test_rmse": null,
+  "target_test_rmse_lt_087_demonstrated": null,
+  "official_author_code_parity_established": false,
+  "static_validation": {
+    "python_files_parsed": 40,
+    "python_files_transpiled": 40,
+    "failures": [],
+    "scope": "Static Python grammar, Python-to-JS and generated-JS syntax; not CPython/PyTorch execution"
+  },
+  "prepared_test_function_count": 20,
+  "evidence_file": "docs/v52_evidence/STATIC_CHECKS.json",
+  "prior_v5_results_are_v52_results": false,
+  "limitations": [
+    "Native Python execution unavailable; compile checks use a JavaScript-hosted Python parser, not CPython imports.",
+    "No new learned weights or measured V5.2 validation/TEST results exist at delivery.",
+    "No GPU utilization, performance, graph-storage equivalence or CPU replay benchmark was executed for V5.2.",
+    "New AEMC controls are independent experiments; paper result reproduction is not established.",
+    "Overlapping random splits do not justify an independent-samples significance claim.",
+    "Tree object storage is not a branch commit and is not available through an ordinary pull until a commit is authorized."
+  ]
+}

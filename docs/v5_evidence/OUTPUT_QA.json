@@ -1,0 +1,442 @@
+{
+  "status": "PASS",
+  "valid_non_temporary_pngs": 62,
+  "valid_pair_csv_gz": 42,
+  "images": [
+    {
+      "file": "figures/absolute_error_ecdf.png",
+      "size": [
+        2926,
+        1526
+      ]
+    },
+    {
+      "file": "figures/accuracy_efficiency.png",
+      "size": [
+        2766,
+        1646
+      ]
+    },
+    {
+      "file": "figures/error_by_item_train_count.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "figures/error_by_truth.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "figures/error_by_user_train_count.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "figures/generalization_gap.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "figures/ndcg_testset.png",
+      "size": [
+        2846,
+        1646
+      ]
+    },
+    {
+      "file": "figures/ordinal_cdf_reliability.png",
+      "size": [
+        2126,
+        1646
+      ]
+    },
+    {
+      "file": "figures/point_prediction_calibration.png",
+      "size": [
+        5006,
+        4206
+      ]
+    },
+    {
+      "file": "figures/probability_coverage_and_width.png",
+      "size": [
+        3246,
+        1366
+      ]
+    },
+    {
+      "file": "figures/randomized_ordinal_pit.png",
+      "size": [
+        2126,
+        1446
+      ]
+    },
+    {
+      "file": "figures/rank_test_Global_OOB_Rate.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "figures/rank_test_IndividualBoundViolationRate.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "figures/rank_test_MAE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "figures/rank_test_MeanBoundWidth.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "figures/rank_test_MeanIndividualBoundViolation.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "figures/rank_test_Mean_OOB_Violation.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "figures/rank_test_NMAE_range.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "figures/rank_test_NRMSE_range.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "figures/rank_test_P95AE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "figures/rank_test_P99AE.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "figures/rank_test_Probability_NLL.png",
+      "size": [
+        2686,
+        1246
+      ]
+    },
+    {
+      "file": "figures/rank_test_RMSE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "figures/rank_test_RankedProbabilityScore.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "figures/residual_boxplot.png",
+      "size": [
+        3246,
+        1646
+      ]
+    },
+    {
+      "file": "figures/resource_PeakGPUAllocated_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "figures/resource_PeakGPUReserved_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "figures/resource_PeakRSS_Delta_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "figures/resource_train_wall_sec.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "figures/training_generalization_facets.png",
+      "size": [
+        2926,
+        4146
+      ]
+    },
+    {
+      "file": "figures/training_validation_facets.png",
+      "size": [
+        5006,
+        3806
+      ]
+    },
+    {
+      "file": "publication/figures/absolute_error_ecdf.png",
+      "size": [
+        2926,
+        1526
+      ]
+    },
+    {
+      "file": "publication/figures/accuracy_efficiency.png",
+      "size": [
+        2766,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/error_by_item_train_count.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "publication/figures/error_by_truth.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "publication/figures/error_by_user_train_count.png",
+      "size": [
+        3646,
+        1363
+      ]
+    },
+    {
+      "file": "publication/figures/generalization_gap.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/ndcg_testset.png",
+      "size": [
+        2846,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/ordinal_cdf_reliability.png",
+      "size": [
+        2126,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/point_prediction_calibration.png",
+      "size": [
+        5006,
+        4206
+      ]
+    },
+    {
+      "file": "publication/figures/probability_coverage_and_width.png",
+      "size": [
+        3246,
+        1366
+      ]
+    },
+    {
+      "file": "publication/figures/randomized_ordinal_pit.png",
+      "size": [
+        2126,
+        1446
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_Global_OOB_Rate.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_IndividualBoundViolationRate.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_MAE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_MeanBoundWidth.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_MeanIndividualBoundViolation.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_Mean_OOB_Violation.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_NMAE_range.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_NRMSE_range.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_P95AE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_P99AE.png",
+      "size": [
+        2526,
+        1614
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_Probability_NLL.png",
+      "size": [
+        2686,
+        1246
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_RMSE.png",
+      "size": [
+        2686,
+        2046
+      ]
+    },
+    {
+      "file": "publication/figures/rank_test_RankedProbabilityScore.png",
+      "size": [
+        2526,
+        1166
+      ]
+    },
+    {
+      "file": "publication/figures/residual_boxplot.png",
+      "size": [
+        3246,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/resource_PeakGPUAllocated_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/resource_PeakGPUReserved_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/resource_PeakRSS_Delta_MB.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/resource_train_wall_sec.png",
+      "size": [
+        2646,
+        1646
+      ]
+    },
+    {
+      "file": "publication/figures/training_generalization_facets.png",
+      "size": [
+        2926,
+        4146
+      ]
+    },
+    {
+      "file": "publication/figures/training_validation_facets.png",
+      "size": [
+        5006,
+        3806
+      ]
+    }
+  ],
+  "scope": "Re-rendered uploaded V4 output; no V5 TEST accuracy claim"
+}

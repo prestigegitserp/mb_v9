@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "Uploaded V4 output audit and V5 rendering only; no new model training",
+  "audited_prediction_archives": 42,
+  "max_reported_RMSE_difference": 1.1102230246251565e-16,
+  "source_zips": {
+    "figures_v4.zip": "3e92809a642401164f55636afa16e86c7b4e7ac1eeb794433014c27f0ce6485e",
+    "predictions_v4.zip": "b4044e08d60297c43df2ffb3edbb9016012aaf4aaa9b3a1c71d90cf016f9fcd3"
+  },
+  "assignment_counts": {
+    "train": 80053,
+    "test": 9980,
+    "val": 9967
+  },
+  "all_reported_GPU_peaks_zero": true,
+  "device_conclusion": "Zero telemetry alone does not prove CPU execution; original environment/device records not attached",
+  "test_scope": "Already observed exploratory TEST; never use these test values for V5 tuning"
+}
