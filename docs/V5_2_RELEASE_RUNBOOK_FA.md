@@ -1,13 +1,13 @@
 # دریافت نسخهٔ پنجم، اجرای V5.2 و ارتباط آزمایش‌ها
 
-سورس V5.2 با اجازهٔ جدید کاربر کامیت و برای ادغام در `v5-development` و انتشار روی `v5` آماده شده است. برای شناسهٔ نهایی commit به خود شاخه‌های GitHub رجوع کنید. نسخه‌های ۱ تا ۴ نباید جابه‌جا یا بازنویسی شوند. نخستین commit این انتشار، سورس دقیق tree قبلی `016df6ac193f2f296813617c7fd21bbbf2226e05` را محفوظ کرده است؛ رفع اشکال اجرای واقعی و این راهنما در commit بعدی مشخص‌اند.
+سورس V5.2 با اجازهٔ جدید کاربر کامیت و در `v5-development` ادغام و روی `v5` منتشر شده است. برای شناسهٔ نهایی commit به خود شاخه‌های GitHub رجوع کنید. نسخه‌های ۱ تا ۴ نباید جابه‌جا یا بازنویسی شوند. نخستین commit این انتشار، سورس دقیق tree قبلی `016df6ac193f2f296813617c7fd21bbbf2226e05` را محفوظ کرده است؛ رفع اشکال اجرای واقعی و این راهنما در commit بعدی مشخص‌اند.
 
 ## ۱. پوشهٔ خالی در Windows / PowerShell
 
 ترمینال VS Code را داخل پوشهٔ خالیِ انتخابی باز کنید:
 
 ```powershell
-git clone --branch v5 --single-branch https://github.com/prestigegitserp/mb_v9.git .
+git clone --config core.autocrlf=false --branch v5 --single-branch https://github.com/prestigegitserp/mb_v9.git .
 git branch --show-current
 git log -1 --oneline
 conda activate foo311
@@ -16,7 +16,7 @@ python verify_v5_2.py
 python -c "import sys,torch,v52; print(sys.executable); print(v52.__version__); print(torch.__version__); print(torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU')"
 ```
 
-برای نخستین دریافت در پوشهٔ خالی از `clone` استفاده می‌شود. پس از آن، دریافت به‌روزرسانی‌های همین شاخه:
+گزینهٔ core.autocrlf=false فقط برای همین مخزن ذخیره می‌شود و پایان‌خط فایل‌های آرشیوی را در Windows حفظ می‌کند تا بررسی SHA فایل‌هایی مثل SVG و PowerShell نیز عین سورس باشد. برای نخستین دریافت در پوشهٔ خالی از `clone` استفاده می‌شود. پس از آن، دریافت به‌روزرسانی‌های همین شاخه:
 
 ```powershell
 git pull --ff-only origin v5
