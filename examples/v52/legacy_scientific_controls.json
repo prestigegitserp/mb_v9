@@ -1,0 +1,6 @@
+{
+  "protocol": "aemc-paper",
+  "mf_max_epochs": 1000,
+  "mbmf_max_epochs": 5000,
+  "models": {}
+}

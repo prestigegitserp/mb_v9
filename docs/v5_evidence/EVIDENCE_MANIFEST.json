@@ -1,0 +1,32 @@
+{
+  "fresh_validation_trainings": 35,
+  "all_test_labels_poisoned": true,
+  "real_test_training_evaluations": 0,
+  "assignment_sha256": "8e52ebd248ab1f15dbef41f4e9772e8db3e917becabcc2f7bf1a31dbdce34e12",
+  "files": {
+    "OUTPUT_QA.json": "a48645b8d7c1542817037cd30af949ce5d014d274567342c38bcb6650575efc1",
+    "README.md": "eef55295025f20ddd5b1ccefc451be2ecd600c676b77a5792d067ac4307ad605",
+    "REMOTE_BRANCH_PRESERVATION.json": "9a0430bfaa67486aa6ff0b34b9d88efa7a504a5d04890afca643b0782f871476",
+    "UPLOAD_AUDIT.json": "327517118a14177e051bc2a104594ca3ca826bde4b8ccccbb3ca33e012bfbc6a",
+    "ci_dependency_checks.txt": "a68a0ee46d489577eebb2e4d759da06ea90945593172f9bd232ff48f29f463f8",
+    "extra_checks.txt": "585b82f750b8a222dcf4af2ed72f52d2a1062430e11cebafc794d61579f9b47d",
+    "full_suite.txt": "174a03fb8fc466ee49652dd294ba65ac89e20b3de5ef6ef0f0f6d76eda2c3ea2",
+    "observed_v4_results.csv": "96f03138f560bc1116c747ee38a42772abbfd27ca1b6e2f0007f89e6d46e7e7c",
+    "paper_plan.txt": "ce04189b34b52770b20bf7aee4c51753c167a1f31af68b65a2c146cb5cbd1046",
+    "parity_coupled.json": "24bac648a5f36b5a8f702f6edfe2d18e0b8faad0167a3990e75463a51b0803cd",
+    "parity_decoder.json": "156ff357e1dea1b2b5bf5563d85187422dfc2540f28f68bf6526bbafb0c87340",
+    "parity_geometric.json": "81847233e2f69039c9a35ccf200db70e05293f4151545f99179a5aff335830e8",
+    "prediction_integrity.csv": "eeac21613c401b2b1a2ded3fcfd4b99fe6d42bdf02829bbab088bb9944fd894d",
+    "preview_v4_absolute_error_ecdf.pdf": "44efb22273ea1c79926f5173edb84abc5657d33fe64e8a33f0adf138216a9a48",
+    "preview_v4_absolute_error_ecdf.png": "51644ff61c25df87c3afc03f8e1643faac4d7b0c706c76f40f8e3f47c756dbf2",
+    "preview_v4_absolute_error_ecdf.svg": "b74600ffc919ab3569eb3a741f536532dac2dc266b3ceae47cb98a6bf4bc7ec8",
+    "preview_v4_rank_test_RMSE.pdf": "f364950b8d98952b06b5284bd2fe5c3f51085df9634898699b3aa19a6c9b1ce4",
+    "preview_v4_rank_test_RMSE.png": "6ff430073961df2b02ad8de6427a208d716b337076916c66ab422a8c55c793cd",
+    "preview_v4_rank_test_RMSE.svg": "9550d49c77974cd6fe22d56b58481618eb58bcf348f3f84ad745b549c00831fa",
+    "selected_validation_comparison.csv": "43244ce1aea2388e2d5eaa68fa6b0ddf9a06e41342e4f454ffd615323391ff89",
+    "split_assignments_2026.csv.gz": "f7d757201ccb76a11c4c8e53678479e9853aa84e9580f5069dd3ac60baade59c",
+    "v5_suite.txt": "2bbe4027dd3a7deb0e00bca8b816cf3aa001e0d941bd911314767a30595340af",
+    "validation_evidence.tar.gz": "3e533dd38640afec13517e8c9d3e0b9827b397d5414b918c166b5dc9e15b4524",
+    "validation_trials.csv": "f54a54aa91a80a94a8c125fd4830331b4df55f3868c52c47970fb2c0503eddb7"
+  }
+}

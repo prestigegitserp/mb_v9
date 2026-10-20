@@ -1,0 +1,182 @@
+{
+  "parser_source": "https://github.com/brython-dev/brython/blob/master/www/src/brython.js",
+  "parser_blob": "a5821f2cb2198183426690692c8ef71416cd3308",
+  "scope": "Static Python grammar, Python-to-JS and generated-JS syntax; not CPython/PyTorch execution",
+  "parsed": [
+    "v52/__init__.py",
+    "v52/baselines.py",
+    "v52/bounds.py",
+    "v52/checkpoints.py",
+    "v52/config.py",
+    "v52/engine.py",
+    "v52/ensemble.py",
+    "v52/entry.py",
+    "v52/evaluation.py",
+    "v52/execution.py",
+    "v52/export.py",
+    "v52/fidelity.py",
+    "v52/figures.py",
+    "v52/history.py",
+    "v52/laws.py",
+    "v52/models.py",
+    "v52/numerics.py",
+    "v52/protocol.py",
+    "v52/publication.py",
+    "v52/readout.py",
+    "v52/reporting.py",
+    "v52/resources.py",
+    "v52/runtime.py",
+    "v52/search.py",
+    "v52/search_report.py",
+    "v52/selection.py",
+    "v52/studies.py",
+    "v52/telemetry.py",
+    "v52/training.py",
+    "v52/transport.py",
+    "v52/aemc_baseline.py",
+    "run_v5_2.py",
+    "paper_v5_2.py",
+    "replot_v5_2.py",
+    "v52/goal.py",
+    "assess_v5_2.py",
+    "tests/test_v52_models.py",
+    "tests/test_v52_goal.py",
+    "tests/test_v52_workflow.py",
+    "verify_v5_2.py"
+  ],
+  "transpiled": [
+    "v52/__init__.py",
+    "v52/baselines.py",
+    "v52/bounds.py",
+    "v52/checkpoints.py",
+    "v52/config.py",
+    "v52/engine.py",
+    "v52/ensemble.py",
+    "v52/entry.py",
+    "v52/evaluation.py",
+    "v52/execution.py",
+    "v52/export.py",
+    "v52/fidelity.py",
+    "v52/figures.py",
+    "v52/history.py",
+    "v52/laws.py",
+    "v52/models.py",
+    "v52/numerics.py",
+    "v52/protocol.py",
+    "v52/publication.py",
+    "v52/readout.py",
+    "v52/reporting.py",
+    "v52/resources.py",
+    "v52/runtime.py",
+    "v52/search.py",
+    "v52/search_report.py",
+    "v52/selection.py",
+    "v52/studies.py",
+    "v52/telemetry.py",
+    "v52/training.py",
+    "v52/transport.py",
+    "v52/aemc_baseline.py",
+    "run_v5_2.py",
+    "paper_v5_2.py",
+    "replot_v5_2.py",
+    "v52/goal.py",
+    "assess_v5_2.py",
+    "tests/test_v52_models.py",
+    "tests/test_v52_goal.py",
+    "tests/test_v52_workflow.py",
+    "verify_v5_2.py"
+  ],
+  "failures": [],
+  "reference_formula_checks": {
+    "samples": 100000,
+    "max_bound_violation": 0,
+    "max_identity_transfer_error": 0,
+    "language": "JavaScript numeric reference; not the PyTorch implementation"
+  },
+  "m5_selected_penalty_in_preset": 0,
+  "python_runtime_tests_executed": false,
+  "checked_on": "2026-10-20",
+  "new_test_functions_prepared": [
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_method5_selected_zero_penalty_is_not_overwritten"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_hybrid_wide_model_never_reads_test_and_restores_exactly"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_wide_context_never_contains_query_values_or_query_timestamps"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_aemc_identity_transfer_is_exact_before_training"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_aemc_sparse_equation_and_uniform_item_gradient_match_dense_definition"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_aemc_control_training_is_validation_only"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_paper_protocol_allows_method7_without_extra_validation_and_restores_native_class"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_decoder_only_readout_is_independent_of_a_nonfinite_geometric_branch"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_method7_has_no_fake_auxiliary_only_ablation"
+    },
+    {
+      "path": "tests/test_v52_models.py",
+      "name": "test_method1_decoder_without_auxiliary_priors_can_backpropagate"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_goal_requires_complete_twenty_split_comparison"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_single_split_cannot_become_a_paper_claim_even_with_low_threshold_option"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_weaker_reference_is_flagged_instead_of_hiding_it"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_every_model_is_reported_instead_of_selecting_the_best_test_row"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_missing_baseline_duplicate_rows_and_seed_mismatch_are_rejected"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_test_pair_digest_matches_the_freezing_function"
+    },
+    {
+      "path": "tests/test_v52_goal.py",
+      "name": "test_nonfinite_or_negative_reported_scores_are_rejected"
+    },
+    {
+      "path": "tests/test_v52_workflow.py",
+      "name": "test_new_recipe_uses_explicit_v52_entry_and_full_paper_protocol"
+    },
+    {
+      "path": "tests/test_v52_workflow.py",
+      "name": "test_v5_flag_aliases_are_parsed_by_v52_without_calling_old_implementation"
+    },
+    {
+      "path": "tests/test_v52_workflow.py",
+      "name": "test_tiny_scan_then_final_exports_and_freezes_v52"
+    }
+  ],
+  "prepared_tests_collected_or_run": false
+}
