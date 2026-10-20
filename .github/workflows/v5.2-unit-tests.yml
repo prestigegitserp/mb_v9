@@ -2,7 +2,7 @@ name: V5.2 baseline fidelity, model and target audit tests
 on: [push, pull_request]
 jobs:
   v52-cpu-tests:
-    if: startsWith(github.ref, 'refs/heads/v5.2') || startsWith(github.head_ref, 'v5.2')
+    if: startsWith(github.ref, 'refs/heads/v5') || startsWith(github.head_ref, 'v5')
     runs-on: ubuntu-latest
     env:
       OMP_NUM_THREADS: '2'

@@ -145,7 +145,7 @@ class BaseModel(nn.Module):
         zero = next(self.parameters()).new_zeros(())
         penalty = zero
         n = max(1, self._data.train_users.numel())
-        if self.bias is not None:
+        if self.bias is not None and self.cfg.bias_prior:
             penalty = penalty+self.cfg.bias_prior*(self.bias.user.weight.square().sum()
                        +self.bias.item.weight.square().sum())/n
         for name, value in state.items():

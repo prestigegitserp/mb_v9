@@ -5,14 +5,13 @@
   "requested_branch": "v5.2-development",
   "parent_source_tree_sha": "99f8b50952101a13be67873a5dce3872c033b327",
   "branch_commit_base": "3e8bd23024a4c2f934a934695a86b89f737d5927",
-  "publication_state": "Uncommitted Git tree object on GitHub; branch remains at unchanged base commit; ordinary pull does not include this source",
+  "publication_state": "Committed V5.2 source; release targets v5-development and v5. GitHub branch refs carry final merge identity.",
   "source_scope": "Additive v52 namespace and entrypoints; all 272 parent blobs protected",
-  "commit_created": false,
-  "merge_performed": false,
+  "commit_created": true,
   "other_branches_modified": false,
-  "execution_environment_available": false,
-  "python_runtime_tests_executed": false,
-  "pytorch_tests_executed": false,
+  "execution_environment_available": true,
+  "python_runtime_tests_executed": true,
+  "pytorch_tests_executed": true,
   "new_training_executed": false,
   "cuda_tests_executed": false,
   "new_validation_rmse": null,
@@ -29,11 +28,21 @@
   "evidence_file": "docs/v52_evidence/STATIC_CHECKS.json",
   "prior_v5_results_are_v52_results": false,
   "limitations": [
-    "Native Python execution unavailable; compile checks use a JavaScript-hosted Python parser, not CPython imports.",
-    "No new learned weights or measured V5.2 validation/TEST results exist at delivery.",
-    "No GPU utilization, performance, graph-storage equivalence or CPU replay benchmark was executed for V5.2.",
-    "New AEMC controls are independent experiments; paper result reproduction is not established.",
-    "Overlapping random splits do not justify an independent-samples significance claim.",
-    "Tree object storage is not a branch commit and is not available through an ordinary pull until a commit is authorized."
-  ]
+    "No fresh MovieLens benchmark or learned benchmark weights were produced.",
+    "CUDA and GPU utilization were not tested on this CPU host.",
+    "Official-author implementation parity and RMSE below0.87 remain unestablished.",
+    "Cross-device floating-point bitwise equivalence is not asserted.",
+    "Overlapping random splits are not asserted independent."
+  ],
+  "merge_receipt": "Read GitHub v5-development/v5 branch heads; merge completion is verified externally, not predeclared in this source file.",
+  "benchmark_training_executed": false,
+  "synthetic_fixture_training_executed": true,
+  "runtime_evidence_file": "docs/v52_evidence/RUNTIME_VALIDATION.json",
+  "historical_precommit_status": "docs/v52_evidence/PRECOMMIT_BUILD_STATUS.json",
+  "runtime_tests": {
+    "passed": 350,
+    "skipped": 3,
+    "failed": 0
+  },
+  "release_runbook": "docs/V5_2_RELEASE_RUNBOOK_FA.md"
 }

@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-20",
+  "scope": "CPU correctness tests with synthetic fixtures, not a MovieLens accuracy benchmark",
+  "python": "3.12.14",
+  "platform": "Linux",
+  "torch": "2.14.1+cpu",
+  "numpy": "2.3.5",
+  "pandas": "2.2.3",
+  "scipy": "1.17.0",
+  "pytest": "9.1.1",
+  "cuda_available": false,
+  "implementation_sha256": "49b7c7e44bddeadbba01243cf1366c626e415cfb4ab6685d260b29d73796d9c5",
+  "targeted_suite": {
+    "command": "python -m pytest tests/test_v52_models.py tests/test_v52_goal.py tests/test_v52_workflow.py -q -ra -p no:cacheprovider",
+    "passed": 37,
+    "failed": 0,
+    "seconds": 10.85
+  },
+  "complete_suite": {
+    "command": "OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest tests -q -ra -p no:cacheprovider",
+    "collected": 353,
+    "passed": 350,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3,
+    "seconds": 99.562,
+    "skip_reasons": [
+      {
+        "test": "tests.test_v4_2::test_cuda_storage_does_not_change_optimizer_updates",
+        "reason": "Requires real single-CUDA hardware"
+      },
+      {
+        "test": "tests.test_v4_research::test_version_dispatch_calls_selected_entry",
+        "reason": "V4 default=4 assertion superseded by test_v5_default_dispatch_keeps_all_explicit_versions; frozen old test retained"
+      },
+      {
+        "test": "tests.test_v5_research::test_v5_cuda_raw_ssd_adam_parity",
+        "reason": "Requires real CUDA hardware; CPU parity does not prove CUDA parity"
+      }
+    ]
+  },
+  "resolved_first_execution_failure": "Zero bias-prior weight still constructed an auxiliary autograd graph. The zero-weight bias term is now skipped, matching the declared no-prior control and allowing no-auxiliary backward.",
+  "original_reviewed_source_commit": "7a5855c1d41472f46ce19601299d3a275a0b7241",
+  "plan_check": {
+    "dataset": "ml-100k",
+    "outer_splits": 20,
+    "model_seeds": [
+      11,
+      22,
+      33
+    ],
+    "k": [
+      20,
+      50,
+      100
+    ],
+    "supported_families": 14,
+    "scan_jobs": 416,
+    "candidate_trainings": 69780,
+    "training_performed": false
+  },
+  "benchmark_training_executed": false,
+  "new_benchmark_validation_rmse": null,
+  "new_benchmark_test_rmse": null,
+  "target_test_rmse_lt_087_demonstrated": null,
+  "cuda_tests_executed": false,
+  "source_transfer": {
+    "exact_initial_source_tree": "016df6ac193f2f296813617c7fd21bbbf2226e05",
+    "parent_v5_source_tree": "99f8b50952101a13be67873a5dce3872c033b327",
+    "protected_parent_blobs": 272
+  },
+  "historical_static_checks": "STATIC_CHECKS.json predates runtime validation and is retained as historical evidence."
+}
