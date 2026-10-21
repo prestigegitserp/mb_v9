@@ -1,9 +1,26 @@
 """Lossless, streaming Excel export; complete pair data remain in CSV.gz/NPZ."""
 import csv
+from contextlib import contextmanager
 import hashlib
 import json
 import re
 from pathlib import Path
+
+
+@contextmanager
+def _large_csv_fields():
+    """Read full diagnostic/config JSON before applying Excel's cell limit.
+
+    2**31-1 also fits the C long used by Python 3.11 on Windows; sys.maxsize
+    need not. Preserve an already larger limit and restore the process setting
+    on success, empty files, and errors.
+    """
+    previous=csv.field_size_limit()
+    try:
+        csv.field_size_limit(max(previous,2**31-1))
+        yield
+    finally:
+        csv.field_size_limit(previous)
 
 
 def export_workbook(report):
@@ -27,7 +44,7 @@ def export_workbook(report):
             readme.set_column(0,0,24);readme.set_column(1,1,105)
             for path in sources:
                 digest=hashlib.sha256(path.read_bytes()).hexdigest()
-                with path.open(newline='',encoding='utf8') as stream:
+                with _large_csv_fields(),path.open(newline='',encoding='utf8') as stream:
                     reader=csv.reader(stream);header=next(reader,[])
                     if not header:continue
                     if len(header)>16384:raise ValueError('Excel column limit exceeded: '+str(path))
