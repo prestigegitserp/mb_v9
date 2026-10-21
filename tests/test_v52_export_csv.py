@@ -5,17 +5,21 @@ Runs with unittest as well as pytest. No model construction or PyTorch needed.
 import csv
 from contextlib import closing
 import hashlib
+from importlib.util import find_spec
 import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from openpyxl import load_workbook
+EXCEL_DEPS_AVAILABLE=all(find_spec(name) is not None for name in ('openpyxl','xlsxwriter'))
+if EXCEL_DEPS_AVAILABLE:
+    from openpyxl import load_workbook
 
 from v52.export import _large_csv_fields,export_workbook
 
 
+@unittest.skipUnless(EXCEL_DEPS_AVAILABLE,'Requires openpyxl and xlsxwriter from requirements_v5.txt')
 class LargeCSVExportTests(unittest.TestCase):
     def setUp(self):
         self.previous=csv.field_size_limit()
