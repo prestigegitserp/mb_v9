@@ -6,6 +6,11 @@ from types import SimpleNamespace
 import pandas as pd
 import pytest
 import torch
+
+# Frozen V4 CI installs only requirements_v4.txt.  V6's dedicated workflow
+# installs requirements_v6.txt and must exercise all publication integrations.
+pytest.importorskip("xlsxwriter", reason="V6 publication tests require requirements_v6.txt")
+
 from v6 import engine
 from v6.config import StudyConfig
 from v6.entry import run

@@ -42,5 +42,25 @@
     "Historical TEST cohorts differ between V1-V4 and V5",
     "Real ML100K probe budgets differ; no matched-compute claim",
     "AEMC official supplemental forward is synthetic; MovieLens training parity unverified"
-  ]
+  ],
+  "remote_CI_at_model_source_commit": {
+    "commit": "a4a2bd079877e453cdd1b0384f29e0f717eb7a04",
+    "workflow_run": "https://github.com/prestigegitserp/mb_v9/actions/runs/39825973631",
+    "result": "success",
+    "passed": 399,
+    "skipped": 3,
+    "subtests_passed": 5,
+    "runtime_seconds": 230.22,
+    "warning_count": 588,
+    "fresh_CUDA_testing": false
+  },
+  "legacy_dependency_compatibility": {
+    "old_V4_workflow_installs_only": "requirements_v4.txt",
+    "V6_publication_integration_requires": "requirements_v6.txt including xlsxwriter",
+    "fix": "Module-level importorskip in new V6 workflow tests, consistent with V5/V5.2 tests",
+    "old_source_or_workflow_files_changed": false,
+    "dedicated_V6_workflow_installs_full_dependencies_and_runs_all_V6_tests": true,
+    "missing_dependency_collection_probe": "PASS; explicit one-module skip when xlsxwriter is absent",
+    "full_dependency_targeted_workflow_tests": "12 passed, 8 warnings in 92.38 seconds"
+  }
 }
