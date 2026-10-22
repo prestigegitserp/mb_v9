@@ -1,0 +1,28 @@
+Targeted V6 publication integrations with full dependencies:
+............                                                             [100%]
+=============================== warnings summary ===============================
+tests/test_v6_workflow.py::test_scan_final_and_report_use_frozen_winners
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/engine.py:253: UserWarning: V6 final statistical comparison skipped: One outer split: descriptive results only, no across-split statistical claim
+    warnings.warn(f'V6 final statistical comparison skipped: {exc}')
+
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/reporting.py:374: PendingDeprecationWarning: vert: bool will be deprecated in a future version. Use orientation: {'vertical', 'horizontal'} instead.
+    fig,ax=plt.subplots(figsize=(8,4),constrained_layout=True);ax.bxp(stats,showfliers=False,vert=False)
+
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/publication.py:118: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+    ax.set(title=title,xlabel='Absolute rating error',ylim=(0,1));ax.grid();ax.legend(loc='lower right',fontsize=7,ncol=2)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+12 passed, 8 warnings in 92.38s (0:01:32)
+
+Dependency-absent collection probe (expected module skip):
+
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_v6_workflow.py:12: V6 publication tests require requirements_v6.txt
+no tests collected in 1.28s

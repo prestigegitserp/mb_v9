@@ -1,0 +1,64 @@
+{
+  "profile": "development",
+  "split_seeds": [
+    2026
+  ],
+  "model_seeds": [
+    1
+  ],
+  "K": [
+    20
+  ],
+  "planned_only": true,
+  "full_real_dataset_training_completed": false,
+  "datasets": [
+    {
+      "dataset": "synthetic",
+      "supported_methods": 12,
+      "scan_jobs": 80,
+      "candidate_trainings": 104,
+      "ablation_jobs": 103,
+      "ablation_trainings": 103
+    },
+    {
+      "dataset": "ml-100k",
+      "supported_methods": 14,
+      "scan_jobs": 94,
+      "candidate_trainings": 118,
+      "ablation_jobs": 101,
+      "ablation_trainings": 101
+    },
+    {
+      "dataset": "ml-1m",
+      "supported_methods": 14,
+      "scan_jobs": 95,
+      "candidate_trainings": 119,
+      "ablation_jobs": 101,
+      "ablation_trainings": 101
+    },
+    {
+      "dataset": "ml-10m",
+      "supported_methods": 14,
+      "scan_jobs": 94,
+      "candidate_trainings": 118,
+      "ablation_jobs": 101,
+      "ablation_trainings": 101
+    },
+    {
+      "dataset": "jester",
+      "supported_methods": 12,
+      "scan_jobs": 79,
+      "candidate_trainings": 103,
+      "ablation_jobs": 103,
+      "ablation_trainings": 103
+    },
+    {
+      "dataset": "bookcrossing",
+      "supported_methods": 12,
+      "scan_jobs": 80,
+      "candidate_trainings": 104,
+      "ablation_jobs": 103,
+      "ablation_trainings": 103
+    }
+  ]
+}

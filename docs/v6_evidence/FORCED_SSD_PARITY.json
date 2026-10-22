@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "device": "cpu",
+  "dtype": "float64",
+  "forced_storage": "ssd",
+  "peak_disk_bytes": 3376,
+  "max_forward_error": 0.0,
+  "gradient_assertion_rtol": 1e-10,
+  "CUDA_benchmarked": false
+}

@@ -1,0 +1,49 @@
+........................................................................ [ 17%]
+.......................................................................s [ 35%]
+....................................................................s... [ 53%]
+................................................................... [ 70%]
+.................................................................s...... [ 88%]
+...............................................                          [100%]
+=============================== warnings summary ===============================
+tests/test_v3_research.py::test_m6_spline_constraints_and_actual_feasible_learning_gradient
+  <checkout>/tests/test_v3_research.py:195: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+  Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+    assert abs(float(q.mean())-.4) < .002
+
+tests/test_v4_2.py::test_frozen_blend_complete_scan_to_locked_archives
+tests/test_v4_workflow.py::test_scan_freezes_winners_runs_final_and_resumes_without_training
+tests/test_v4_workflow.py::test_scan_freezes_winners_runs_final_and_resumes_without_training
+  <checkout>/v4/engine.py:208: UserWarning: V4 final statistical comparison skipped: One outer split: descriptive results only, no across-split statistical claim
+    warnings.warn(f'V4 final statistical comparison skipped: {exc}')
+
+tests/test_v52_workflow.py::test_tiny_scan_then_final_exports_and_freezes_v52
+  <checkout>/v52/engine.py:211: UserWarning: V52 final statistical comparison skipped: One outer split: descriptive results only, no across-split statistical claim
+    warnings.warn(f'V52 final statistical comparison skipped: {exc}')
+
+tests/test_v5_workflow.py::test_v5_full_scan_final_and_report_are_complete_and_frozen
+  <checkout>/v5/engine.py:208: UserWarning: V5 final statistical comparison skipped: One outer split: descriptive results only, no across-split statistical claim
+    warnings.warn(f'V5 final statistical comparison skipped: {exc}')
+
+tests/test_v6_workflow.py::test_scan_final_and_report_use_frozen_winners
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/engine.py:253: UserWarning: V6 final statistical comparison skipped: One outer split: descriptive results only, no across-split statistical claim
+    warnings.warn(f'V6 final statistical comparison skipped: {exc}')
+
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/reporting.py:374: PendingDeprecationWarning: vert: bool will be deprecated in a future version. Use orientation: {'vertical', 'horizontal'} instead.
+    fig,ax=plt.subplots(figsize=(8,4),constrained_layout=True);ax.bxp(stats,showfliers=False,vert=False)
+
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+tests/test_v6_workflow.py::test_best_settings_have_real_vector_and_raster_figures
+  <checkout>/v6/publication.py:118: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+    ax.set(title=title,xlabel='Absolute rating error',ylim=(0,1));ax.grid();ax.legend(loc='lower right',fontsize=7,ncol=2)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_v4_2.py:104: Requires real single-CUDA hardware
+SKIPPED [1] tests/test_v4_research.py: V4 default=4 assertion superseded by test_v5_default_dispatch_keeps_all_explicit_versions; frozen old test retained
+SKIPPED [1] tests/test_v5_research.py:222: Requires real CUDA hardware; CPU parity does not prove CUDA parity
+399 passed, 3 skipped, 14 warnings, 5 subtests passed in 196.68s (0:03:16)
