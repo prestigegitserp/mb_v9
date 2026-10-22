@@ -1,0 +1,98 @@
+{
+  "synthetic": {
+    "development": "development/synthetic.json",
+    "paper": "paper/synthetic.json",
+    "v5_compatible": "v5_compatible/synthetic.json",
+    "protocol": "common",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N"
+    ],
+    "data_path": "generated"
+  },
+  "ml-100k": {
+    "development": "development/ml-100k.json",
+    "paper": "paper/ml-100k.json",
+    "v5_compatible": "v5_compatible/ml-100k.json",
+    "protocol": "aemc-paper",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N",
+      "AutoRec",
+      "AEMC-NE"
+    ],
+    "data_path": "ml-100k/u.data"
+  },
+  "ml-1m": {
+    "development": "development/ml-1m.json",
+    "paper": "paper/ml-1m.json",
+    "v5_compatible": "v5_compatible/ml-1m.json",
+    "protocol": "aemc-paper",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N",
+      "AutoRec",
+      "AEMC-NE"
+    ],
+    "data_path": "ml-1m/ratings.dat"
+  },
+  "ml-10m": {
+    "development": "development/ml-10m.json",
+    "paper": "paper/ml-10m.json",
+    "v5_compatible": "v5_compatible/ml-10m.json",
+    "protocol": "aemc-paper",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N",
+      "AutoRec",
+      "AEMC-NE"
+    ],
+    "data_path": "ml-10M100K/ratings.dat"
+  },
+  "jester": {
+    "development": "development/jester.json",
+    "paper": "paper/jester.json",
+    "v5_compatible": "v5_compatible/jester.json",
+    "protocol": "common",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N"
+    ],
+    "data_path": "jester/jester-data-1.xls (and optional files 2/3)"
+  },
+  "bookcrossing": {
+    "development": "development/bookcrossing.json",
+    "paper": "paper/bookcrossing.json",
+    "v5_compatible": "v5_compatible/bookcrossing.json",
+    "protocol": "common",
+    "paper_optimized": false,
+    "eligible_competitors": [
+      "MF",
+      "BiasMF",
+      "MBMF-F",
+      "MBMF-C",
+      "MBMF-N"
+    ],
+    "data_path": "bookcrossing/BX-Book-Ratings.csv"
+  }
+}

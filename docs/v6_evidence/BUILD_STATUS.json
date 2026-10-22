@@ -1,0 +1,46 @@
+{
+  "branch": "v6-development",
+  "version": "6.0.0-development",
+  "parent_commit": "2f6438f4e0723fda45f7e5ea0a1283ec9dc254b6",
+  "release_v6_created_or_merged": false,
+  "old_namespaces_modified": false,
+  "protected_parent_file_count": 328,
+  "source_implementation_sha256": "a9f5486c89bbf3f15258a8e1459a556043e043126d14b5e3eeb1bb19cee0200e",
+  "python": "3.12.14",
+  "torch": "2.10.0+cpu",
+  "CUDA_available": false,
+  "test_command": "python -m pytest tests -q -ra -p no:cacheprovider",
+  "test_status": "PASS",
+  "tests_passed": 399,
+  "tests_skipped": 3,
+  "subtests_passed": 5,
+  "warnings": 14,
+  "test_seconds": 196.68,
+  "skips": [
+    "V4.2 real CUDA hardware",
+    "V4 default dispatch superseded by V5 default test; old source preserved",
+    "V5 real CUDA hardware"
+  ],
+  "warning_summary": [
+    "Expected descriptive-only statistics for one outer split",
+    "Inherited tensor-to-scalar warning in old V3 test",
+    "Matplotlib deprecation and empty legend in a two-method smoke"
+  ],
+  "CPU_SSD_forward_and_gradient_parity": "PASS; see FORCED_SSD_PARITY.json",
+  "real_CUDA_correctness_or_speed_benchmarked": false,
+  "all_six_dataset_templates_schema_and_plans": "PASS",
+  "all_six_datasets_fully_trained": false,
+  "real_ML100K_validation_candidate_trainings": 26,
+  "fresh_ML100K_test_evaluated": false,
+  "probe_snapshots_precede_some_final_changes": true,
+  "paper_scores_reproduced_or_beaten": false,
+  "figure_and_workbook_integration": "PASS; PNG/PDF/SVG and Excel generated in tests; layout manually inspected",
+  "default_experiment": "One outer split, one model seed, K20; bounded development grid",
+  "checkpoints_retained_during_scan": "metrics only; selected-leader prediction traces retained; final artifacts complete",
+  "scientific_limits": [
+    "Validation winners require independent locked-test evaluation",
+    "Historical TEST cohorts differ between V1-V4 and V5",
+    "Real ML100K probe budgets differ; no matched-compute claim",
+    "AEMC official supplemental forward is synthetic; MovieLens training parity unverified"
+  ]
+}

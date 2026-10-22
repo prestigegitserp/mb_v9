@@ -1,0 +1,14 @@
+{
+  "source": "https://proceedings.iclr.cc/paper_files/paper/2024/file/6cd3ac24cdb789beeaa9f7145670fcae-Supplementary-Conference.zip",
+  "archive_sha256": "75ab908bca5022fec047cadef9931f24ca31db535dfe891ddd62571d4d817963",
+  "member": "Codes of AEMC-NE.py",
+  "member_sha256": "a0c0688aecebe82f4f20d5881a375643663339a17f8491cc9e886c6daadcf55c",
+  "provided_experiment": "synthetic Section 5.1, not MovieLens Section 5.2",
+  "main_hidden_activation": "tanh",
+  "element_hidden_activation": "tanh",
+  "element_forward": "element_network(z) + 0.8*z",
+  "synthetic_optimizer": "AdamW",
+  "movieLens_training_code_present": false,
+  "independent_reimplementation_forward_control": "audited; test covers same scalar formula and gradients",
+  "full_CF_reproduction_verified": false
+}
