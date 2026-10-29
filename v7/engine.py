@@ -572,6 +572,9 @@ def main(argv=None):
     for ds in datasets:
         base=make_base(pub,a,ds);dsroot=root/ds
         if a.command not in ('audit','plan') and not a.dry_run:
+            from .recovery import require_dataset_inputs
+            require_dataset_inputs(base.data)
+        if a.command not in ('audit','plan') and not a.dry_run:
             json_write(dsroot/'V7_STUDY_MODE.json',{'quick':a.quick,'mode':'smoke' if a.quick else 'research','command':a.command})
         if a.command=='plan':plan_for_ds(pub,base,a);continue
         if a.command=='audit':

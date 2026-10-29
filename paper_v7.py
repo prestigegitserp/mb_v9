@@ -50,6 +50,7 @@ def build_commands(a):
                 common += ["--v7-"+name.replace("_","-"),str(value)]
         if a.no_plots:
             common += ["--v7-no-plots"]
+        common += ['--epoch-train-rmse' if getattr(a,'epoch_train_rmse',False) else '--no-epoch-train-rmse']
         stages = (["scan","final","lossstudy","ablation","ablation-fixed","kstudy","sparsity",
                    "convergence","calibration","report","audit"] if a.stage=="all" else [a.stage])
         if a.stage=="all" and dataset=="synthetic":
@@ -89,6 +90,8 @@ def parser():
     p.add_argument("--steps-per-epoch",type=int)
     p.add_argument("--include-temporal",action="store_true")
     p.add_argument("--no-plots",action="store_true")
+    p.add_argument('--epoch-train-rmse',action=argparse.BooleanOptionalAction,default=False,
+                   help='Extra full TRAIN evaluation at every tick; convergence enables its own curves')
     p.add_argument("--quick",action="store_true",help="Smoke only, never manuscript accuracy")
     p.add_argument("--dry-run",action="store_true",help="Print commands without running them")
     return p

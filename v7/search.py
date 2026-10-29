@@ -66,6 +66,7 @@ def build_jobs(pub, base, ks, mode="hybrid"):
             setattr(prior,key,getattr(original,key))
         model_trial(method,"prior_validated_v6",prior)
         model_trial(method, "gated_context", replace(modern,history_signal="gated"))
+        model_trial(method, "support_gated_context", replace(modern,history_signal="gated",history_gate_support_shrinkage=True))
         model_trial(method, "mixed_context", replace(modern,history_signal="mixed"))
         # Joint coefficient draws are prioritized before exhaustive enumeration.
         for trial in range(4):
@@ -187,7 +188,7 @@ def build_jobs(pub, base, ks, mode="hybrid"):
         tag=item[0]
         return (0 if tag.startswith("default__") else 1 if tag.startswith("historical_")
                 else 2 if tag.startswith("prior_validated_v6")
-                else 3 if tag.startswith("gated_context") else 4 if tag.startswith("loss_joint_")
+                else 3 if tag.startswith("gated_context") else 3.5 if tag.startswith("support_gated_context") else 4 if tag.startswith("loss_joint_")
                 else 5 if tag.startswith(mechanism_prefixes) else 6)
     for tag,cfg in sorted(jobs.items(),key=order):
         applicable=tuple(m for m in cfg.methods if not limit or counts[m]<limit)
@@ -422,8 +423,10 @@ def ablations(base):
         if base.v7.models[method].readout_mode!='geometric':
             changes[method]['no_wide_decoder']=dict(wide_context_readout=False)
         if base.v7.models[method].history_signal=='gated':
-            changes[method]['residual_only_signal']=dict(history_signal='residual')
-            changes[method]['raw_only_signal']=dict(history_signal='raw')
+            changes[method]['residual_only_signal']=dict(history_signal='residual',history_gate_support_shrinkage=False)
+            changes[method]['raw_only_signal']=dict(history_signal='raw',history_gate_support_shrinkage=False)
+            if base.v7.models[method].history_gate_support_shrinkage:
+                changes[method]['no_gate_support_shrinkage']=dict(history_gate_support_shrinkage=False)
         changes[method]['no_full_history_term']=dict(full_history_weight=0.)
         if method!='Method7':changes[method]['no_mechanism_auxiliary']=dict(mechanism_auxiliary_weight=0.)
         if base.v7.models[method].readout_mode=='residual':

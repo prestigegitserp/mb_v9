@@ -22,7 +22,8 @@ def verify(root=None):
     if bad:raise ValueError("Integrity mismatch: "+", ".join(bad))
     return dict(status="PASS",parent_commit=parent["parent_commit"],
                 unchanged_parent_files=len(parent["protected_parent_blobs"]),
-                new_files_verified=len(new["new_blobs"]),release_branch_modified=False)
+                new_files_verified=len(new["new_blobs"]),previous_release_files_modified=False,
+                explicit_entrypoint="run_v7.py",release_target="v7")
 
 
 if __name__=="__main__":

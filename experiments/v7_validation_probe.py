@@ -41,7 +41,7 @@ def main(argv=None):
     for key in ('epochs','steps','hidden','k','threads','baseline_epochs'):
         if getattr(a,key)<1:parser.error(key+' must be positive')
     families=a.families.split(',');methods=a.methods.split(',')
-    if set(families)-{'reference','prior','modern','gated'}:parser.error('Unknown family')
+    if set(families)-{'reference','prior','modern','gated','support_gated'}:parser.error('Unknown family')
     import pandas as pd
     import torch
     from v7 import engine
@@ -84,9 +84,10 @@ def main(argv=None):
                 model=replace(model,max_epochs=a.epochs,steps_per_epoch=a.steps,hidden_dim=a.hidden,
                     eval_every=5,router_expert_epochs=a.epochs,router_epochs=a.epochs,
                     shape_epochs=a.epochs,probability_fit=base.v7.models[method].probability_fit)
-                if family in ('modern','gated'):
+                if family in ('modern','gated','support_gated'):
                     model=replace(model,lineage='v7',prediction_loss_units='mse')
-                if family=='gated':model=replace(model,history_signal='gated')
+                if family in ('gated','support_gated'):
+                    model=replace(model,history_signal='gated',history_gate_support_shrinkage=family=='support_gated')
                 cfg.v7.models[method]=model.validate();jobs.append((family,method,cfg))
         if a.baselines:
             for method in ('AutoRec','AEMC-NE'):

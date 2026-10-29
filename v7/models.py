@@ -118,11 +118,15 @@ class BaseModel(nn.Module):
         if self.cfg.history_signal in ("gated","mixed"):
             raw = (h.y/self.width).detach()
             if self.cfg.history_signal == "gated":
-                def weight(features, parameters):
+                def weight(features, counts, parameters):
                     x=torch.stack((torch.ones_like(features[:,0]),features[:,0],features[:,2]),-1)
-                    return torch.sigmoid(x@parameters)
-                gu=weight(h.user_features,self.history_mix_user)[h.u]
-                gi=weight(h.item_features,self.history_mix_item)[h.i]
+                    learned=torch.sigmoid(x@parameters)
+                    if self.cfg.history_gate_support_shrinkage:
+                        trust=counts/(counts+self.cfg.count_tau)
+                        learned=.5+trust*(learned-.5)
+                    return learned
+                gu=weight(h.user_features,h.user_counts,self.history_mix_user)[h.u]
+                gi=weight(h.item_features,h.item_counts,self.history_mix_item)[h.i]
             else: gu=gi=.5
             user_signal = (1-gu)*residual + gu*raw
             item_signal = (1-gi)*residual + gi*raw
@@ -1214,6 +1218,7 @@ class LegacyAdapter(BaseModel):
             from .aggregation import sparse_encoder_forward
             for module in self.inner.modules():
                 if module.__class__.__name__=="HistoryEncoder":
+                    module._v7_edge_chunk=cfg.pair_dot_chunk
                     module.forward=MethodType(sparse_encoder_forward,module)
         self.to(device)
 
@@ -1270,6 +1275,7 @@ def instantiate(data, config, seed=1, device=None):
         for module in model.modules():
             if module.__class__.__name__=="HistoryEncoder":
                 module._v7_sparse_history=cfg.fused_history
+                module._v7_edge_chunk=cfg.pair_dot_chunk
         if cfg.readout_mode != "geometric" and not cfg.wide_context_readout and cfg.method in ("Method2","Method7"):
             model.context_user_decoder=nn.Embedding(data.num_items,cfg.latent_dim)
             model.context_item_decoder=nn.Embedding(data.num_users,cfg.latent_dim)

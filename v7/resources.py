@@ -11,7 +11,7 @@ import sys
 import time
 from pathlib import Path
 import torch
-from .execution import capture_rng, restore_rng, run_training, allocation_failure
+from .execution import capture_rng, restore_rng, run_training, allocation_failure,storage_policies
 
 
 def resolve_device(requested="auto"):
@@ -51,13 +51,20 @@ def placement(model,data,requested):
 
 
 def execute_candidate(model,data,callback,rebuild,config,on_replay=None):
+    from .replay_state import ReplayState
+    cuda=next(model.parameters()).device.type=='cuda'
+    needed=(cuda and config.cpu_fallback) or len(storage_policies(config,cuda))>1
+    with ReplayState(model,config,enabled=needed) as initial:
+        return _execute_candidate(model,data,callback,rebuild,initial.execution_config(),initial,on_replay)
+
+
+def _execute_candidate(model,data,callback,rebuild,config,initial,on_replay):
     started=time.perf_counter();device=next(model.parameters()).device
     rng=capture_rng(device)
-    initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items()} if device.type=='cuda' else None
     record=placement(model,data,config.device);fallback=None
     record['initialization_fallback']=getattr(model,'_v7_initialization_fallback',None)
     try:
-        result=run_training(model,callback,lambda:rebuild(),config,on_replay=on_replay)
+        result=run_training(model,callback,lambda:rebuild(),config,on_replay=on_replay,replay_state=initial)
     except (torch.cuda.OutOfMemoryError,FloatingPointError,MemoryError) as exc:
         if device.type!="cuda" or not config.cpu_fallback:raise
         if isinstance(exc,MemoryError) and not allocation_failure(exc):raise
@@ -69,12 +76,12 @@ def execute_candidate(model,data,callback,rebuild,config,on_replay=None):
         # Release GPU parameters and all graph caches before moving data.
         model.__dict__.clear();gc.collect();torch.cuda.empty_cache()
         move_data_(data,"cpu")
-        fresh=rebuild(torch.device("cpu"));fresh.load_state_dict(initial)
+        fresh=rebuild(torch.device("cpu"));initial.restore_into(fresh)
         model.__dict__.update(fresh.__dict__);del fresh
         restore_rng(rng)
         if on_replay:on_replay()
         print("[V7 DEVICE] replaying failed CUDA candidate on CPU; dtype and training configuration unchanged",flush=True)
-        result=run_training(model,callback,lambda:rebuild(torch.device("cpu")),config,on_replay=on_replay)
+        result=run_training(model,callback,lambda:rebuild(torch.device("cpu")),config,on_replay=on_replay,replay_state=initial)
     record.update(actual_device=str(next(model.parameters()).device),fallback=fallback,
                   total_candidate_seconds=time.perf_counter()-started)
     result.setdefault("v7_execution",{}).update(placement=record)

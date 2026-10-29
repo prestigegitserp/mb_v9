@@ -1,0 +1,38 @@
+{
+  "protocol": {
+    "purpose": "development validation only; not TEST or paper reproduction",
+    "arguments": {
+      "data_root": "/workspace/scratch/v7_continue/datasets",
+      "output": "/workspace/scratch/v7_continue/release_gate_probe",
+      "epochs": 60,
+      "steps": 2,
+      "hidden": 64,
+      "k": 20,
+      "split_seed": 2026,
+      "model_seed": 1,
+      "threads": 2,
+      "device": "cpu",
+      "families": "gated,support_gated",
+      "methods": "Method1,Method5,Method6",
+      "baselines": false,
+      "method8": false,
+      "baseline_epochs": 100
+    },
+    "source_sha256": "98fea1936fecb35f943645865f4173ec6c96d5d2203effd29f3f14d83cbb735c",
+    "driver_sha256": "e7e0d2a8e23ae106d3c65111c3108ec924554d8df225fc27f7633aede015d844",
+    "test_evaluated": false,
+    "budgets": "same caps within Methods1-7; architecture and early stopping can change actual compute",
+    "variants": "modern maps the prior to v7/MSE; gated uses that modern architecture and changes history_signal only",
+    "gate_scope": "historical architectures do not implement the new gate; use modern versus gated to isolate it"
+  },
+  "completion": {
+    "completed": true,
+    "elapsed_seconds": 549.5341840259998,
+    "candidate_trainings": 6,
+    "test_evaluated": false,
+    "source_sha256": "98fea1936fecb35f943645865f4173ec6c96d5d2203effd29f3f14d83cbb735c"
+  },
+  "conclusion": "No reliable accuracy gain established; support-gated option remains validation-selected, not forced",
+  "test_evaluated": false,
+  "all_seven_methods_toy_contracts_passed": true
+}

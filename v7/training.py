@@ -80,7 +80,8 @@ def _warm_bias(model):
 
 def _shared_encoder_parameters(model):
     return [p for name, p in model.named_parameters()
-            if p.requires_grad and (name.startswith("user_encoder.") or name.startswith("item_encoder."))]
+            if p.requires_grad and (name.startswith("user_encoder.") or name.startswith("item_encoder.")
+                                    or name in ('history_mix_user','history_mix_item'))]
 
 
 def _backward(model, prediction, auxiliary):

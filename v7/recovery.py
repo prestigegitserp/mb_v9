@@ -153,16 +153,29 @@ def scientific_fingerprint(config):
     return hashlib.sha256(json.dumps(values, sort_keys=True, default=str).encode()).hexdigest()
 
 
-def input_digest(config):
-    """Hash dataset input bytes, excluding generated outputs and cache files."""
+def input_files(config):
+    """Locate raw inputs without loading data or allocating device memory."""
     root = Path(config.data_root)/config.dataset
     if config.dataset=='ml-10m' and (Path(config.data_root)/'ml-10M100K/ratings.dat').exists():root=Path(config.data_root)/'ml-10M100K'
-    if config.dataset == 'synthetic': return 'generated_from_serialized_configuration'
+    if config.dataset == 'synthetic':return root,[]
     candidates = {'ml-100k': ('u.data',), 'ml-1m': ('ratings.dat',),
                   'ml-10m': ('ratings.dat',), 'bookcrossing': ('BX-Book-Ratings.csv','BX-Book-Ratings.csv.txt','Ratings.csv')}
     names = candidates.get(config.dataset)
     files = sorted(p for p in root.rglob('*') if p.is_file() and
                    (p.name in names if names else p.suffix.lower() in ('.xls','.xlsx','.csv','.dat')))
+    return root,files
+
+
+def require_dataset_inputs(config):
+    if config.dataset=='synthetic':return
+    root,files=input_files(config)
+    if not files:raise FileNotFoundError(f'Raw {config.dataset} inputs missing under {root}; prepare data before starting the study')
+
+
+def input_digest(config):
+    """Hash dataset input bytes, excluding generated outputs and cache files."""
+    if config.dataset == 'synthetic':return 'generated_from_serialized_configuration'
+    root,files=input_files(config)
     if not files: return 'missing:'+config.dataset
     digest = hashlib.sha256()
     for path in files:

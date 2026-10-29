@@ -1,7 +1,9 @@
 name: V7 restart, frozen versions, recovery and scientific contracts
 on:
   push:
-    branches: [v7-development]
+    branches: [v7-development, v7]
+  pull_request:
+    branches: [v7]
   workflow_dispatch:
 permissions:
   contents: read
@@ -42,4 +44,4 @@ jobs:
       - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install -r requirements_v7.txt
       - run: python verify_v7.py
-      - run: python -m pytest tests/test_v7_lock_and_worker.py tests/test_v7_data_cache.py tests/test_v7_nested_resume.py tests/test_v7_baseline_recovery.py tests/test_v7_uploaded_method10.py tests/test_v7_rebuild.py tests/test_v7_retention.py -q -ra -p no:cacheprovider
+      - run: python -m pytest tests/test_v7_lock_and_worker.py tests/test_v7_data_cache.py tests/test_v7_nested_resume.py tests/test_v7_baseline_recovery.py tests/test_v7_uploaded_method10.py tests/test_v7_rebuild.py tests/test_v7_retention.py tests/test_v7_release_resources.py tests/test_v7_release_architecture.py -q -ra -p no:cacheprovider

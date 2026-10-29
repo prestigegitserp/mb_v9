@@ -225,19 +225,24 @@ class DeviceSampler:
         if self.thread:self.thread.join(timeout=1)
 
 
-def run_training(model,callback,rebuild,config,on_replay=None):
+def run_training(model,callback,rebuild,config,on_replay=None,replay_state=None):
+    from .replay_state import ReplayState
+    if replay_state is None:
+        cuda=next(model.parameters()).device.type=='cuda'
+        with ReplayState(model,config,enabled=len(storage_policies(config,cuda))>1) as initial:
+            return run_training(model,callback,rebuild,initial.execution_config(),on_replay,replay_state=initial)
     device=next(model.parameters()).device
     with DeviceSampler(device) as sampler:
-        result=_run_training(model,callback,rebuild,config,on_replay)
+        result=_run_training(model,callback,rebuild,config,on_replay,replay_state)
+    result['v7_execution']['initial_state']=dict(replay_state.record)
     result["v7_execution"]["device_sampling"]=dict(samples=sampler.samples,
         unavailable_reason=sampler.error,scope="device-wide NVML, not process-only or achieved FLOPs")
     return result
 
 
-def _run_training(model,callback,rebuild,config,on_replay):
+def _run_training(model,callback,rebuild,config,on_replay,initial):
     config.validate();device=next(model.parameters()).device;cuda=device.type=="cuda"
     policies=storage_policies(config,cuda);rng=capture_rng(device)
-    initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items()} if len(policies)>1 else None
     start=time.perf_counter();attempts=[]
     if cuda:
         torch.cuda.synchronize(device);torch.cuda.reset_peak_memory_stats(device)
@@ -258,7 +263,7 @@ def _run_training(model,callback,rebuild,config,on_replay):
             if hasattr(model,"clear_cache"):model.clear_cache()
             model.__dict__.clear();gc.collect()
             if cuda:torch.cuda.empty_cache()
-            fresh=rebuild();fresh.load_state_dict(initial);model.__dict__.update(fresh.__dict__);del fresh
+            fresh=rebuild();initial.restore_into(fresh);model.__dict__.update(fresh.__dict__);del fresh
             restore_rng(rng)
             if on_replay:on_replay()
             continue

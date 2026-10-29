@@ -41,6 +41,7 @@ class ModelConfig:
     fused_history: bool = True
     pair_dot_chunk: int = 32768
     history_signal: str = "residual"
+    history_gate_support_shrinkage: bool = False
     latent_dim: int = 20
     hidden_dim: int = 128
     max_epochs: int = 300
@@ -190,7 +191,7 @@ class ModelConfig:
                       "context_radius", "graph_context_directions", "moment_refinement", "orthogonal_moment_loss",
                       "posterior_preconditioned", "hierarchical_reference", "hard_transport_balance", "identity_history"})
         flags.update({"readout_count_adaptive", "probability_fit", "wide_context_readout"})
-        flags.update({"history_degree_gate", "history_residual_skip", "cavity_degree_normalization",
+        flags.update({"history_degree_gate", "history_residual_skip", "history_gate_support_shrinkage", "cavity_degree_normalization",
                       "radius_line_search", "moment_context_prior", "posterior_degree_precision",
                       "transport_support_shrinkage", "router_support_shrinkage"})
         for name, value in vars(self).items():

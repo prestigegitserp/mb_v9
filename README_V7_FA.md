@@ -1,8 +1,9 @@
-# V7 development — بازسازی از انتشار V6
+# V7.0.0 — انتشار مستقل از نسخه‌های پیشین
 
-ورودی این شاخه `run_v7.py` و recipe کامل آن `paper_v7.py` است. این شاخه انتشار V7 نیست. `VERSION`، ورودی پیش‌فرض قبلی، تمام فایل‌های نسخه‌های ۱ تا ۶ و سرشاخه‌های آن‌ها حفظ شده‌اند.
+ورودی این شاخه `run_v7.py` و recipe کامل آن `paper_v7.py` است. شاخهٔ انتشار این نسخه `v7` است؛ توسعه روی `v7-development` انجام می‌شود. `VERSION`، ورودی پیش‌فرض قبلی، تمام فایل‌های نسخه‌های ۱ تا ۶ و سرشاخه‌های آن‌ها حفظ شده‌اند.
 
-- [راهنمای دقیق نصب، پایلوت سبک، scan، final، ابلیشن، ضرایب loss، زمان و نمودار](docs/V7_EXPERIMENTS_FA.md)
+- [شروع مرحله‌به‌مرحلهٔ انتشار ۷، کانفیگ، اجرا و تخمین زمان](docs/V7_RELEASE_RUNBOOK_FA.md)
+- [راهنمای کامل scan، final، ابلیشن، ضرایب loss و نمودار](docs/V7_EXPERIMENTS_FA.md)
 - [بررسی پژوهشی نسخه‌ها، پایلوت ارسالی، معماری‌ها، خطاها و ممیزی رقبا](docs/V7_RESEARCH_REVIEW_FA.md)
 - [تنظیمات شش دیتاست](examples/v7)
 - [منبع اصلی Method10 با نام عمومی Method8، بدون تغییر](vendor_method10/PROVENANCE.json)
@@ -14,7 +15,7 @@
 در پوشهٔ خالی:
 
 ```powershell
-git clone --branch v7-development --single-branch https://github.com/prestigegitserp/mb_v9.git .
+git clone --branch v7 --single-branch https://github.com/prestigegitserp/mb_v9.git .
 python -m pip install -r requirements_v7.txt
 python verify_v7.py
 ```

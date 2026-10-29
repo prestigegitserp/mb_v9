@@ -1,13 +1,13 @@
-# راهنمای اجرایی V7 development
+# راهنمای اجرایی V7.0.0
 
-این شاخه بازسازی تازه از `v6@7fbce77f0d07a057083e2bab68327780986cafda` است. انتشار V7 یا merge انجام نشده است. فایل‌های V1 تا V6 تغییر نمی‌کنند. فرمان‌های V7 صریح‌اند؛ `run_v9.py` و فایل `VERSION` برای حفظ رفتار نسخه‌های قبل دست نخورده‌اند.
+این شاخه بازسازی تازه از `v6@7fbce77f0d07a057083e2bab68327780986cafda` است. شاخهٔ انتشار `v7` است و شاخهٔ توسعه `v7-development`. راهنمای فشردهٔ انتشار در `V7_RELEASE_RUNBOOK_FA.md` آمده است. فایل‌های V1 تا V6 تغییر نمی‌کنند. فرمان‌های V7 صریح‌اند؛ `run_v9.py` و فایل `VERSION` برای حفظ رفتار نسخه‌های قبل دست نخورده‌اند.
 
 ## ۱. دریافت در پوشهٔ خالی و بررسی CUDA
 
 در PowerShell و داخل پوشهٔ واقعاً خالی:
 
 ```powershell
-git clone --branch v7-development --single-branch https://github.com/prestigegitserp/mb_v9.git .
+git clone --branch v7 --single-branch https://github.com/prestigegitserp/mb_v9.git .
 python -m pip install -r requirements_v7.txt
 python verify_v7.py
 python -c "import torch; print(torch.__version__); print('CUDA:', torch.cuda.is_available()); print(torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU only')"
@@ -18,8 +18,8 @@ python -c "import torch; print(torch.__version__); print('CUDA:', torch.cuda.is_
 آپدیت بعدی همین پوشه:
 
 ```powershell
-git switch v7-development
-git pull --ff-only origin v7-development
+git switch v7
+git pull --ff-only origin v7
 python -m pip install -r requirements_v7.txt
 python verify_v7.py
 ```
@@ -249,3 +249,6 @@ python experiments/v7_validation_probe.py --data-root $DataRoot --output ./resul
 ```
 
 `reference` پایهٔ فعلی، `prior` تنظیم قبلاً منتخبِ V6، `modern` همان تنظیم روی معماری V7/MSE و `gated` همان مسیر مدرن با gate فعال است. این کنترل‌ها الزاماً همگی بهتر از پایه نیستند؛ نتایج منفی در CSV باقی می‌مانند. اجرای ثبت‌شدهٔ اولیه از driver در commit اعلام‌شده استفاده کرده بود؛ تفاوت کنترل Method3 در گزارش توضیح داده شده است. source/driver/config در پروتکل ذخیره می‌شوند، پس برای تغییر آن‌ها پوشهٔ تازه بسازید.
+
+
+در انتشار ۷.۰.۰، recipe به‌طور پیش‌فرض ارزیابی اضافهٔ کامل TRAIN در هر tick را کنار می‌گذارد؛ loss و validation و خروجی نهایی TRAIN همچنان ثبت می‌شوند. `--epoch-train-rmse` آن را روشن می‌کند و مرحلهٔ convergence خودش منحنی کامل TRAIN/VAL را فعال می‌کند.

@@ -1,0 +1,103 @@
+{
+  "target": "RTX 4090, 24 GB VRAM; 16 GB system RAM",
+  "dataset": "ml-100k",
+  "profile": "common",
+  "calibration_file": "/workspace/scratch/v7_continue/repo/docs/v7_evidence/V6_PILOT_CANDIDATES.csv",
+  "user_supplied_calibration": false,
+  "measured_on_target_hardware": false,
+  "reference_hardware": "NVIDIA GeForce RTX 5090; supplied V6 pilot device logs",
+  "requested_training_caps": {
+    "max_epochs": 120,
+    "baseline_max_epochs": 200,
+    "steps_per_epoch": 2
+  },
+  "timing_scope": "Measured median per-method time times actual outer training count; caps/architecture/early stopping are NOT silently extrapolated linearly",
+  "limitations": [
+    "Planning heuristic, not a measured RTX 4090 benchmark",
+    "0.5x to 4x is an assumption range, not a statistical confidence interval",
+    "Different epochs, early stopping, SSD and CPU fallback can exceed the range",
+    "Method8 uses a 40-second placeholder unless measured in calibration CSV",
+    "Default timing reference is the supplied RTX 5090 pilot; a supplied CSV alone does not verify hardware provenance",
+    "Winner-based ablation/loss counts change with selected architecture; defaults shown",
+    "All estimate includes scan, final, both ablations, loss, K, four sparsity rates, convergence and eligible calibration; temporal only if requested"
+  ],
+  "stages": [
+    {
+      "stage": "main",
+      "candidate_trainings": 21,
+      "reference_hours": 0.23639371819308305,
+      "low_hours": 0.11819685909654153,
+      "high_hours": 0.9455748727723322
+    },
+    {
+      "stage": "hyperparameter_scan",
+      "candidate_trainings": 107,
+      "reference_hours": 1.125952851515645,
+      "low_hours": 0.5629764257578225,
+      "high_hours": 4.50381140606258
+    },
+    {
+      "stage": "final",
+      "candidate_trainings": 15,
+      "reference_hours": 0.14262760268250227,
+      "low_hours": 0.07131380134125113,
+      "high_hours": 0.5705104107300091
+    },
+    {
+      "stage": "ablation_defaults_plan",
+      "candidate_trainings": 103,
+      "reference_hours": 1.2532337631735895,
+      "low_hours": 0.6266168815867947,
+      "high_hours": 5.012935052694358
+    },
+    {
+      "stage": "loss_sensitivity_defaults_plan",
+      "candidate_trainings": 222,
+      "reference_hours": 2.709225366741238,
+      "low_hours": 1.354612683370619,
+      "high_hours": 10.836901466964951
+    },
+    {
+      "stage": "ablation_fixed_defaults_plan",
+      "candidate_trainings": 103,
+      "reference_hours": 1.2532337631735895,
+      "low_hours": 0.6266168815867947,
+      "high_hours": 5.012935052694358
+    },
+    {
+      "stage": "kstudy",
+      "candidate_trainings": 13,
+      "reference_hours": 0.13973453537194777,
+      "low_hours": 0.06986726768597389,
+      "high_hours": 0.5589381414877911
+    },
+    {
+      "stage": "sparsity_four_rates",
+      "candidate_trainings": 60,
+      "reference_hours": 0.5705104107300091,
+      "low_hours": 0.28525520536500454,
+      "high_hours": 2.2820416429200363
+    },
+    {
+      "stage": "convergence",
+      "candidate_trainings": 15,
+      "reference_hours": 0.14262760268250227,
+      "low_hours": 0.07131380134125113,
+      "high_hours": 0.5705104107300091
+    },
+    {
+      "stage": "calibration",
+      "candidate_trainings": 1,
+      "reference_hours": 0.00487588479944356,
+      "low_hours": 0.00243794239972178,
+      "high_hours": 0.01950353919777424
+    },
+    {
+      "stage": "all_requested_stages_estimate",
+      "candidate_trainings": 639,
+      "reference_hours": 7.342021780870467,
+      "low_hours": 3.6710108904352334,
+      "high_hours": 29.368087123481867
+    }
+  ]
+}

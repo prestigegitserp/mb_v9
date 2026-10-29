@@ -2,12 +2,38 @@
 import torch
 
 
+class _SparseValueMM(torch.autograd.Function):
+    """Avoid native value-backward's dense owner-by-counterpart product."""
+    @staticmethod
+    def forward(ctx,owners,counterparts,values,weight,entities,chunk):
+        matrix=torch.sparse_coo_tensor(torch.stack((owners,counterparts)),values,
+            (entities,len(weight)),device=values.device).coalesce()
+        ctx.save_for_backward(matrix,weight,owners,counterparts)
+        ctx.chunk=int(chunk)
+        return torch.sparse.mm(matrix,weight)
+
+    @staticmethod
+    def backward(ctx,gradient):
+        matrix,weight,owners,counterparts=ctx.saved_tensors
+        dv=(pair_dot(gradient,weight,owners,counterparts,ctx.chunk)
+            if ctx.needs_input_grad[2] else None)
+        dw=(torch.sparse.mm(matrix.transpose(0,1).coalesce(),gradient)
+            if ctx.needs_input_grad[3] else None)
+        return None,None,dv,dw,None,None
+
+
+def sparse_value_mm(owners,counterparts,values,weight,entities,chunk=32768):
+    if chunk<1:raise ValueError('Positive sparse-backward chunk required')
+    return _SparseValueMM.apply(owners,counterparts,values,weight,entities,chunk)
+
+
 def sparse_encoder_forward(self, owners, counterparts, residual, count, entities, *, return_hidden=False):
     shape=(entities,self.value.num_embeddings)
     indices=torch.stack((owners,counterparts))
-    values=torch.sparse_coo_tensor(indices,residual,shape,device=residual.device).coalesce()
     masks=torch.sparse_coo_tensor(indices,torch.ones_like(residual),shape,device=residual.device).coalesce()
-    pooled=(torch.sparse.mm(values,self.value.weight)+torch.sparse.mm(masks,self.mask.weight))
+    pooled=(sparse_value_mm(owners,counterparts,residual,self.value.weight,entities,
+                          getattr(self,'_v7_edge_chunk',32768))
+            +torch.sparse.mm(masks,self.mask.weight))
     pooled=pooled/count.clamp_min(1).pow(getattr(self,"pooling_power",.5))[:,None]
     hidden=self.network[1](self.network[0](pooled))
     code=self.network[2](hidden)
