@@ -1,0 +1,35 @@
+{
+  "pilot_member": "pilot_2/ml-100k/main/V6_PROTOCOL_2026.json",
+  "compared_fields": {
+    "num_users": true,
+    "num_items": true,
+    "rating_min": true,
+    "rating_max": true,
+    "rating_step": true,
+    "train_sha256": true,
+    "selection_sha256": true,
+    "test_pair_sha256": true,
+    "calibration_fit_sha256": true,
+    "calibration_hold_sha256": true,
+    "role_sha256": true
+  },
+  "all_equal": true,
+  "train_pairs": 80053,
+  "validation_original": 9967,
+  "test_pairs": 9980,
+  "selection": 5980,
+  "v7_probe_source": {
+    "num_users": 943,
+    "num_items": 1682,
+    "rating_min": 1.0,
+    "rating_max": 5.0,
+    "rating_step": 1.0,
+    "train_sha256": "a1764ed4960f6711b4381b6d55d8f1a12a255f50bb31a3ae6ca90f32102d181e",
+    "selection_sha256": "6fc0262a86e37ebe7ba87ee8d6db677272b070bf114961130d791baaaec7dc00",
+    "test_pair_sha256": "deb2c3ece7c3f89cb9f5c1afecd987290d3783fa1252766df9e929da98900b24",
+    "calibration_fit_sha256": "21e261ac139e6b215d8ecd02a26467a2ee2f39c79f45499dc1dd33d8b4e0c191",
+    "calibration_hold_sha256": "c4707569ffbc69cde177f1ba86fab576c23d7aebd62fc2fdcd44c21e48b26e85",
+    "role_sha256": "7234e4da2efc5c011580e15b4eac47ffaf4b2a8276678a0ff3d64bb587ba57b9"
+  },
+  "test_labels_used_for_selection": false
+}

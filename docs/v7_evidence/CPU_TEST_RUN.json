@@ -20,7 +20,14 @@
   "command": "python -m pytest tests -q -ra -p no:cacheprovider",
   "duration_seconds": 287.83,
   "gpu_benchmark_performed": false,
-  "development_study_pending": true,
+  "development_study_pending": false,
   "full_suite_repeated_after_resource_and_resume_changes": true,
-  "scope": "CPU scientific contracts, replay, partial-job/epoch/OOF resume, original Method10, bounded runner, export and legacy namespaces"
+  "scope": "CPU scientific contracts, replay, partial-job/epoch/OOF resume, original Method10, bounded runner, export and legacy namespaces",
+  "development_candidate_trainings": 27,
+  "development_test_evaluated": false,
+  "all_six_datasets_fully_trained": false,
+  "github_linux_and_windows_ci": "https://github.com/prestigegitserp/mb_v9/actions/runs/40951779489",
+  "windows_tests_passed": 69,
+  "windows_tests_skipped": 1,
+  "github_v4_ci": "https://github.com/prestigegitserp/mb_v9/actions/runs/40951779658"
 }

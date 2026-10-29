@@ -8,6 +8,8 @@
 - [منبع اصلی Method10 با نام عمومی Method8، بدون تغییر](vendor_method10/PROVENANCE.json)
 - [شواهد بازخوانی فایل‌ها، تست‌ها و آزمایش‌های توسعه](docs/v7_evidence)
 - [نمونهٔ ظاهر جدید شکل با دادهٔ V6 ارسالی؛ نتیجهٔ V7 نیست](docs/v7_evidence/FIGURE_LAYOUT_V6_DATA.svg)
+- [جدول بررسی تازهٔ validation با ۲۷ آموزش محدود؛ نتیجهٔ TEST نیست](docs/v7_evidence/ML100K_VALIDATION_PROBES.csv)
+- [شکل lossهای V7 با داده و تاریخچهٔ واقعی validation](docs/v7_evidence/V7_VALIDATION_OBJECTIVE_PREVIEW.svg)
 
 در پوشهٔ خالی:
 

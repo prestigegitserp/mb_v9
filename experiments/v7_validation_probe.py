@@ -41,7 +41,7 @@ def main(argv=None):
     for key in ('epochs','steps','hidden','k','threads','baseline_epochs'):
         if getattr(a,key)<1:parser.error(key+' must be positive')
     families=a.families.split(',');methods=a.methods.split(',')
-    if set(families)-{'reference','prior','gated'}:parser.error('Unknown family')
+    if set(families)-{'reference','prior','modern','gated'}:parser.error('Unknown family')
     import pandas as pd
     import torch
     from v7 import engine
@@ -64,9 +64,10 @@ def main(argv=None):
     rows=[];configs={};started=time.perf_counter()
     declaration=dict(purpose='development validation only; not TEST or paper reproduction',
         arguments={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items() if k!='resume'},
-        source_sha256=implementation_signature(),test_evaluated=False,
+        source_sha256=implementation_signature(),driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),test_evaluated=False,
         budgets='same caps within Methods1-7; architecture and early stopping can change actual compute',
-        variants='gated starts from the same prior config and changes history_signal only')
+        variants='modern maps the prior to v7/MSE; gated uses that modern architecture and changes history_signal only',
+        gate_scope='historical architectures do not implement the new gate; use modern versus gated to isolate it')
     declaration_file=root/'PROBE_PROTOCOL.json'
     if declaration_file.is_file() and json.loads(declaration_file.read_text())!=declaration:
         raise ValueError('Changed source, config or cohort; choose a fresh --output')
@@ -83,6 +84,8 @@ def main(argv=None):
                 model=replace(model,max_epochs=a.epochs,steps_per_epoch=a.steps,hidden_dim=a.hidden,
                     eval_every=5,router_expert_epochs=a.epochs,router_epochs=a.epochs,
                     shape_epochs=a.epochs,probability_fit=base.v7.models[method].probability_fit)
+                if family in ('modern','gated'):
+                    model=replace(model,lineage='v7',prediction_loss_units='mse')
                 if family=='gated':model=replace(model,history_signal='gated')
                 cfg.v7.models[method]=model.validate();jobs.append((family,method,cfg))
         if a.baselines:

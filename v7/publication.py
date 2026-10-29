@@ -109,8 +109,12 @@ def render_clean(report,runs,primary,smoke=False):
         if ecdf_file.is_file():
             data=pd.read_csv(ecdf_file);data=data[data.partition==primary]
             if len(data):
-                fig,axes=plt.subplots(1,2,figsize=(7.2,3.7),sharex=True,sharey=True,layout='constrained')
-                for ax,proposed,title in zip(axes,[True,False],['Proposed models','Comparison methods']):
+                groups=[(flag,title) for flag,title in ((True,'Proposed models'),(False,'Comparison methods'))
+                        if (data.method.str.startswith('Method')==flag).any()]
+                fig,grid=plt.subplots(1,len(groups),figsize=(7.2 if len(groups)>1 else 5.2,3.7),
+                    squeeze=False,sharex=True,sharey=True,layout='constrained')
+                axes=grid.ravel()
+                for ax,(proposed,title) in zip(axes,groups):
                     subset=data[data.method.str.startswith('Method')==proposed]
                     for method,line in subset.groupby('method'):
                         line=line.groupby('fraction',as_index=False).absolute_error.mean()
@@ -210,7 +214,8 @@ def objective_tables(report,runs,*,plots,smoke):
     import matplotlib.pyplot as plt
     from .figures import _save
     methods=sorted(long.method.unique());columns=2 if len(methods) in (2,4) else min(3,len(methods));rows=(len(methods)+columns-1)//columns
-    palette=['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#6B7280','#882255']
+    palette=['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#6B7280',
+             '#882255','#44AA99','#332288','#AA4499','#117733']
     term_colors={term:palette[i%len(palette)] for i,term in enumerate(sorted(long.term.unique()))}
     labels={'L_pred':'Prediction','L_auxiliary':'Auxiliary','L_mechanism_auxiliary':'Mechanism','L_prior_bias':'Bias prior','L_prior_code':'Code prior','L_prior_direction':'Direction prior','L_prior_collaborative_l2':'Weight prior','L_ensemble_bias':'Member biases','L_masked_prediction':'Masked prediction','L_full_observed_reconstruction':'Full history'}
     with plt.rc_context(STYLE):
@@ -224,7 +229,8 @@ def objective_tables(report,runs,*,plots,smoke):
                 curve=group.groupby('epoch').value.mean()
                 if any(np.array_equal(curve.values,prior) for prior in seen_curves):continue
                 seen_curves.append(curve.values.copy())
-                ax.plot(curve.index,curve.values,label=labels.get(term,term.removeprefix('L_').replace('_',' ')),color=term_colors[term])
+                ax.plot(curve.index,curve.values,label=labels.get(term,term.removeprefix('L_').replace('_',' ')),
+                        color=term_colors[term],ls='--' if 'prior' in term else '-')
             ax.set(title=method,xlabel='Epoch',ylabel='Loss component');ax.grid(axis='y');ax.legend(fontsize=6,ncol=2)
             ax.yaxis.set_major_locator(MaxNLocator(4));ax.yaxis.set_major_formatter(FuncFormatter(lambda x,pos:f'{x:.2g}'))
             ax.xaxis.set_major_locator(MaxNLocator(4,integer=True))

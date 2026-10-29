@@ -24,6 +24,15 @@ python -m pip install -r requirements_v7.txt
 python verify_v7.py
 ```
 
+اگر قبلاً V7 را روی Windows گرفته‌اید و پس از pull فقط کنترل بایتی Method10 خطا داد، ممکن است فایل قدیمی با CRLF مانده باشد. **تنها اگر این فایل اصلی را عمداً محلی ویرایش نکرده‌اید**، نسخهٔ دقیقِ ثبت‌شده در Git را دوباره checkout کنید و بررسی را تکرار کنید:
+
+```powershell
+git restore --source=HEAD --worktree -- vendor_method10/method10.py
+python verify_v7.py
+```
+
+clone تازه این مشکل را ندارد؛ قاعدهٔ انتقال مخصوص همین فایل، بایت‌های ZIP را روی Windows هم حفظ می‌کند.
+
 برای داده‌ها می‌توانید پوشهٔ نسخهٔ قبلی را مستقیماً استفاده کنید:
 
 ```powershell
@@ -222,3 +231,19 @@ python replot_v7.py --input ./results_v7/tuned_common/ml-100k/lossstudy/loss_sen
 `replot_v7.py` علاوه بر شکل، CSV نقاط رسم‌شده و JSON شامل هش منبع و آرگومان‌ها ذخیره می‌کند. به‌همراه shapeها، دادهٔ بازتولید شکل را نگه دارید. SD بین splitها را CI نام‌گذاری نکنید؛ curveهای یک split، تأیید مستقل مقاله نیستند. خود کیفیت ظاهری شکل یا عدد ۰٫۸۷ تضمین پذیرش مقاله نیست؛ پروتکل، نوآوری و آزمون‌های مستقل هم لازم‌اند.
 
 در جدول ضرایب، «ضریب objective»، «بودجهٔ shrinkage optimizer»، «بودجهٔ gradient surgery» و «precision/scale مربوط به prior» جدا مشخص می‌شوند. اجزای prior، auxiliary و reconstruction با نام مستقل در دادهٔ تاریخچه ثبت می‌شوند. RPS تنها در حالت احتمالاتی فعال است؛ lossstudy در آن حالت علاوه بر RMSE، NLL validation را هم ذخیره، تجمیع و رسم می‌کند. ثابت‌ماندن RMSE هنگام تغییر یک ضریب احتمالاتی، به‌تنهایی به معنی بی‌اثر بودن آن بر توزیع احتمالات نیست.
+
+## ۱۰. بازتولید بررسی توسعه‌ای ثبت‌شده
+
+شواهد ۲۷ آموزشِ کوتاه در `docs/v7_evidence` هستند؛ جزئیات و محدودیتشان در [گزارش پژوهشی](V7_RESEARCH_REVIEW_FA.md) آمده است. فرمان زیر بررسیِ فعلی و اصلاح‌شدهٔ سه خانواده را با CUDA تکرار می‌کند. این ابزار جای `develop` و مطالعهٔ مقاله را نمی‌گیرد؛ TEST را ارزیابی نمی‌کند و برندهٔ `final` یک مطالعهٔ دیگر را هم تغییر نمی‌دهد.
+
+```powershell
+python experiments/v7_validation_probe.py --data-root $DataRoot --output ./results_v7/validation_diagnostics --epochs 60 --steps 2 --hidden 64 --baselines --method8 --device cuda --resume
+```
+
+برای Method3، تغییر lineage به V7 را از اثر خود gate جدا کنید:
+
+```powershell
+python experiments/v7_validation_probe.py --data-root $DataRoot --output ./results_v7/method3_diagnostics --epochs 60 --steps 2 --hidden 64 --methods Method3 --families modern,gated --device cuda --resume
+```
+
+`reference` پایهٔ فعلی، `prior` تنظیم قبلاً منتخبِ V6، `modern` همان تنظیم روی معماری V7/MSE و `gated` همان مسیر مدرن با gate فعال است. این کنترل‌ها الزاماً همگی بهتر از پایه نیستند؛ نتایج منفی در CSV باقی می‌مانند. اجرای ثبت‌شدهٔ اولیه از driver در commit اعلام‌شده استفاده کرده بود؛ تفاوت کنترل Method3 در گزارش توضیح داده شده است. source/driver/config در پروتکل ذخیره می‌شوند، پس برای تغییر آن‌ها پوشهٔ تازه بسازید.
