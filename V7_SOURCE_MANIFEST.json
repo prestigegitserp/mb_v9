@@ -1,10 +1,11 @@
 {
   "new_blobs": {
+    ".gitattributes": "fe182ea4528e2a06c4db903c1e7c7caae53dc7fb",
     ".github/workflows/v7-development-tests.yml": "ef2bb54979e58ab92edf8d5e3901368cb50afb03",
     "README_V7_FA.md": "b760eb6f6063cb030150823cd85dff4883e21502",
     "V7_BASELINE_MANIFEST.json": "bbce5d3733a47fb46840a86b575874c4e2e9242c",
     "docs/V7_EXPERIMENTS_FA.md": "c7ae73eda65955de1f622042e48e838fbdb7c740",
-    "docs/V7_RESEARCH_REVIEW_FA.md": "67890d9a9b770cdc52c1e3b3bb18c4f7255c5c2b",
+    "docs/V7_RESEARCH_REVIEW_FA.md": "3925606d555b31273abed660ad642b5aa6aaea10",
     "docs/v7_evidence/BRANCH_RECREATION.json": "7f75ee6600886205e9f17a18d7931ccc104f3dd8",
     "docs/v7_evidence/CPU_TEST_RUN.json": "2bab74585af85be4c08ebcbc12d74daa6f107036",
     "docs/v7_evidence/FIGURE_LAYOUT_V6_DATA.svg": "7a5d280e8f5edc6281452945bd0e0fbc12b470d6",
