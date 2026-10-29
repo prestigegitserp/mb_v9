@@ -1,0 +1,8 @@
+{
+  "pilot_filename": "pilot_2(1).zip",
+  "pilot_sha256": "cc3c1dc926bc6436d312451b4c1ba66d3174ef66f5961e7179abbb59c234a9b6",
+  "pilot_entries": 442,
+  "source_method10_sha256": "c76754f899c31a99a99eb99bfb8291b97e40d7eeda463f58ed47d6ae86e19c77",
+  "all_14_rmse_recomputed": true,
+  "test_never_used_for_v7_selection": true
+}

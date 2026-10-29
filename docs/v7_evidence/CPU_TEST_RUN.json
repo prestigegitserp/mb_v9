@@ -1,0 +1,24 @@
+{
+  "status": "CPU_SUITE_PASS",
+  "pytest_passed": 480,
+  "subtests_passed": 5,
+  "skipped": 4,
+  "skip_reasons": [
+    "3 tests need real CUDA hardware",
+    "1 frozen V4 default-version assertion superseded by V5 default"
+  ],
+  "python": "3.12.14",
+  "packages": {
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "xlsxwriter": "3.2.9",
+    "pytest": "9.2.0"
+  },
+  "command": "python -m pytest tests -q -ra -p no:cacheprovider",
+  "duration_seconds": 267.56,
+  "gpu_benchmark_performed": false,
+  "development_study_pending": true
+}

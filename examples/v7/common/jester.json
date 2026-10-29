@@ -1,0 +1,46 @@
+{
+  "profile": "jester_common",
+  "protocol": "common",
+  "artifact_policy": "selected",
+  "search_profile": "development",
+  "search_jobs_per_method": 8,
+  "mf_max_epochs": 1000,
+  "mbmf_max_epochs": 5000,
+  "aemc_main_activation": "tanh",
+  "aemc_element_activation": "tanh",
+  "aemc_initialization": "torch",
+  "aemc_item_batch_size": 64,
+  "models": {
+    "Method1": {
+      "hidden_dim": 128,
+      "batch_size": 4096
+    },
+    "Method2": {
+      "hidden_dim": 128,
+      "batch_size": 4096
+    },
+    "Method3": {
+      "hidden_dim": 32,
+      "batch_size": 4096
+    },
+    "Method4": {
+      "hidden_dim": 32,
+      "batch_size": 4096
+    },
+    "Method5": {
+      "hidden_dim": 128,
+      "batch_size": 4096
+    },
+    "Method6": {
+      "hidden_dim": 128,
+      "batch_size": 4096
+    },
+    "Method7": {
+      "hidden_dim": 128,
+      "batch_size": 4096
+    }
+  },
+  "aemc_element_skip": 0.8,
+  "search_seed": 1,
+  "method8": {}
+}
