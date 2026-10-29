@@ -45,6 +45,7 @@ def test_worker_resolves_relative_paths_from_invoking_directory(tmp_path):
     assert result.returncode==0,result.stdout+'\n'+result.stderr
     target=tmp_path/'results/ml-100k/main'
     assert json.loads((target/'dataset_manifest.json').read_text())['n_interactions']==192
+    assert not list(target.rglob('recovery'))
     request=next(target.glob('V7_WORKER_REQUEST_*.json'))
     assert Path(json.loads(request.read_text())['config']['data']['data_root']).is_absolute()
 

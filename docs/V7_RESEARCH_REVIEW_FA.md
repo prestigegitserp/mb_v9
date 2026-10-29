@@ -77,7 +77,7 @@ AutoRec در این بررسی `0.889666` داد؛ AEMC-NE مستقیم `0.93313
 
 در driver تشخیصی اولیه، گزینهٔ gated برای Method3 تاریخی هنوز روی lineage=V4 بود؛ آن معماری gate جدید ندارد. این ردیف در دادهٔ خام حفظ و با `inactive_gate_control` از ادعای معماری کنار گذاشته شد. سپس **هر دو** کنترل modern/residual و modern/gated واقعاً اجرا شدند: به‌ترتیب `0.925513` و `0.925130`، که هیچ‌کدام از V4 کمتر نبودند. driver اصلاح شد تا gated همواره به مسیر V7/MSE برود؛ برای جداسازی اثر gate از تغییر معماری، `modern` کنترل مستقل آن است. مسیر search محصول از ابتدا gated را فقط روی V7 ساخته بود.
 
-این شواهد با مدل‌های علمیِ commit `c38ef9494ec95e855a29dbfecd5abf151a753779` تولید شده‌اند. تغییر انتقال Windows و بازطراحی شکل پس از آن، کد مدل/optimizer این اجراها را عوض نکرده‌اند. جدول کامل، config واقعی، budget و تاریخچهٔ تمام کاندیداها در `v7_evidence/ML100K_VALIDATION_PROBES.csv` و `ML100K_VALIDATION_HISTORIES.json` ثبت است. نمونهٔ شکل تازه و نقاط دقیق آن نیز `V7_VALIDATION_OBJECTIVE_PREVIEW.svg` و `V7_VALIDATION_OBJECTIVE_POINTS.csv` هستند. یک قطع واقعیِ مطالعه نیز با ردکردن ۱۱ job کامل و بازیابی Method5 از epoch 40 ادامه یافت؛ `LONG_STUDY_RESUME.json` مرجع آن است.
+این شواهد با مدل‌های علمیِ commit `c38ef9494ec95e855a29dbfecd5abf151a753779` تولید شده‌اند. تغییر انتقال Windows، بازطراحی شکل و اصلاح نهاییِ حساب زمان/پاکسازی recovery پس از آن، کد مدل/optimizer این اجراها را عوض نکرده‌اند. جدول کامل، config واقعی، budget و تاریخچهٔ تمام کاندیداها در `v7_evidence/ML100K_VALIDATION_PROBES.csv` و `ML100K_VALIDATION_HISTORIES.json` ثبت است. نمونهٔ شکل تازه و نقاط دقیق آن نیز `V7_VALIDATION_OBJECTIVE_PREVIEW.svg` و `V7_VALIDATION_OBJECTIVE_POINTS.csv` هستند. یک قطع واقعیِ مطالعه نیز با ردکردن ۱۱ job کامل و بازیابی Method5 از epoch 40 ادامه یافت؛ `LONG_STUDY_RESUME.json` مرجع آن است.
 
 ## مدل هشتم: دقیقاً Method10 اصلی
 
@@ -125,6 +125,8 @@ c76754f899c31a99a99eb99bfb8291b97e40d7eeda463f58ed47d6ae86e19c77
 | بودجهٔ محدود، lossها را به انتهای گرید می‌راند | اولویت کاندیداهای joint loss و گزارش coverage واقعی | plan قطعی با search seed و جدول پوشش |
 
 ذخیرهٔ recovery پیش‌فرض هر پنج epoch است. مدل/optimizer/state بهترین epoch/patience/count/RNG ذخیره می‌شود؛ در Method4 وضعیت frozen بودن bias پیش از ساخت optimizer بازیابی می‌شود. مسیرهای تاریخی V3/V4/V5.2 در نسخه‌های محلیِ namespace V7 همین قابلیت را دارند؛ فایل‌های قدیمی تغییر نکرده‌اند. قطع داخل دومین OOF expert در مسیر جدید و V5.2 هم با اجرای پیوسته دقیقاً مقایسه شده است. برای Method10 اصلی، بازیابی داخل optimizer اضافه نشده تا trainer تغییر نکند. policy اصلیِ قدیمی MBMF در صورت انتخاب delegate به کد منجمد می‌رود؛ recovery داخل epoch آن ادعا نمی‌شود. policy validation و کنترل Adam V7 به‌طور مستقل آزموده‌اند.
+
+زمان بازیابیِ فاز mean و expertهای مستقل OOF جدا جمع می‌شود؛ قبلاً تنها زمان mean اصلی حساب می‌شد. زمان warm-start بازیابی‌شده نیز در checkpoint اصلی منتقل می‌شود تا یک قطع دوم، آن را از گزارش حذف نکند. این اصلاح فقط metadata زمان است و با آزمون دقیق وزن‌های نهایی کنترل شده است. پاکسازی recovery فقط برای status=COMPLETED انجام می‌شود؛ worker و پس از خروج موفقش parent هر دو آن را بررسی می‌کنند. RUNNING/FAILED/REPORT_FAILED فایل بازیابی را نگه می‌دارند و CSVهای پایدار حذف نمی‌شوند.
 
 offload ذخیره‌سازیِ activation به RAM/SSD و محاسبهٔ sparse/chunkشده، dtype و batch منطقی را خودکار عوض نمی‌کند. CPU replay از وضعیت اولیه و RNG معتبر انجام می‌شود و جدا ثبت می‌شود. برابری بیتی بین دستگاه‌ها ادعا نمی‌شود. در محیط توسعهٔ حاضر CUDA واقعی وجود ندارد؛ عبور آزمون CPU جای بنچمارک 4090/5090 را نمی‌گیرد.
 

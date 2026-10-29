@@ -42,4 +42,4 @@ jobs:
       - run: python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
       - run: python -m pip install -r requirements_v7.txt
       - run: python verify_v7.py
-      - run: python -m pytest tests/test_v7_lock_and_worker.py tests/test_v7_data_cache.py tests/test_v7_nested_resume.py tests/test_v7_baseline_recovery.py tests/test_v7_uploaded_method10.py tests/test_v7_rebuild.py -q -ra -p no:cacheprovider
+      - run: python -m pytest tests/test_v7_lock_and_worker.py tests/test_v7_data_cache.py tests/test_v7_nested_resume.py tests/test_v7_baseline_recovery.py tests/test_v7_uploaded_method10.py tests/test_v7_rebuild.py tests/test_v7_retention.py -q -ra -p no:cacheprovider

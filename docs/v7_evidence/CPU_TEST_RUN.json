@@ -29,5 +29,10 @@
   "github_linux_and_windows_ci": "https://github.com/prestigegitserp/mb_v9/actions/runs/40951779489",
   "windows_tests_passed": 69,
   "windows_tests_skipped": 1,
-  "github_v4_ci": "https://github.com/prestigegitserp/mb_v9/actions/runs/40951779658"
+  "github_v4_ci": "https://github.com/prestigegitserp/mb_v9/actions/runs/40951779658",
+  "full_suite_code_checkpoint": "c38ef9494ec95e855a29dbfecd5abf151a753779",
+  "post_suite_runtime_recovery_tests_passed": 74,
+  "post_suite_runtime_recovery_tests_skipped": 1,
+  "final_warm_start_timing_and_cleanup_tests_passed": 19,
+  "final_additions": "Parent/worker completed-only cleanup and time accounting for OOF/repeated warm-start recovery; model/optimizer arithmetic unchanged"
 }

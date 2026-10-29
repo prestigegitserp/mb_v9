@@ -30,7 +30,7 @@ def installed(engine, options):
     old_load, old_base = engine.load_v8, engine.make_base
     from . import method8
     from .lifecycle import release_model
-    from .recovery import candidate_identity,load_candidate,save_candidate
+    from .recovery import candidate_identity,load_candidate,save_candidate,recovered_training_time
     old_job=engine.run_job
     core, pub = old_load()
     saved = []
@@ -252,14 +252,17 @@ def installed(engine, options):
                 if progress.log_path.exists():
                     with progress.log_path.open("r+b") as handle:handle.truncate(offset)
                 progress.active=dict(before) if before else None;progress.n_epoch_records=count
-        result=execute_candidate(model,data,callback,rebuild,study.execution,on_replay=rollback)
+        with recovered_training_time() as restored_phases:
+            result=execute_candidate(model,data,callback,rebuild,study.execution,on_replay=rollback)
         if result.get("history"):
             result["history"][-1]['v7_training_budget']={key:result[key] for key in (
                 'best_epoch','best_val_RMSE','last_epoch','final_epoch','stopping_reason','best_checkpoint_at_budget',
                 'optimizer_steps','mean_optimizer_steps','prediction_targets_seen','full_observed_targets_seen','objective','radius_block_updates','bias_warmup_steps') if key in result}
             for key in ("v7_routing","v7_probability","v7_execution","v7_response","source_lineage"):
                 if key in result:result["history"][-1][key]=result[key]
-        prior=getattr(model,"_v7_prior_training_seconds",getattr(getattr(model,"inner",None),"_v7_prior_training_seconds",0.))
+        prior=sum(restored_phases.values())
+        result['v7_recovered_training_seconds']=prior
+        result['v7_recovered_phase_seconds']=dict(restored_phases)
         result["v7_original_training_seconds"]=time.perf_counter()-training_started+prior
         remember_training(model,data,result)
         save_candidate(model,identity,result)
@@ -409,6 +412,7 @@ def installed(engine, options):
                             prediction=pred.astype(np.float32), truth=y.cpu().numpy(),
                             **archive_cache.get("extras", {}))
     def job(pub_,core_,cfg,folder,*,args,validation_only=False,extra=None):
+        from .retention import prune_completed_recovery
         cfg._v7_resume=bool(args.resume)
         cfg._v7_shared_data_root=str(Path(args.output).resolve()/"_shared_data")
         if options.v7_isolate_jobs and not getattr(options,"_v7_worker",False):
@@ -428,14 +432,13 @@ def installed(engine, options):
             code=process.wait()
             json_write(folder/"V7_JOB_PROCESS.json",dict(pid=process.pid,parent_pid=os.getpid(),start_unix=started,end_unix=time.time(),exit_code=code,isolation="sequential_process_per_job"))
             if code:raise RuntimeError(f"Isolated job exited with status {code}; rerun the same command with --resume: {folder}")
+            prune_completed_recovery(folder)
             import pandas as pd
             return pd.read_csv(folder/("candidate_validation_runs.csv" if validation_only else "locked_test_runs.csv"))
         from .locking import study_lock
         with study_lock(folder):
             result=old_job(pub_,core_,cfg,folder,args=args,validation_only=validation_only,extra=extra)
-            import shutil
-            for path in Path(folder).rglob("recovery"):
-                if path.is_dir() and not path.is_symlink():shutil.rmtree(path)
+            prune_completed_recovery(folder)
             return result
 
     def self_test():

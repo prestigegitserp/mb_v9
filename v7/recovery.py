@@ -1,5 +1,7 @@
 """Atomic, content-addressed candidate and optimizer recovery (V7 only)."""
 from dataclasses import asdict, is_dataclass
+from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 import hashlib
 import json
@@ -9,6 +11,16 @@ import tempfile
 import time
 import numpy as np
 import torch
+
+_recovered_time=ContextVar('v7_recovered_training_time',default=None)
+
+
+@contextmanager
+def recovered_training_time():
+    """Collect restored, disjoint phases once, including completed OOF experts."""
+    phases={};token=_recovered_time.set(phases)
+    try:yield phases
+    finally:_recovered_time.reset(token)
 
 
 def cpu_tree(obj):
@@ -101,6 +113,8 @@ class EpochRecovery:
             self.payload = torch.load(self.path, map_location='cpu', weights_only=False)
             self.elapsed_before=self.payload.get('elapsed_seconds',0.)
             model._v7_prior_training_seconds=self.elapsed_before
+            phases=_recovered_time.get()
+            if phases is not None:phases[str(self.path)]=self.elapsed_before
             if self.payload['config'] != self.config:
                 raise ValueError('Epoch recovery configuration mismatch')
             model.load_state_dict(self.payload['model'])
@@ -117,9 +131,15 @@ class EpochRecovery:
 
     def save(self, model, optimizer, generator, state, force=False):
         if not self.path or (not force and state['epoch'] % self.interval): return
+        # AEMC constructs its main recovery before warm-start. If that warm
+        # phase was itself resumed, carry its OLD time into future main saves;
+        # current-attempt warm work is already included by this timer.
+        warm_root=self.path.parent.parent/'warm_start'
+        warm_prior=(sum(seconds for name,seconds in (_recovered_time.get() or {}).items()
+                        if warm_root in Path(name).parents) if self.path.name=='baseline.pt' else 0.)
         atomic_save(dict(config=self.config, model=model.state_dict(), optimizer=optimizer.state_dict() if optimizer is not None else None,
                          rng=rng_state(generator), requires_grad={n:p.requires_grad for n,p in model.named_parameters()},
-                         local=state,elapsed_seconds=self.elapsed_before+time.perf_counter()-self.started), self.path)
+                         local=state,elapsed_seconds=self.elapsed_before+warm_prior+time.perf_counter()-self.started), self.path)
 
 
 def scientific_fingerprint(config):

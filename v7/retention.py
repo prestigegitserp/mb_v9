@@ -6,6 +6,17 @@ import pandas as pd
 from v9.selection import select_validation_winners
 
 
+def prune_completed_recovery(folder):
+    """Sweep from both worker and parent, only after a completed job is durable."""
+    folder=Path(folder)
+    state=folder/'V9_JOB_STATUS.json'
+    if not state.is_file() or json.loads(state.read_text(encoding='utf8')).get('status')!='COMPLETED':
+        return
+    # Materialize before deletion; recursive walkers need not tolerate mutation.
+    for path in sorted(folder.rglob('recovery'),key=lambda p:len(p.parts),reverse=True):
+        if path.is_dir() and not path.is_symlink():shutil.rmtree(path)
+
+
 def retain_leaders(root, table, base):
     root = Path(root).resolve()
     if base.v7.artifact_policy != "selected":
