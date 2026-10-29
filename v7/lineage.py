@@ -47,17 +47,21 @@ def make_legacy(data, cfg, seed, device):
 
 def train_legacy(pub, adapter, data):
     namespace=adapter.cfg.lineage
-    module = import_module("v7.legacy_"+namespace+"_training" if namespace in ("v3","v4") else namespace+".training")
+    module = import_module("v7.legacy_"+namespace+"_training" if namespace in ("v3","v4","v52") else namespace+".training")
     inner = adapter.inner
     if hasattr(adapter, "_v7_artifact_dir"):
         setattr(inner, "_" + adapter.cfg.lineage + "_artifact_dir", adapter._v7_artifact_dir)
     inner._v7_artifact_dir=getattr(adapter,"_v7_artifact_dir",None)
+    inner._v7_fused_history=adapter.cfg.fused_history
     inner._v7_resume=getattr(adapter,"_v7_resume",False)
     inner._v7_recovery_interval=getattr(adapter,"_v7_recovery_interval",5)
     # Historical trainers for the selected M3/M4/M5 have no probability stage.
     # Use their exact training function and the shared V7 validation population.
     method = getattr(module, "train_" + adapter.cfg.lineage)
     result = method(pub, inner, data, inner.cfg, None)
+    for suffix in ("routing","probability"):
+        key=namespace+"_"+suffix
+        if key in result:result["v7_"+suffix]=result[key]
     adapter.clear_cache()
     result["source_lineage"] = adapter.cfg.lineage
     result["legacy_training_objective_preserved"] = True

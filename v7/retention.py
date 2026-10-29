@@ -58,4 +58,4 @@ def retain_leaders(root, table, base):
 
 def skip_trial_report(cfg, validation_only, extra):
     return (validation_only and cfg.v7.artifact_policy == "selected"
-            and (extra or {}).get("type") == "hyper")
+            and (extra or {}).get("type") in ("hyper","loss-sensitivity"))

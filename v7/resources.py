@@ -11,7 +11,7 @@ import sys
 import time
 from pathlib import Path
 import torch
-from .execution import capture_rng, restore_rng, run_training
+from .execution import capture_rng, restore_rng, run_training, allocation_failure
 
 
 def resolve_device(requested="auto"):
@@ -53,13 +53,14 @@ def placement(model,data,requested):
 def execute_candidate(model,data,callback,rebuild,config,on_replay=None):
     started=time.perf_counter();device=next(model.parameters()).device
     rng=capture_rng(device)
-    initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items()}
+    initial={k:v.detach().cpu().clone() for k,v in model.state_dict().items()} if device.type=='cuda' else None
     record=placement(model,data,config.device);fallback=None
     record['initialization_fallback']=getattr(model,'_v7_initialization_fallback',None)
     try:
         result=run_training(model,callback,lambda:rebuild(),config,on_replay=on_replay)
     except (torch.cuda.OutOfMemoryError,FloatingPointError,MemoryError) as exc:
         if device.type!="cuda" or not config.cpu_fallback:raise
+        if isinstance(exc,MemoryError) and not allocation_failure(exc):raise
         fallback=dict(from_device=str(device),to_device="cpu",reason=type(exc).__name__+": "+str(exc),
                       replay="entire_candidate_from_initial_state",cross_device_bitwise_equivalence=False)
         exc.__traceback__=None

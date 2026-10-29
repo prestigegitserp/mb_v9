@@ -173,27 +173,38 @@ class BaseModel(nn.Module):
         if self.bias is not None and self.cfg.bias_prior:
             penalty = penalty+self.cfg.bias_prior*(self.bias.user.weight.square().sum()
                        +self.bias.item.weight.square().sum())/n
+        recorded={"L_prior_bias":penalty-zero}
+        before=penalty
         for name, value in state.items():
             if self.cfg.code_prior and name in ("zu", "zi"):
                 penalty = penalty+self.cfg.code_prior*value.square().sum()/n
+        recorded["L_prior_code"]=penalty-before
+        before=penalty
         for name, module in self.named_modules():
             if self.cfg.direction_prior and isinstance(module, nn.Embedding) and "direction" in name:
                 initial = getattr(self, "initial_"+name.replace(".", "_"), None)
                 if initial is not None:
                     penalty = penalty+self.cfg.direction_prior*(1-(unit(module.weight)*initial).sum(-1)).sum()/n
+        recorded["L_prior_direction"]=penalty-before
+        before=penalty
         if self.cfg.collaborative_l2:
             weights=[p.square().sum() for name,p in self.named_parameters()
                      if p.ndim>1 and ('encoder' in name or 'decoder' in name)]
             penalty=penalty+.5*self.cfg.collaborative_l2*sum(weights)/(n*self.width**2)
+        recorded["L_prior_collaborative_l2"]=penalty-before
+        values=torch.stack(list(recorded.values())).detach().cpu().tolist()
+        self._last_prior_terms=dict(zip(recorded,values))
         return penalty
 
     def loss_for_targets(self, h, state, u, i, y):
         pred, _ = self.predict(h, state, u, i)
         lp = ((pred-y)/self.width).square().mean()
         aux=self.common_prior(state)
+        prior=aux
         if self.cfg.mechanism_auxiliary_weight:
             aux=aux+self.cfg.mechanism_auxiliary_weight*self.auxiliary(h,state,u,i,y)
         return lp, aux, {"L_pred": float(lp.detach()), "L_auxiliary": float(aux.detach()),
+                         "L_mechanism_auxiliary":float((aux-prior).detach()),**self._last_prior_terms,
                          "masked_target_RMSE": float((pred-y).square().mean().detach().sqrt())}
 
     def auxiliary(self, h, state, u, i, y):
@@ -525,10 +536,10 @@ class Method3(RadiusBase):
         return self.cfg.reconstruction_weight*self.reconstruction(h, s, u, i, y)+anchor
 
     def loss_for_targets(self, h, state, u, i, y):
-        prediction, auxiliary, _ = super().loss_for_targets(h, state, u, i, y)
+        prediction, auxiliary, parts = super().loss_for_targets(h, state, u, i, y)
         if self.cfg.prediction_loss_units == "gaussian":
             prediction = .5*prediction/self.cfg.radius_noise**2
-        return prediction, auxiliary, {"L_pred": float(prediction.detach()),
+        return prediction, auxiliary, {**parts,"L_pred": float(prediction.detach()),
                                        "L_auxiliary": float(auxiliary.detach())}
 
     @torch.no_grad()
@@ -1105,8 +1116,9 @@ class Method7(BaseModel):
         for member in self.members:
             aux = aux+self.cfg.bias_prior*(member.bias.user.weight.square().sum()
                   +member.bias.item.weight.square().sum())/n/len(means)
+        ensemble_bias=float(aux.detach())
         aux = aux+self.common_prior(s)
-        return lp, aux, {"L_pred": float(lp.detach()), "L_auxiliary": float(aux.detach()),
+        return lp, aux, {**self._last_prior_terms,"L_ensemble_bias":ensemble_bias,"L_pred": float(lp.detach()), "L_auxiliary": float(aux.detach()),
                          "masked_target_RMSE": float((means.mean(0)-y).square().mean().detach().sqrt())}
 
     def _shape_features(self, h, state, mean, u, i):

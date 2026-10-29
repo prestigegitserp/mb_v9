@@ -123,7 +123,9 @@ def installed(engine, options):
         cfg._v7_locked_specs={}
         return cfg
     old_inst, old_train = pub.instantiate_model_v8, pub.train_model_v8
-    old_build, old_run = pub.build_publication_matrix_data_v8, pub.run_publication_study_v8
+    old_build, native_run = pub.build_publication_matrix_data_v8, pub.run_publication_study_v8
+    from . import runner
+    def old_run(cfg,*args,**kwargs):return runner.run_study(pub,cfg,*args,**kwargs)
     old_save, old_restore = pub.save_model_checkpoint_v8, pub.load_model_checkpoint_v8
     old_bounds, old_count = pub.individual_bound_arrays, core.parameter_count
     old_archive = pub.save_prediction_archive_v8
@@ -232,9 +234,10 @@ def installed(engine, options):
             if method.startswith("MBMF-") and config.checkpoint_policy == "validation":
                 return train_mbmf(pub,model,data,config,study.scalable_chunk_size)
             return old_train(method,model,data,config,study)
+        recovery_folder=getattr(model,"_v7_artifact_dir",None)
         def rebuild(target_device=None):
             import shutil
-            folder=getattr(model,"_v7_artifact_dir",None)
+            folder=recovery_folder
             if folder:
                 for path in Path(folder).rglob("recovery"):
                     if path.is_dir() and not path.is_symlink():shutil.rmtree(path)
@@ -281,7 +284,11 @@ def installed(engine, options):
                 pd.to_numeric(tr["timestamp"], errors="raise").to_numpy(dtype=np.float64), device=device)
         if active["settings"] is None:
             raise RuntimeError("V7 data construction requires an active study")
-        data=validation_roles(data, active["settings"], data_cfg.split_seed, active["output"])
+        from .split_cache import shared_file
+        def role_table(factory,target):
+            return shared_file(active["publication_config"],target,"validation_roles_"+str(data_cfg.split_seed),
+                               lambda path:factory().to_csv(path,index=False))
+        data=validation_roles(data, active["settings"], data_cfg.split_seed, active["output"],table_writer=role_table)
         anchor=active["settings"].analysis_anchor
         if anchor:
             current=data_signature(data)
@@ -293,7 +300,8 @@ def installed(engine, options):
         if cfg.v7.implementation_sha256 != implementation_signature():
             raise ValueError("V7 source changed since configuration creation")
         previous = dict(active)
-        active.update(settings=cfg.v7, output=cfg.output_dir, execution=cfg.execution, validation_only=cfg.validation_only,training_records=[])
+        active.update(settings=cfg.v7, output=cfg.output_dir, execution=cfg.execution,
+                      validation_only=cfg.validation_only,training_records=[],publication_config=cfg)
         supplied=getattr(cfg,"_v7_locked_specs",None)
         if supplied:active["locked_specs"]=supplied
         try:
@@ -339,7 +347,7 @@ def installed(engine, options):
                 release_model(progress.active.pop("model"),cfg.output_dir)
             resident=active.pop("resident_data",None)
             if resident is not None:move_data_(resident,"cpu")
-            active.update(previous)
+            active.clear();active.update(previous)
     def save(path,model,**kwargs):
         if isinstance(model,method8.Method10):return method8.save(path,model,**kwargs)
         result=checkpoints.save(path,model,**kwargs) if isinstance(model,BaseModel) else old_save(path,model,**kwargs)
@@ -367,6 +375,9 @@ def installed(engine, options):
     def restore(path, data, device, *, strict_data=True):
         payload = torch.load(path, map_location="cpu", weights_only=False)
         def load_on(target):
+            progress=active.get("progress")
+            if progress is not None and progress.active and progress.active.get("model") is not None:
+                release_model(progress.active.pop("model"),active.get("output"))
             prior=active.get("resident_data")
             if prior is not None and prior is not data:move_data_(prior,"cpu")
             active["resident_data"]=data
@@ -399,6 +410,7 @@ def installed(engine, options):
                             **archive_cache.get("extras", {}))
     def job(pub_,core_,cfg,folder,*,args,validation_only=False,extra=None):
         cfg._v7_resume=bool(args.resume)
+        cfg._v7_shared_data_root=str(Path(args.output).resolve()/"_shared_data")
         if options.v7_isolate_jobs and not getattr(options,"_v7_worker",False):
             import os,subprocess,sys
             from dataclasses import asdict

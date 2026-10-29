@@ -72,6 +72,7 @@ def run(argv=None):
     if study.protocol!="common":study.split_validation_roles=False
     if options.manual_seed is not None: study.search_seed=options.manual_seed
     options.study = study.validate()
+    if options.v7_cache_dir is not None:options.v7_cache_dir=str(Path(options.v7_cache_dir).resolve())
     options.execution=ExecutionConfig(storage=options.v7_storage,host_budget_mb=options.v7_host_budget_mb,cache_dir=options.v7_cache_dir,
         device=options.v7_device,reserve_fraction=options.v7_memory_reserve,pin_memory=options.v7_pin_memory,
         cpu_fallback=options.v7_cpu_fallback,ssd_budget_gb=options.v7_ssd_budget_gb).validate()

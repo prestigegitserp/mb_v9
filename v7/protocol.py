@@ -24,7 +24,7 @@ def digest_tensors(*values):
     return digest.hexdigest()
 
 
-def validation_roles(data, settings, split_seed=2026, output=None):
+def validation_roles(data, settings, split_seed=2026, output=None, table_writer=None):
     """Keep original train/test. Split validation by *unique pair*, without Y.
 
     Selection, probability fit, probability early stopping are disjoint. The
@@ -70,8 +70,10 @@ def validation_roles(data, settings, split_seed=2026, output=None):
         root = Path(output)
         root.mkdir(parents=True, exist_ok=True)
         names = np.asarray(["selection", "probability_fit", "probability_hold"])
-        pd.DataFrame(dict(pair_id=pair, validation_role=names[roles])).to_csv(
-            root/f"V7_ROLE_ASSIGNMENTS_{split_seed}.csv", index=False)
+        target=root/f"V7_ROLE_ASSIGNMENTS_{split_seed}.csv"
+        factory=lambda:pd.DataFrame(dict(pair_id=pair, validation_role=names[roles]))
+        if table_writer is None:factory().to_csv(target,index=False)
+        else:table_writer(factory,target)
         (root/f"V7_PROTOCOL_{split_seed}.json").write_text(json.dumps(out.v7_protocol, indent=2))
     # Namespaced aliases let frozen historical architectures consume the same
     # already-assigned calibration roles. No resplitting or label copying occurs.

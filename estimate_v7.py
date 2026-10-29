@@ -85,11 +85,14 @@ def main(argv=None):
     rows=[dict(stage=name,candidate_trainings=count,reference_hours=value/3600,
                low_hours=value*.5/3600,high_hours=value*4/3600) for name,count,value in levels]
     report=dict(target='RTX 4090, 24 GB VRAM; 16 GB system RAM',dataset=a.dataset,profile=a.profile,
-         calibration_file=str(calibration),measured_on_target_hardware=bool(a.calibration),
+         calibration_file=str(calibration),user_supplied_calibration=bool(a.calibration),
+         measured_on_target_hardware=None if a.calibration else False,
+         reference_hardware='not verified from CSV alone' if a.calibration else 'NVIDIA GeForce RTX 5090; supplied V6 pilot device logs',
          limitations=['Planning heuristic, not a measured RTX 4090 benchmark',
          '0.5x to 4x is an assumption range, not a statistical confidence interval',
          'Different epochs, early stopping, SSD and CPU fallback can exceed the range',
          'Method8 uses a 40-second placeholder unless measured in calibration CSV',
+         'Default timing reference is the supplied RTX 5090 pilot; a supplied CSV alone does not verify hardware provenance',
          'Winner-based ablation/loss counts change with selected architecture; defaults shown',
          'All estimate includes scan, final, both ablations, loss, K, four sparsity rates, convergence and eligible calibration; temporal only if requested'],
          stages=rows)

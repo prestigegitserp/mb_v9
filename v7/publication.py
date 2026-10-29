@@ -185,7 +185,7 @@ def finish_report(root,report,runs,primary,*,plots,smoke):
 def objective_tables(report,runs,*,plots,smoke):
     """Export operative weights and per-epoch objective components, then plot."""
     from .config import ModelConfig
-    from .losses import coefficients
+    from .losses import coefficients,coefficient_kind
     tables=Path(report)/'tables';records=[]
     for _,row in runs.iterrows():
         config=json.loads(row.config_key)['config']
@@ -196,8 +196,8 @@ def objective_tables(report,runs,*,plots,smoke):
         else:weights={key:config[key] for key in ('lambda_l2','lambda_main','lambda_element','weight_decay') if key in config}
         for key,value in weights.items():
             records.append(dict(method=row.method,split_seed=row.split_seed,model_seed=row.model_seed,
-                                coefficient=key,value=value,config_key=row.config_key))
-    pd.DataFrame(records,columns=['method','split_seed','model_seed','coefficient','value','config_key']).to_csv(tables/'objective_coefficients.csv',index=False)
+                                coefficient=key,value=value,kind=coefficient_kind(key),config_key=row.config_key))
+    pd.DataFrame(records,columns=['method','split_seed','model_seed','coefficient','value','kind','config_key']).to_csv(tables/'objective_coefficients.csv',index=False)
     history_file=tables/'epoch_history.csv'
     if not history_file.is_file():return
     history=pd.read_csv(history_file)
@@ -210,7 +210,9 @@ def objective_tables(report,runs,*,plots,smoke):
     import matplotlib.pyplot as plt
     from .figures import _save
     methods=sorted(long.method.unique());columns=2 if len(methods) in (2,4) else min(3,len(methods));rows=(len(methods)+columns-1)//columns
-    palette=['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9']
+    palette=['#0072B2','#D55E00','#009E73','#CC79A7','#E69F00','#56B4E9','#6B7280','#882255']
+    term_colors={term:palette[i%len(palette)] for i,term in enumerate(sorted(long.term.unique()))}
+    labels={'L_pred':'Prediction','L_auxiliary':'Auxiliary','L_mechanism_auxiliary':'Mechanism','L_prior_bias':'Bias prior','L_prior_code':'Code prior','L_prior_direction':'Direction prior','L_prior_collaborative_l2':'Weight prior','L_ensemble_bias':'Member biases','L_masked_prediction':'Masked prediction','L_full_observed_reconstruction':'Full history'}
     with plt.rc_context(STYLE):
         fig,axes=plt.subplots(rows,columns,figsize=(7.2,2.25*rows),squeeze=False,layout='constrained')
         from matplotlib.ticker import MaxNLocator,FuncFormatter
@@ -222,8 +224,8 @@ def objective_tables(report,runs,*,plots,smoke):
                 curve=group.groupby('epoch').value.mean()
                 if any(np.array_equal(curve.values,prior) for prior in seen_curves):continue
                 seen_curves.append(curve.values.copy())
-                ax.plot(curve.index,curve.values,label=term.removeprefix('L_').replace('_',' '),color=palette[index%len(palette)])
-            ax.set(title=method,xlabel='Epoch',ylabel='Loss component');ax.grid(axis='y');ax.legend(fontsize=6.5)
+                ax.plot(curve.index,curve.values,label=labels.get(term,term.removeprefix('L_').replace('_',' ')),color=term_colors[term])
+            ax.set(title=method,xlabel='Epoch',ylabel='Loss component');ax.grid(axis='y');ax.legend(fontsize=6,ncol=2)
             ax.yaxis.set_major_locator(MaxNLocator(4));ax.yaxis.set_major_formatter(FuncFormatter(lambda x,pos:f'{x:.2g}'))
             ax.xaxis.set_major_locator(MaxNLocator(4,integer=True))
             if subset.value.min()>=-1e-8:ax.set_ylim(bottom=0)

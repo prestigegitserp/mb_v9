@@ -2,13 +2,16 @@
   "target": "RTX 4090, 24 GB VRAM; 16 GB system RAM",
   "dataset": "ml-100k",
   "profile": "paper",
-  "calibration_file": "/workspace/scratch/a86a6cc36b33/v7_rebuild/docs/v7_evidence/V6_PILOT_CANDIDATES.csv",
+  "calibration_file": "/workspace/scratch/v7_continue/repo/docs/v7_evidence/V6_PILOT_CANDIDATES.csv",
+  "user_supplied_calibration": false,
   "measured_on_target_hardware": false,
+  "reference_hardware": "NVIDIA GeForce RTX 5090; supplied V6 pilot device logs",
   "limitations": [
     "Planning heuristic, not a measured RTX 4090 benchmark",
     "0.5x to 4x is an assumption range, not a statistical confidence interval",
     "Different epochs, early stopping, SSD and CPU fallback can exceed the range",
     "Method8 uses a 40-second placeholder unless measured in calibration CSV",
+    "Default timing reference is the supplied RTX 5090 pilot; a supplied CSV alone does not verify hardware provenance",
     "Winner-based ablation/loss counts change with selected architecture; defaults shown",
     "All estimate includes scan, final, both ablations, loss, K, four sparsity rates, convergence and eligible calibration; temporal only if requested"
   ],
@@ -43,10 +46,10 @@
     },
     {
       "stage": "loss_sensitivity_defaults_plan",
-      "candidate_trainings": 11460,
-      "reference_hours": 141.47337531200998,
-      "low_hours": 70.73668765600499,
-      "high_hours": 565.8935012480399
+      "candidate_trainings": 13080,
+      "reference_hours": 161.3833096526078,
+      "low_hours": 80.6916548263039,
+      "high_hours": 645.5332386104312
     },
     {
       "stage": "ablation_fixed_defaults_plan",
@@ -85,10 +88,10 @@
     },
     {
       "stage": "all_requested_stages_estimate",
-      "candidate_trainings": 65340,
-      "reference_hours": 757.2516983960605,
-      "low_hours": 378.62584919803027,
-      "high_hours": 3029.006793584242
+      "candidate_trainings": 66960,
+      "reference_hours": 777.1616327366584,
+      "low_hours": 388.5808163683292,
+      "high_hours": 3108.6465309466334
     }
   ]
 }

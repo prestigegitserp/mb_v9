@@ -2,13 +2,16 @@
   "target": "RTX 4090, 24 GB VRAM; 16 GB system RAM",
   "dataset": "ml-100k",
   "profile": "common",
-  "calibration_file": "/workspace/scratch/a86a6cc36b33/v7_rebuild/docs/v7_evidence/V6_PILOT_CANDIDATES.csv",
+  "calibration_file": "/workspace/scratch/v7_continue/repo/docs/v7_evidence/V6_PILOT_CANDIDATES.csv",
+  "user_supplied_calibration": false,
   "measured_on_target_hardware": false,
+  "reference_hardware": "NVIDIA GeForce RTX 5090; supplied V6 pilot device logs",
   "limitations": [
     "Planning heuristic, not a measured RTX 4090 benchmark",
     "0.5x to 4x is an assumption range, not a statistical confidence interval",
     "Different epochs, early stopping, SSD and CPU fallback can exceed the range",
     "Method8 uses a 40-second placeholder unless measured in calibration CSV",
+    "Default timing reference is the supplied RTX 5090 pilot; a supplied CSV alone does not verify hardware provenance",
     "Winner-based ablation/loss counts change with selected architecture; defaults shown",
     "All estimate includes scan, final, both ablations, loss, K, four sparsity rates, convergence and eligible calibration; temporal only if requested"
   ],
@@ -43,10 +46,10 @@
     },
     {
       "stage": "loss_sensitivity_defaults_plan",
-      "candidate_trainings": 195,
-      "reference_hours": 2.377393127731274,
-      "low_hours": 1.188696563865637,
-      "high_hours": 9.509572510925096
+      "candidate_trainings": 222,
+      "reference_hours": 2.709225366741238,
+      "low_hours": 1.354612683370619,
+      "high_hours": 10.836901466964951
     },
     {
       "stage": "ablation_fixed_defaults_plan",
@@ -85,10 +88,10 @@
     },
     {
       "stage": "all_requested_stages_estimate",
-      "candidate_trainings": 629,
-      "reference_hours": 7.172257041797437,
-      "low_hours": 3.5861285208987184,
-      "high_hours": 28.689028167189747
+      "candidate_trainings": 656,
+      "reference_hours": 7.5040892808074,
+      "low_hours": 3.7520446404037,
+      "high_hours": 30.0163571232296
     }
   ]
 }

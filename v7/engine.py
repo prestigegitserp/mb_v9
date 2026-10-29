@@ -45,6 +45,8 @@ def make_base(pub,args,dataset):
     cfg.core_config.split_seeds=numbers(args.split_seeds)
     cfg.core_config.model_seeds=numbers(args.model_seeds)
     cfg.core_config.latent_dims=numbers(args.k)
+    for label,values in (("split-seeds",cfg.core_config.split_seeds),("model-seeds",cfg.core_config.model_seeds),("k",cfg.core_config.latent_dims)):
+        if len(values)!=len(set(values)):raise ValueError("Repeated values in --"+label+" are not independent repetitions")
     if args.methods:
         allowed=set(cfg.methods);chosen=tuple(x.strip() for x in args.methods.split(',') if x.strip())
         if set(chosen)-allowed:raise ValueError(f'Unknown methods: {set(chosen)-allowed}')
@@ -518,7 +520,9 @@ def main(argv=None):
     if set(datasets)-set(DATASETS):ap.error(f'Unknown datasets {set(datasets)-set(DATASETS)}')
     if a.quick and a.command in ('all','final','main'):
         print('WARNING: QUICK RESULTS ARE NOT SUITABLE FOR PUBLICATION',flush=True)
+    a.data_root=str(pathlib.Path(a.data_root).resolve())
     root=pathlib.Path(a.output).resolve()
+    a.output=str(root)
     if root==ROOT:raise ValueError('Choose a results folder, not the repository root')
     root.mkdir(parents=True,exist_ok=True);(root/'.gitignore').write_text('*\n')
     core,pub=load_v8()

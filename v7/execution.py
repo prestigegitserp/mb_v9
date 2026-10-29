@@ -14,6 +14,28 @@ import numpy as np
 import torch
 
 
+def host_memory():
+    """Respect container RAM limits as well as physical host availability."""
+    memory=psutil.virtual_memory();available,total=memory.available,memory.total
+    for limit_file,usage_file in (
+        ('/sys/fs/cgroup/memory.max','/sys/fs/cgroup/memory.current'),
+        ('/sys/fs/cgroup/memory/memory.limit_in_bytes','/sys/fs/cgroup/memory/memory.usage_in_bytes')):
+        try:
+            limit=int(Path(limit_file).read_text().strip())
+            usage=int(Path(usage_file).read_text().strip())
+        except (OSError,ValueError):continue
+        if 0<limit<total:
+            total=limit;available=min(available,max(0,limit-usage))
+    return available,total
+
+
+def allocation_failure(error):
+    if isinstance(error,torch.cuda.OutOfMemoryError):return True
+    message=str(error).lower()
+    if isinstance(error,MemoryError):return 'ssd' not in message and 'disk' not in message
+    return 'defaultcpuallocator' in message and ('allocate memory' in message or 'not enough memory' in message)
+
+
 @dataclass
 class ExecutionConfig:
     storage:str="auto"
@@ -79,7 +101,7 @@ class SavedTensorStore:
         if policy=="auto":
             if tensor.device.type!="cuda":
                 if 'ram' not in self._memory or self.pack_calls%self.config.memory_poll_interval==0:
-                    memory=psutil.virtual_memory();self._memory['ram']=(memory.available,memory.total)
+                    self._memory['ram']=host_memory()
                 available,total=self._memory['ram']
                 if available>self.config.ram_reserve_fraction*total+tensor.numel()*tensor.element_size():return tensor.detach()
                 policy='ssd'
@@ -100,8 +122,8 @@ class SavedTensorStore:
             self.cache_hits+=1
             return hit
         size=tensor.numel()*tensor.element_size()
-        memory=psutil.virtual_memory()
-        available=max(0,memory.available-self.config.ram_reserve_fraction*memory.total)
+        free,total=host_memory()
+        available=max(0,free-self.config.ram_reserve_fraction*total)
         host=policy=="host" and self.host_current+size<=self.config.host_budget_mb*1024**2 and size<=available
         if not host:
             parent=Path(self.temp.name)
@@ -178,7 +200,8 @@ def restore_rng(state):
 
 
 def storage_policies(config,cuda):
-    return ["auto","host","ssd"] if config.storage=="auto" and cuda else [config.storage]
+    if config.storage!='auto':return [config.storage]
+    return ["auto","host","ssd"] if cuda else ["auto","ssd"]
 
 
 class DeviceSampler:
@@ -226,8 +249,8 @@ def _run_training(model,callback,rebuild,config,on_replay):
         storage=SavedTensorStore(config,policy,persistent);del persistent;failed=False
         try:
             with (nullcontext() if policy=="resident" else storage):result=callback()
-        except torch.cuda.OutOfMemoryError as exc:
-            if number==len(policies)-1:raise
+        except (RuntimeError,MemoryError) as exc:
+            if not allocation_failure(exc) or number==len(policies)-1:raise
             attempts.append(dict(policy=policy,status="OOM_REPLAY_FROM_INITIAL_STATE"))
             exc.__traceback__=None;failed=True
         if failed:
@@ -246,6 +269,8 @@ def _run_training(model,callback,rebuild,config,on_replay):
         details=dict(storage_attempts=attempts,wall_seconds=time.perf_counter()-start,
             dtype_policy="unchanged",logical_batch_and_updates="unchanged",cuda_available=cuda,
             cuda_bitwise_parity_verified=False,numerical_overflow_policy="fail; do not silently change precision or learning rate")
+        available,total=host_memory()
+        details['host_memory']=dict(available_bytes=available,effective_limit_bytes=total,container_limit_respected=True)
         details["storage_contract"]="same dtype, tensor values, masks, optimizer updates and logical batch; CUDA parity requires host hardware verification"
         if cuda:
             end.record();torch.cuda.synchronize(device);free,total=torch.cuda.mem_get_info(device)

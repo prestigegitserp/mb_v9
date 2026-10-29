@@ -33,8 +33,11 @@ def build_jobs(pub, base, ks, mode="hybrid"):
         insert(tag + "__" + method, c)
 
     import random
-    from .losses import coefficients,trial_values
+    from .losses import coefficients,trial_values,coefficient_overrides
     joint_rng=random.Random(base.v7.search_seed)
+    import json
+    from pathlib import Path
+    prior_records=json.loads((Path(__file__).resolve().parents[1]/"examples/v7/validated_candidates.json").read_text())
     records = historical_records()
     allowed = {f.name for f in fields(ModelConfig)}
     for method in base.methods:
@@ -58,12 +61,16 @@ def build_jobs(pub, base, ks, mode="hybrid"):
         modern = replace(original, lineage="v7", response_shrinkage=True,
                          prediction_loss_units="mse", full_history_weight=0.)
         model_trial(method, "modern_mechanism", modern)
+        prior=ModelConfig(**{k:v for k,v in prior_records[method]["config"].items() if k in allowed})
+        for key in ("max_epochs","steps_per_epoch","eval_every","router_expert_epochs","router_epochs","shape_epochs","graph_probes","cg_steps","posterior_probes","posterior_cg_steps","probability_fit"):
+            setattr(prior,key,getattr(original,key))
+        model_trial(method,"prior_validated_v6",prior)
         model_trial(method, "gated_context", replace(modern,history_signal="gated"))
         model_trial(method, "mixed_context", replace(modern,history_signal="mixed"))
         # Joint coefficient draws are prioritized before exhaustive enumeration.
         for trial in range(4):
             values={name:joint_rng.choice(trial_values(modern,name)) for name in coefficients(modern)}
-            model_trial(method,"loss_joint_"+str(trial),replace(modern,**values))
+            model_trial(method,"loss_joint_"+str(trial),replace(modern,**coefficient_overrides(modern,values)))
         model_trial(method, "raw_history_signal", replace(modern,history_signal="raw"))
         model_trial(method, "compact_regularized", replace(modern, hidden_dim=128,
                     collaborative_l2=100., mechanism_auxiliary_weight=.25,
@@ -179,8 +186,9 @@ def build_jobs(pub, base, ks, mode="hybrid"):
     def order(item):
         tag=item[0]
         return (0 if tag.startswith("default__") else 1 if tag.startswith("historical_")
-                else 2 if tag.startswith("gated_context") else 3 if tag.startswith("loss_joint_")
-                else 4 if tag.startswith(mechanism_prefixes) else 5)
+                else 2 if tag.startswith("prior_validated_v6")
+                else 3 if tag.startswith("gated_context") else 4 if tag.startswith("loss_joint_")
+                else 5 if tag.startswith(mechanism_prefixes) else 6)
     for tag,cfg in sorted(jobs.items(),key=order):
         applicable=tuple(m for m in cfg.methods if not limit or counts[m]<limit)
         if applicable:

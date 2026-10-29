@@ -6,7 +6,7 @@ from v7.aggregation import pair_dot,sparse_encoder_forward
 from v7.history import HistoryEncoder
 
 
-@pytest.mark.parametrize("namespace",["v3","v4","v7"])
+@pytest.mark.parametrize("namespace",["v3","v4","v52","v7"])
 def test_fused_history_matches_explicit_edge_tensor_outputs_and_gradients(namespace):
     from importlib import import_module
     torch.manual_seed(81);torch.set_num_threads(1)

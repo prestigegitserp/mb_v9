@@ -54,11 +54,12 @@ def test_gates_are_trainable_and_exclude_queries(method):
     for x,y in zip(before,after):torch.testing.assert_close(x,y,atol=0,rtol=0)
 
 
-@pytest.mark.parametrize('method,modern',[('Method1',True),('Method2',True),('Method3',False),('Method4',False),('Method5',False)])
+@pytest.mark.parametrize('method,modern',[('Method1',True),('Method2',True),('Method3',False),('Method4',False),('Method5',False),('Method1','v52'),('Method2','v52'),('Method6','v52'),('Method7','v52')])
 def test_interrupted_optimizer_resume_matches_uninterrupted(method,modern,tmp_path,monkeypatch):
     torch.set_num_threads(1)
     data=validation_roles(tiny_data(),StudyConfig(protocol='aemc-paper',split_validation_roles=False))
     cfg=small(method,modern,max_epochs=5,val_patience=10,router_enabled=False,response_shrinkage=False)
+    if isinstance(modern,str):cfg=replace(cfg,lineage=modern)
     def build(folder):
         model=instantiate(data,cfg,41);model._v7_artifact_dir=folder
         model._v7_resume=True;model._v7_recovery_interval=1

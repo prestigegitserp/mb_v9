@@ -15,7 +15,7 @@ def memory_snapshot():
 
 def release_model(model, folder=None):
     before = memory_snapshot()
-    if model is not None:
+    if model is not None and "_parameters" in model.__dict__:
         model.zero_grad(set_to_none=True)
         if hasattr(model, 'clear_cache'): model.clear_cache()
         # Called only after prediction archives/checkpoints have been saved.

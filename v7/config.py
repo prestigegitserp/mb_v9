@@ -22,7 +22,7 @@ def implementation_signature():
         digest.update(path.name.encode())
         digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
     root = Path(__file__).resolve().parents[1]
-    dependencies = [root / "examples/v7/historical_incumbents.json", root / "vendor_method10/method10.py"]
+    dependencies = [root / "examples/v7/historical_incumbents.json", root / "vendor_method10/method10.py", root / "examples/v7/validated_candidates.json"]
     for namespace in ("v3", "v4", "v52"):
         dependencies.extend(sorted((root / namespace).glob("*.py")))
     for path in dependencies:

@@ -1,0 +1,119 @@
+{
+  "pilot": {
+    "sha256": "cc3c1dc926bc6436d312451b4c1ba66d3174ef66f5961e7179abbb59c234a9b6",
+    "bytes": 195224484,
+    "zip_entries": 442,
+    "crc": "PASS",
+    "selected_rows": 14,
+    "max_rmse_difference": 1.1102230246251565e-16,
+    "gpu_names": [
+      "NVIDIA GeForce RTX 5090"
+    ],
+    "resource_records": 20,
+    "all_actual_cuda0": true,
+    "cpu_fallback_count": 0,
+    "peak_allocated_bytes": 760926208,
+    "peak_reserved_bytes": 1442840576,
+    "metrics": [
+      {
+        "method": "AEMC-NE",
+        "reported_test_RMSE": 0.9965453853962822,
+        "recomputed_test_RMSE": 0.9965453853962822,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "AutoRec",
+        "reported_test_RMSE": 0.8966358532544446,
+        "recomputed_test_RMSE": 0.8966358532544446,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "BiasMF",
+        "reported_test_RMSE": 0.9548213558392328,
+        "recomputed_test_RMSE": 0.9548213558392327,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "MBMF-C",
+        "reported_test_RMSE": 0.9961865180961076,
+        "recomputed_test_RMSE": 0.9961865180961077,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "MBMF-F",
+        "reported_test_RMSE": 0.9369040184029896,
+        "recomputed_test_RMSE": 0.9369040184029895,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "MBMF-N",
+        "reported_test_RMSE": 0.934427543762982,
+        "recomputed_test_RMSE": 0.934427543762982,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "MF",
+        "reported_test_RMSE": 0.9350389493884236,
+        "recomputed_test_RMSE": 0.9350389493884236,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "Method1",
+        "reported_test_RMSE": 0.9294167308362848,
+        "recomputed_test_RMSE": 0.9294167308362847,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "Method2",
+        "reported_test_RMSE": 0.9109331635172152,
+        "recomputed_test_RMSE": 0.9109331635172151,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "Method3",
+        "reported_test_RMSE": 0.931616847016141,
+        "recomputed_test_RMSE": 0.931616847016141,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "Method4",
+        "reported_test_RMSE": 0.9084698305361322,
+        "recomputed_test_RMSE": 0.9084698305361322,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "Method5",
+        "reported_test_RMSE": 0.9098078798396336,
+        "recomputed_test_RMSE": 0.9098078798396335,
+        "absolute_difference": 1.1102230246251565e-16
+      },
+      {
+        "method": "Method6",
+        "reported_test_RMSE": 0.9100160247735858,
+        "recomputed_test_RMSE": 0.9100160247735858,
+        "absolute_difference": 0.0
+      },
+      {
+        "method": "Method7",
+        "reported_test_RMSE": 0.907008658637702,
+        "recomputed_test_RMSE": 0.907008658637702,
+        "absolute_difference": 0.0
+      }
+    ]
+  },
+  "method10": {
+    "archive_sha256": "d39ac6af5eb69d4e32f14df954ad5d0c99321d2068717c6704ad516a57a742d3",
+    "bytes": 173878,
+    "zip_entries": 39,
+    "crc": "PASS",
+    "member": "MBMF-SI2/v9/method10.py",
+    "member_bytes": 16106,
+    "member_sha256": "c76754f899c31a99a99eb99bfb8291b97e40d7eeda463f58ed47d6ae86e19c77",
+    "vendor_bytes_identical": true
+  },
+  "parent_commit": "7fbce77f0d07a057083e2bab68327780986cafda",
+  "frozen_parent_files_verified": 407,
+  "archived_test_audited_only": true,
+  "archived_test_used_for_v7_selection": false,
+  "new_gpu_benchmark": false
+}
