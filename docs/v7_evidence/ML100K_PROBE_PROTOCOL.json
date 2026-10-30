@@ -1,0 +1,86 @@
+{
+  "candidate_trainings": 27,
+  "comparison": "within-method bounded validation development; not equal total compute",
+  "study_protocols": [
+    {
+      "study": "probe_final",
+      "protocol": {
+        "purpose": "development validation only; not TEST or paper reproduction",
+        "arguments": {
+          "data_root": "/workspace/scratch/v7_continue/datasets",
+          "output": "/workspace/scratch/v7_continue/probe_final",
+          "epochs": 60,
+          "steps": 2,
+          "hidden": 64,
+          "k": 20,
+          "split_seed": 2026,
+          "model_seed": 1,
+          "threads": 2,
+          "device": "cpu",
+          "families": "reference,prior,gated",
+          "methods": "Method1,Method2,Method3,Method4,Method5,Method6,Method7",
+          "baselines": true,
+          "method8": true,
+          "baseline_epochs": 100
+        },
+        "source_sha256": "182ab48630d4f03474b06e33e1e8d4bbafe3d49bc2c4cf428e9fafecfd251e74",
+        "test_evaluated": false,
+        "budgets": "same caps within Methods1-7; architecture and early stopping can change actual compute",
+        "variants": "gated starts from the same prior config and changes history_signal only"
+      },
+      "completion": {
+        "completed": true,
+        "elapsed_seconds": 707.4331070329999,
+        "candidate_trainings": 24,
+        "test_evaluated": false,
+        "source_sha256": "182ab48630d4f03474b06e33e1e8d4bbafe3d49bc2c4cf428e9fafecfd251e74"
+      }
+    },
+    {
+      "study": "probe_modern_m3",
+      "protocol": {
+        "purpose": "development validation only; not TEST or paper reproduction",
+        "arguments": {
+          "data_root": "/workspace/scratch/v7_continue/datasets",
+          "output": "/workspace/scratch/v7_continue/probe_modern_m3",
+          "epochs": 60,
+          "steps": 2,
+          "hidden": 64,
+          "k": 20,
+          "split_seed": 2026,
+          "model_seed": 1,
+          "threads": 2,
+          "device": "cpu",
+          "families": "modern,gated",
+          "methods": "Method3",
+          "baselines": false,
+          "method8": false,
+          "baseline_epochs": 100
+        },
+        "source_sha256": "182ab48630d4f03474b06e33e1e8d4bbafe3d49bc2c4cf428e9fafecfd251e74",
+        "driver_sha256": "d383621f95112c7e4c9d7113981b3891894fb8171e9bedebeef8b69f68738e03",
+        "test_evaluated": false,
+        "budgets": "same caps within Methods1-7; architecture and early stopping can change actual compute",
+        "variants": "modern maps the prior to v7/MSE; gated uses that modern architecture and changes history_signal only",
+        "gate_scope": "historical architectures do not implement the new gate; use modern versus gated to isolate it"
+      },
+      "completion": {
+        "completed": true,
+        "elapsed_seconds": 81.99373983100031,
+        "candidate_trainings": 2,
+        "test_evaluated": false,
+        "source_sha256": "182ab48630d4f03474b06e33e1e8d4bbafe3d49bc2c4cf428e9fafecfd251e74"
+      }
+    }
+  ],
+  "first_driver_commit": "c38ef9494ec95e855a29dbfecd5abf151a753779",
+  "first_driver_inactive_gate_excluded": true,
+  "modern_method3_controls_executed_separately": true,
+  "warm_start_control": "extra AutoRec initialization budget is recorded, not an author MovieLens implementation claim",
+  "test_evaluated": false,
+  "paper_reproduction_established": false,
+  "rtx4090_benchmark": false,
+  "all_six_datasets_fully_trained": false,
+  "all_candidate_results_retained": true,
+  "limitation": "One split/seed, short caps, validation-selected observations; use locked TEST and independent splits for claims"
+}

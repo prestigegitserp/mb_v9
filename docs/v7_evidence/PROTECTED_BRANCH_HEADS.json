@@ -1,0 +1,57 @@
+{
+  "captured_after_authorized_v7_recreation": true,
+  "protected": [
+    {
+      "name": "main",
+      "sha": "ab18aa2f52d11ef2227c720116492c1497306629"
+    },
+    {
+      "name": "v2-development",
+      "sha": "c4d58285d36e27d5e86b6575dbdece881a85e165"
+    },
+    {
+      "name": "v2",
+      "sha": "61097d772620e97fff7ec64a9f21b74a6eb9f913"
+    },
+    {
+      "name": "v3-development",
+      "sha": "b32636cb91af4a03e0a61526df63705feb415526"
+    },
+    {
+      "name": "v3",
+      "sha": "3b1af9306a9ef9da541c5b0fabbe74dbafeb3011"
+    },
+    {
+      "name": "v4-development",
+      "sha": "3e8bd23024a4c2f934a934695a86b89f737d5927"
+    },
+    {
+      "name": "v4",
+      "sha": "3e8bd23024a4c2f934a934695a86b89f737d5927"
+    },
+    {
+      "name": "v5-development",
+      "sha": "b13bf6230f6aa7e97658df34e867bdf05f45a8c8"
+    },
+    {
+      "name": "v5-fix-large-csv-export",
+      "sha": "1513186b214662f47cab3b45e38c354407801e04"
+    },
+    {
+      "name": "v5",
+      "sha": "2f6438f4e0723fda45f7e5ea0a1283ec9dc254b6"
+    },
+    {
+      "name": "v5.2-development",
+      "sha": "20320dad78bd88d73a6cd9bd5810a3991e0d9a86"
+    },
+    {
+      "name": "v6-development",
+      "sha": "6b5ca87c617d696143279a52197ced295a6524b9"
+    },
+    {
+      "name": "v6",
+      "sha": "7fbce77f0d07a057083e2bab68327780986cafda"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "full_suite_passed": 535,
+  "full_suite_subtests_passed": 5,
+  "full_suite_skipped": 5,
+  "full_suite_duration_seconds": 301.75,
+  "after_collection_added_tests": "Recipe TRAIN-evaluation option and missing-raw preflight; included in final targeted check",
+  "final_targeted_passed": 74,
+  "final_targeted_skipped": 2,
+  "initial_resource_architecture_checks_passed": 31,
+  "skip_reasons": [
+    "4 tests require real CUDA; no new GPU benchmark",
+    "1 frozen V4 default-version assertion superseded by V5 dispatch"
+  ],
+  "gpu_benchmark_performed": false,
+  "version": "7.0.0",
+  "method8_scientific_source_unchanged": true
+}

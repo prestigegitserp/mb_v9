@@ -1,0 +1,14 @@
+{
+  "real_interruption_recovered": true,
+  "completed_jobs_skipped": 11,
+  "resumed_candidate": "prior__Method5",
+  "epoch_recovery_messages": [
+    "[RESUME] optimizer recovery at epoch 40"
+  ],
+  "final_status": "all 24 original probe jobs completed; additional 2 modern Method3 controls plus 1 AEMC warm control completed",
+  "discarded_jobs_retrained": false,
+  "source_scientific_code_commit": "c38ef9494ec95e855a29dbfecd5abf151a753779",
+  "original_driver_commit": "c38ef9494ec95e855a29dbfecd5abf151a753779",
+  "weights_equivalence_for_interrupts": "separately checked by exact CPU epoch/OOF recovery tests",
+  "gpu_resume_benchmarked": false
+}

@@ -1,0 +1,44 @@
+{
+  "device": "CPU",
+  "torch": "2.10.0+cpu",
+  "entities": 1000,
+  "counterparts": 2000,
+  "edges": 10000,
+  "hidden": 16,
+  "native_matmul_allocations": [
+    {
+      "name": "aten::mm",
+      "shapes": [
+        [
+          1000,
+          16
+        ],
+        [
+          16,
+          2000
+        ]
+      ],
+      "cpu_memory_bytes": 8000000
+    },
+    {
+      "name": "aten::mm",
+      "shapes": [
+        [
+          2000,
+          1000
+        ],
+        [
+          1000,
+          16
+        ]
+      ],
+      "cpu_memory_bytes": 128000
+    }
+  ],
+  "bounded_matmul_allocations": [],
+  "native_dense_value_gradient_bytes": 8000000,
+  "new_dense_value_gradient_bytes": 0,
+  "first_order_gradient_parity": "tested with duplicates and finite differences",
+  "scientific_source_sha256": "98fea1936fecb35f943645865f4173ec6c96d5d2203effd29f3f14d83cbb735c",
+  "cuda_benchmark": false
+}

@@ -1,0 +1,22 @@
+{
+  "pilot_filename": "pilot_2.zip",
+  "pilot_sha256": "cc3c1dc926bc6436d312451b4c1ba66d3174ef66f5961e7179abbb59c234a9b6",
+  "pilot_entries": 442,
+  "source_method10_sha256": "c76754f899c31a99a99eb99bfb8291b97e40d7eeda463f58ed47d6ae86e19c77",
+  "all_14_rmse_recomputed": true,
+  "test_never_used_for_v7_selection": true,
+  "previous_download_alias": "pilot_2(1).zip",
+  "pilot_library_file_id": "libfile_a04bb7973cac81919624b1e309e258f5",
+  "pilot_size_bytes": 195224484,
+  "pilot_crc_check": "PASS",
+  "method10_archive_filename": "MBMF-SI2_Method10_v1.0.0.zip",
+  "method10_archive_sha256": "d39ac6af5eb69d4e32f14df954ad5d0c99321d2068717c6704ad516a57a742d3",
+  "method10_library_file_id": "libfile_7127b09fc77c8191921287a08ba11a83",
+  "method10_archive_size_bytes": 173878,
+  "method10_archive_entries": 39,
+  "method10_crc_check": "PASS",
+  "original_member": "MBMF-SI2/v9/method10.py",
+  "original_member_bytes": 16106,
+  "re_downloaded_and_reverified": true,
+  "all_407_parent_blobs_unchanged": true
+}

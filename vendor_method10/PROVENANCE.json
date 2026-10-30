@@ -1,0 +1,15 @@
+{
+  "public_alias": "Method8",
+  "original_name": "Method10",
+  "original_version": "1.0.0",
+  "archive": "MBMF-SI2_Method10_v1.0.0.zip",
+  "member": "MBMF-SI2/v9/method10.py",
+  "source_bytes": 16106,
+  "source_sha256": "c76754f899c31a99a99eb99bfb8291b97e40d7eeda463f58ed47d6ae86e19c77",
+  "source_modified": false,
+  "other_uploaded_models_imported": false,
+  "trainer": "the original train_method10 function",
+  "integration": "v7/method8.py only adapts naming, seeded construction, metadata and save/load dispatch",
+  "hyperparameters": "Original Method10Config defaults are preserved in the vendor. Explicit K/budget/search controls use its existing configuration fields.",
+  "resume": "Finished candidates are reused. Interrupted Method8 candidates restart through its original trainer; optimizer-level recovery would require changing or replacing that trainer and is not claimed."
+}

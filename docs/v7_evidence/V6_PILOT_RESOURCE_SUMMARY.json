@@ -1,0 +1,14 @@
+{
+  "source": "20 supplied V6 mechanisms/*/DEVICE_AND_STORAGE.json; existing results, not a new GPU benchmark",
+  "candidate_records": 20,
+  "gpu_names": [
+    "NVIDIA GeForce RTX 5090"
+  ],
+  "all_actual_cuda0": true,
+  "cpu_fallbacks": 0,
+  "peak_allocated_bytes": 760926208,
+  "peak_reserved_bytes": 1442840576,
+  "correction": "GPU model is recorded in DEVICE_AND_STORAGE.json, even though environment metadata omitted it",
+  "rtx4090_benchmark": false,
+  "not_a_bound_for_other_studies": true
+}

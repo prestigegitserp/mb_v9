@@ -1,0 +1,22 @@
+{
+  "plot": "V7_VALIDATION_OBJECTIVE_PREVIEW.svg",
+  "data": "V7_VALIDATION_OBJECTIVE_POINTS.csv",
+  "source": "prior controls in the controlled ML-100K validation probe",
+  "models": [
+    "Method1",
+    "Method2",
+    "Method4",
+    "Method5"
+  ],
+  "train_only": true,
+  "validation_only": true,
+  "test_evaluated": false,
+  "epochs_cap": 60,
+  "steps_per_epoch": 2,
+  "hidden_dim": 64,
+  "single_split": 2026,
+  "model_seed": 1,
+  "source_model_commit": "c38ef9494ec95e855a29dbfecd5abf151a753779",
+  "curve_mean": "descriptive means at recorded epochs; not independent confirmation or TEST results",
+  "rendering": "PNG visually inspected; vector SVG and raw points saved"
+}

@@ -1,0 +1,13 @@
+{
+  "action": "deleted_and_recreated_v7-development",
+  "base_commit": "7fbce77f0d07a057083e2bab68327780986cafda",
+  "workflow_run": 40904998123,
+  "job": 123557220684,
+  "conclusion": "success",
+  "proof": [
+    "AUTHORIZED_RESET_PASS",
+    "TEMPORARY_BRANCH_REMOVED"
+  ],
+  "temporary_branch": "v7-reset-once-20261029",
+  "previous_v7_head_was_identical_to_v6": true
+}
