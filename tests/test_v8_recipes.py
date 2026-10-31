@@ -52,3 +52,33 @@ def test_persian_checklist_is_utf8_with_a_windows_legacy_default(tmp_path,monkey
     monkeypatch.setattr(Path,'write_text',legacy_default)
     build_checklist(tmp_path)
     assert 'وضعیت' in (tmp_path/'MANUSCRIPT_CHECKLIST.md').read_bytes().decode('utf-8')
+
+
+def test_implicit_smoke_cannot_relabel_an_existing_research_study(tmp_path):
+    a,path=resolve_recipe(parser().parse_args(['--stage','plan','--output',str(tmp_path)]))
+    settings={k:str(v) if isinstance(v,Path) else v for k,v in vars(a).items()}
+    path.write_text(json.dumps({'settings':settings}),encoding='utf-8')
+    before=path.read_bytes()
+    with pytest.raises(ValueError,match='fresh'):
+        resolve_recipe(parser().parse_args(['--stage','smoke','--output',str(tmp_path)]))
+    assert path.read_bytes()==before
+
+
+def test_curves_reuses_saved_study_without_requesting_training(tmp_path,monkeypatch):
+    import paper_v8
+    commands=[]
+    monkeypatch.setattr(paper_v8.subprocess,'run',lambda command,**kw:commands.append(command))
+    assert main(['--stage','curves','--output',str(tmp_path),'--dry-run'])==0
+    assert not commands
+    assert not (tmp_path/'V8_RECIPE.json').exists()
+    a,_=resolve_recipe(parser().parse_args(['--stage','curves','--output',str(tmp_path)]))
+    command=build_commands(a)[0]
+    assert command[2]=='curves' and '--resume' not in command
+
+
+def test_windows_display_is_a_literal_powershell_command(monkeypatch):
+    import paper_v8
+    monkeypatch.setattr(paper_v8.sys,'platform','win32')
+    rendered=paper_v8.command_text([r'C:\Program Files\Python\python.exe','paper_v8.py',
+                                    '--output',r"C:\O'Brien\$study"])
+    assert rendered==r"& 'C:\Program Files\Python\python.exe' 'paper_v8.py' '--output' 'C:\O''Brien\$study'"

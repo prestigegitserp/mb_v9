@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parent
 DATASETS=('synthetic','ml-100k','ml-1m','ml-10m','jester','bookcrossing')
 STAGES=('plan','smoke','pilot','develop','scan','final','test','lossstudy','ablation',
         'ablation-fixed','kstudy','sparsity','density','convergence','calibration',
-        'temporal','report','audit','status','all')
+        'temporal','report','curves','audit','status','all')
 DEFAULTS=dict(profile='common',datasets='ml-100k',data_root='./datasets',device='auto',
     threads=4,storage='auto',host_budget_mb=512,ssd_budget_gb=8.,cache_dir='./v8_ssd_cache',
     quick=False,no_plots=False,epoch_train_rmse=False,deterministic=False,
@@ -53,6 +53,15 @@ def parser():
     return p
 
 
+def command_text(command):
+    """Print a literal PowerShell command on Windows, a shell command elsewhere."""
+    if sys.platform=='win32':
+        # The call operator is required for a quoted executable path. Single
+        # quotes also keep $, backticks and apostrophes in paths literal.
+        return '& '+' '.join("'"+str(arg).replace("'","''")+"'" for arg in command)
+    return shlex.join(command)
+
+
 def resolve_recipe(a):
     given=vars(a).copy();root=a.output.resolve()
     if given.get('data_root') is not None:
@@ -67,6 +76,8 @@ def resolve_recipe(a):
     for key,value in DEFAULTS.items():
         if values.get(key) is None:values[key]=value
     if a.stage=='smoke':values['quick']=True
+    if saved and bool(values['quick'])!=bool(saved.get('quick',False)):
+        raise ValueError('Smoke and research runs require a fresh --output; the saved study cannot change quick mode')
     profile=values['profile']
     values['split_seeds']=values.get('split_seeds') or (','.join(map(str,range(4101,4121))) if profile=='paper' else '2026')
     if values.get('manual_seed') is not None:
@@ -125,7 +136,7 @@ def build_commands(a):
         for stage in requested:
             command={'pilot':'main','smoke':'main','develop':'scan','test':'final'}.get(stage,stage)
             extra=['--scan-only'] if stage=='scan' else []
-            if command not in ('plan','report','audit'):extra+=['--resume']
+            if command not in ('plan','report','curves','audit'):extra+=['--resume']
             commands.append([sys.executable,str(ROOT/'run_v8.py'),command,*common,*extra])
     return commands
 
@@ -151,7 +162,7 @@ def main(argv=None):
             settings.update({k:getattr(a,k) for k in ('data_root','cache_dir','device','threads','storage','host_budget_mb','ssd_budget_gb','no_plots','epoch_train_rmse')})
             recipe_path.write_text(json.dumps(dict(version=8,settings=settings),indent=2)+'\n')
     for command in commands:
-        print(shlex.join(command),flush=True)
+        print(command_text(command),flush=True)
         if a.dry_run:continue
         started=time.time();result=subprocess.run(command,cwd=ROOT)
         with (a.output/'V8_RECIPE_RUNS.jsonl').open('a',encoding='utf8') as f:
@@ -164,7 +175,7 @@ def main(argv=None):
         datasets=DATASETS if a.datasets=='all' else a.datasets.split(',')
         for dataset in datasets:build_checklist(a.output/dataset)
         if a.stage=='scan':
-            print('[VAL ONLY] TEST has not run. Next: '+shlex.join([sys.executable,'paper_v8.py','--stage','test','--output',str(a.output)]))
+            print('[VAL ONLY] TEST has not run. Next: '+command_text([sys.executable,'paper_v8.py','--stage','test','--output',str(a.output)]))
         elif a.stage in ('develop','final','test','pilot','smoke','all'):
             print('[TEST OUTPUTS] See <output>/<dataset>/MANUSCRIPT_CHECKLIST.md and publication/figures/selected_test_rmse.png')
     return 0

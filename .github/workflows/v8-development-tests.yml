@@ -1,9 +1,9 @@
 name: V8 frozen parents, scientific contracts and locked TEST
 on:
   push:
-    branches: [v8_development]
+    branches: [v8_development, v8]
   pull_request:
-    branches: [v8_development]
+    branches: [v8_development, v8]
   workflow_dispatch:
 permissions:
   contents: read
@@ -30,6 +30,6 @@ jobs:
       - run: python -m pip install -r requirements_v8.txt
       - run: python verify_v7.py
       - run: python verify_v8.py
-      - run: python -m pytest tests/test_v8_scientific_contracts.py tests/test_v8_workflow.py tests/test_v8_recipes.py tests/test_v8_resume.py tests/test_v8_reporting.py -q -ra -p no:cacheprovider
+      - run: python -m pytest tests/test_v8_scientific_contracts.py tests/test_v8_workflow.py tests/test_v8_recipes.py tests/test_v8_resume.py tests/test_v8_reporting.py tests/test_v8_estimate.py -q -ra -p no:cacheprovider
       - if: runner.os == 'Linux'
         run: python -m pytest tests -q -ra -p no:cacheprovider
