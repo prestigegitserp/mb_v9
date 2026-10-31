@@ -1,0 +1,35 @@
+{
+  "protocol": "aemc-paper",
+  "mf_max_epochs": 1000,
+  "mbmf_max_epochs": 5000,
+  "models": {
+    "Method1": {
+      "hidden_dim": 256,
+      "batch_size": 4096
+    },
+    "Method2": {
+      "hidden_dim": 256,
+      "batch_size": 4096
+    },
+    "Method3": {
+      "hidden_dim": 32,
+      "batch_size": 4096
+    },
+    "Method4": {
+      "hidden_dim": 32,
+      "batch_size": 4096
+    },
+    "Method5": {
+      "hidden_dim": 256,
+      "batch_size": 4096
+    },
+    "Method6": {
+      "hidden_dim": 256,
+      "batch_size": 4096
+    },
+    "Method7": {
+      "hidden_dim": 256,
+      "batch_size": 4096
+    }
+  }
+}

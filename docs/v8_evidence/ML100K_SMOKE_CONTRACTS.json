@@ -1,0 +1,32 @@
+{
+  "dataset": "ml-100k",
+  "purpose": "three-epoch functional smoke; NOT manuscript accuracy",
+  "device": "cpu",
+  "cuda_tested": false,
+  "final_method_count": 15,
+  "final_rows": 15,
+  "proposed_methods": [
+    "Method1",
+    "Method2",
+    "Method3",
+    "Method4",
+    "Method5",
+    "Method6",
+    "Method7",
+    "Method8"
+  ],
+  "test_prediction_count": 9980,
+  "scan_rows": 15,
+  "scan_has_test_columns": false,
+  "figure_counts": {
+    "png": 36,
+    "pdf": 36,
+    "svg": 36
+  },
+  "workbook_created": true,
+  "probability_sum_max_error": 1.1920928955078125e-07,
+  "probability_point_mean_max_error": 7.152557373046875e-07,
+  "variance_decomposition_max_error": 5.960464477539063e-08,
+  "source_snapshot": "Independent execution snapshot before adding the incumbent search candidate; numerical model modules match the exported probe hashes",
+  "scope": "All 15 methods finish scan/final; three-initialization MBMF lock is independently tested on a tiny cohort."
+}

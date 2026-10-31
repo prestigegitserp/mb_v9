@@ -1,0 +1,48 @@
+# نسخه۸، شاخهٔ v8_development
+
+این شاخه از انتشار `v7@cbc8d2fb36c7abf599ccb8d743497f3322ec4e7a` شروع شده است. تمام ۵۴۸ فایل موجود در درخت آن انتشار، از جمله فایل‌ها و ورودی‌های نسخه‌های۱تا۷، بدون تغییر باقی می‌مانند. ورودی جدید `run_v8.py` و راه‌انداز پیشنهادی `paper_v8.py` است. هشت نام عمومی `Method1` تا `Method8` و هفت baseline حفظ شده‌اند؛ Method8 همان منبع اصلی Method10 بدون تغییر است.
+
+- [راهنمای قدم‌به‌قدم از smoke تا TEST و مجموعهٔ مقاله](docs/V8_RUNBOOK_FA.md)
+- [معماری، ضرایب لاس، سهم هندسه و محدودیت ادعاها](docs/V8_MODEL_REVIEW_FA.md)
+- [آزمون‌ها و نتایج واقعی توسعه](docs/V8_VALIDATION_FA.md)
+- [نوت‌بوک آمادهٔ مراحل](notebooks/V8_Research_Workflow_FA.ipynb)
+- [قالب‌های سه پروفایل و شش دیتاست](examples/v8)
+
+دریافت در پوشهٔ جدا از نسخه۷:
+
+```bash
+git clone --branch v8_development --single-branch https://github.com/prestigegitserp/mb_v9.git mb_v9_v8
+cd mb_v9_v8
+python -m pip install -r requirements_v8.txt
+python verify_v8.py
+```
+
+## روشن‌ترین مسیر تنظیم و TEST
+
+```bash
+python paper_v8.py --stage scan --profile common --budget light --datasets ml-100k --data-root ./datasets --output ./results_v8/tuned_light --device cuda
+python paper_v8.py --stage test --output ./results_v8/tuned_light
+python paper_v8.py --stage status --output ./results_v8/tuned_light
+```
+
+در فرمان دوم، تنظیمات مطالعهٔ اول خودکار از `V8_RECIPE.json` خوانده می‌شود. `test` نام روشن‌تر `final` است. `scan` فقط TRAIN/VAL است؛ `test` پیش‌بینی TEST، جدول اصلی و نمودارهای TEST می‌سازد. هر دو مرحله با `--stage develop` در یک فرمان هم اجرا می‌شوند.
+
+پس از موفقیت TEST:
+
+- جدول: `results_v8/tuned_light/ml-100k/final_locked_test_summary.csv`
+- شکل اصلی: `results_v8/tuned_light/ml-100k/publication/figures/selected_test_rmse.png`
+- سایر شکل‌های TEST، در PNG/PDF/SVG: همان پوشهٔ `publication/figures/`
+- Excel: `results_v8/tuned_light/ml-100k/publication/research_tables.xlsx`
+- وضعیت واقعی تکمیل: `results_v8/tuned_light/ml-100k/MANUSCRIPT_CHECKLIST.md`
+
+اگر `--no-plots` استفاده کرده‌اید:
+
+```bash
+python paper_v8.py --stage report --output ./results_v8/tuned_light --plots
+```
+
+این فرمان آموزش نمی‌دهد. اگر TEST اجرا نشده باشد، نمودار TEST از دادهٔ VAL ساخته نمی‌شود.
+
+نسخه۸ خطای initialization در finalِ MBMF را با یکسان‌سازی **هویت مؤثر هر کاندیدا** رفع می‌کند؛ کنترل تطابق optimizer، پارامترها و داده خاموش نشده است. مشکل fragmentation گزارش و وزن فونت نیز رفع شده‌اند. بهبود مدل‌های۱تا۷ شامل اعتماد آموختنی به correction هندسی و تنظیم مشترک پاسخ/هندسه روی VAL است. برازش احتمال متد۷ پس از منجمدشدن میانگین انجام می‌شود. ضرایب لاس در registry و گزارش پوشش جست‌وجو مشخص‌اند و ضریب جهت فعال متد۷ نیز ثبت می‌شود.
+
+بهبود VAL، smoke موفق یا تکمیل فایل‌ها، تضمین برتری TEST یا پذیرش Q1 نیست. نتایج توسعه با همان برچسب منتشر می‌شوند؛ ادعای مقاله نیاز به baseline قوی، تکرار و تحلیل سهم سازوکار دارد.
