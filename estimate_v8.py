@@ -17,11 +17,11 @@ from v9.search import candidate_count
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--dataset',default='ml-100k')
+    parser.add_argument('--dataset',choices=('synthetic','ml-100k','ml-1m','ml-10m','jester','bookcrossing'),default='ml-100k')
     parser.add_argument('--profile',choices=['common','development','paper'],default='common')
     parser.add_argument('--data-root',default='./datasets')
     parser.add_argument('--split-seeds');parser.add_argument('--model-seeds');parser.add_argument('--k')
-    parser.add_argument('--calibration',type=Path,help='candidate_validation_runs.csv measured on YOUR RTX 4090')
+    parser.add_argument('--calibration',type=Path,help='candidate_validation_runs.csv measured on your own hardware')
     parser.add_argument('--search-jobs-per-method',type=int)
     parser.add_argument('--max-epochs',type=int)
     parser.add_argument('--baseline-max-epochs',type=int)
@@ -32,6 +32,8 @@ def main(argv=None):
     a=parser.parse_args(argv)
     if any(value is not None and value<1 for value in (a.max_epochs,a.baseline_max_epochs,a.steps_per_epoch)):
         parser.error('Training caps must be positive')
+    if a.search_jobs_per_method is not None and a.search_jobs_per_method<0:
+        parser.error('Search limit must be nonnegative')
     if a.dataset!="ml-100k" and not a.calibration:parser.error("Other datasets require their own measured --calibration CSV")
     root=Path(__file__).resolve().parent
     payload=json.loads((root/'examples/v8'/a.profile/(a.dataset+'.json')).read_text())
@@ -48,7 +50,8 @@ def main(argv=None):
          methods=a.methods,eval_every=None,quick=False,resume=True)
     options=SimpleNamespace(study=study,execution=ExecutionConfig(),max_epochs=a.max_epochs,baseline_max_epochs=a.baseline_max_epochs,
          steps_per_epoch=a.steps_per_epoch,no_plots=True,retain_candidates='metrics',v8_recovery_interval=5,v8_isolate_jobs=False)
-    calibration=a.calibration or root/'docs/v8_evidence/V6_PILOT_CANDIDATES.csv'
+    # The audited timing reference belongs to the frozen V7 evidence tree.
+    calibration=a.calibration or root/'docs/v7_evidence/V6_PILOT_CANDIDATES.csv'
     timings=pd.read_csv(calibration).groupby('method').train_wall_sec.median().to_dict()
     timings['Method8']=timings.get('Method8',40.)
     def seconds(config):
@@ -91,13 +94,13 @@ def main(argv=None):
         levels += [('all_requested_stages_estimate',sum(row[1] for row in suite),sum(row[2] for row in suite))]
     rows=[dict(stage=name,candidate_trainings=count,reference_hours=value/3600,
                low_hours=value*.5/3600,high_hours=value*4/3600) for name,count,value in levels]
-    report=dict(target='RTX 4090, 24 GB VRAM; 16 GB system RAM',dataset=a.dataset,profile=a.profile,
+    report=dict(target='User hardware; supply a same-device pilot CSV for a relevant reference',dataset=a.dataset,profile=a.profile,
          calibration_file=str(calibration),user_supplied_calibration=bool(a.calibration),
          measured_on_target_hardware=None if a.calibration else False,
          reference_hardware='not verified from CSV alone' if a.calibration else 'NVIDIA GeForce RTX 5090; supplied V6 pilot device logs',
          requested_training_caps=dict(max_epochs=a.max_epochs,baseline_max_epochs=a.baseline_max_epochs,steps_per_epoch=a.steps_per_epoch),
          timing_scope='Measured median per-method time times actual outer training count; caps/architecture/early stopping are NOT silently extrapolated linearly',
-         limitations=['Planning heuristic, not a measured RTX 4090 benchmark',
+         limitations=['Planning heuristic, not a measured benchmark of the target hardware',
          '0.5x to 4x is an assumption range, not a statistical confidence interval',
          'Different epochs, early stopping, SSD and CPU fallback can exceed the range',
          'Method8 uses a 40-second placeholder unless measured in calibration CSV',

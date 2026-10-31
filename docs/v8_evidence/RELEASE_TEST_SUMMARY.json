@@ -1,0 +1,46 @@
+{
+  "release": "8.0.0",
+  "tests": 30,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "cpu_only": true,
+  "python": "3.12.14",
+  "torch": "2.6.0+cpu",
+  "documented_paper_commands_parsed": 71,
+  "all_dataset_dry_run_commands": 70,
+  "scope": "V8 scientific, checkpoint/resume, Windows/Persian reporting, frozen TEST workflows, recipe isolation and default estimator",
+  "actual_launcher_smoke": {
+    "dataset": "synthetic",
+    "methods": [
+      "MBMF-F",
+      "Method6",
+      "Method7",
+      "Method8"
+    ],
+    "final_rows": 4,
+    "validation_search_has_test_columns": false,
+    "completed_jobs_reused_on_repeat_test": 4,
+    "curves_png_files": 6,
+    "status": "SMOKE_COMPLETE_NOT_MANUSCRIPT_EVIDENCE",
+    "accuracy_benchmark": false
+  },
+  "common_light_plan": {
+    "scan_jobs": 83,
+    "candidate_trainings": 107,
+    "final_trainings": 15,
+    "split_seeds": [
+      2026
+    ],
+    "model_seeds": [
+      1
+    ],
+    "k": [
+      20
+    ],
+    "max_epochs": 120,
+    "steps_per_epoch": 2,
+    "baseline_max_epochs": 200,
+    "search_jobs_per_method": 6
+  }
+}

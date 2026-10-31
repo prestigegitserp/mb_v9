@@ -12,7 +12,7 @@ def cell(kind,text):
 def main():
     root=Path(__file__).resolve().parents[1]
     cells=[
-      cell('markdown','# نسخه۸: از پایلوت تا TEST مقاله\nاین نوت‌بوک از paper_v8.py استفاده می‌کند. تنظیم مطالعه ذخیره می‌شود؛ پس از scan، دستور test همان تنظیمات را بازیابی می‌کند. سلول‌های آموزش با False تحویل داده شده‌اند تا اجرای همهٔ سلول‌ها ناخواسته مطالعهٔ سنگین آغاز نکند. راهنمای کامل: docs/V8_RUNBOOK_FA.md.\n'),
+      cell('markdown','# نسخه۸: از پایلوت تا TEST مقاله\nاین نوت‌بوک از paper_v8.py استفاده می‌کند. تنظیم مطالعه ذخیره می‌شود؛ پس از scan، دستور test همان تنظیمات را بازیابی می‌کند. سلول‌های آموزش با False تحویل داده شده‌اند تا اجرای همهٔ سلول‌ها ناخواسته مطالعهٔ سنگین آغاز نکند. راهنمای کامل: docs/V8_RUNBOOK_FA.md. معادل کامل راهنمای نسخه۷، همراه PowerShell و سه سطح اجرا: docs/V8_RELEASE_RUNBOOK_FA.md. معنی مراحل: docs/V8_COMMAND_REFERENCE_FA.md. شاخهٔ انتشار v8 و شاخهٔ توسعه v8_development است.\n'),
       cell('code', '''from pathlib import Path
 import sys, subprocess, json
 import pandas as pd
@@ -76,6 +76,19 @@ if RUN_PAPER_PLAN:
 RUN_PAPER_SUITE = False
 if RUN_PAPER_SUITE:
     paper('all',PAPER,'--include-temporal')
+'''),
+      cell('markdown','## ۱۰. معادل curves نسخه۷، بدون آموزش\nاین سلول history موجود را رسم می‌کند؛ برای RMSE کامل TRAIN که قبلاً ذخیره نشده، از convergence استفاده کنید.\n'),
+      cell('code',"RUN_CURVES = False\nif RUN_CURVES:\n    paper('curves',TUNED,'--plots')\n"),
+      cell('markdown','## ۱۱. شمارش برنامه و تخمین زمان با پایلوت دستگاه خودتان\nاین تخمین آموزش نمی‌دهد. مرجع پیش‌فرض از GPU دیگری است؛ برای تخمین مرتبط با دستگاه خودتان، calibration را روی CSV پایلوت همان دستگاه بگذارید.\n'),
+      cell('code', '''RUN_ESTIMATE = False
+if RUN_ESTIMATE:
+    estimate_args=['estimate_v8.py','--profile','common',
+                   '--search-jobs-per-method','6','--max-epochs','120',
+                   '--steps-per-epoch','2','--baseline-max-epochs','200']
+    measured=PROJECT/'results_v8/pilot/ml-100k/main/candidate_validation_runs.csv'
+    if measured.is_file():
+        estimate_args += ['--calibration',str(measured)]
+    command(*estimate_args)
 '''),
     ]
     for i,c in enumerate(cells):c['id']=f'v8-guide-{i:02d}'

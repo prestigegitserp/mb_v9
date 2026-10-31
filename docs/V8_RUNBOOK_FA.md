@@ -1,5 +1,7 @@
 # راهنمای عملی نسخه۸: از نصب تا آزمایش‌های مقاله
 
+راهنمای مکمل تازه: [انتشار۸ و معادل کامل اجراهای راهنمای نسخه۷](V8_RELEASE_RUNBOOK_FA.md). جدول تطبیق تمام مراحل و معنی گزینه‌ها: [مرجع فرمان‌ها](V8_COMMAND_REFERENCE_FA.md). بخش‌های قبلی این راهنما حفظ شده‌اند.
+
 هدف این راهنما رفع ابهام TRAIN، VAL و TEST است. پیشنهاد عملی: ابتدا smoke، سپس پایلوت ثابت، سپس مطالعهٔ تنظیم‌شده. بعد از آن و بر اساس هزینه و دامنهٔ مقاله، آزمایش‌های تکمیلی را اجرا کنید. تنظیمات نسخه۷ در فایل‌های خودش محفوظ است؛ خروجی جدید را در پوشهٔ تازهٔ نسخه۸ بنویسید.
 
 ## ۱. دریافت و آماده‌سازی
@@ -7,7 +9,7 @@
 در پوشه‌ای جدا از نسخه۷:
 
 ```bash
-git clone --branch v8_development --single-branch https://github.com/prestigegitserp/mb_v9.git mb_v9_v8
+git clone --branch v8 --single-branch https://github.com/prestigegitserp/mb_v9.git mb_v9_v8
 cd mb_v9_v8
 python -m pip install -r requirements_v8.txt
 python verify_v8.py
@@ -252,3 +254,23 @@ python paper_v8.py --stage all --output ./results_v8/paper_full --include-tempor
 پوشش فنی پیشنهادی: جدول اصلی TEST با baselineهای تنظیم‌شده، چند split/seed، چند دیتاست متناسب با ادعا، trained ablation، کنترل decoder و postprocessing، حساسیت ضرایب روی VAL، هزینه و حافظه، و robustness متناسب با دامنه. برای ادعای uncertainty، baseline احتمالاتی و ارزیابی proper scoring ruleها نیز لازم است.
 
 این مجموعهٔ کد امکان تولید این شواهد را فراهم می‌کند، اما novel بودن، قدرت baselineهای روز، کفایت اثبات نظری یا پذیرش Q1 را تأیید خودکار نمی‌کند. فایل checklist دقیقاً برای جداکردن «وجود خروجی» از «ادعای علمی» است. یک split یا seedهای آموزش، نمونه‌های مستقل از کل مسئله محسوب نمی‌شوند؛ هم‌پوشانی resplitها نیز باید در تفسیر آزمون آماری لحاظ شود.
+
+## ۱۲. ادامهٔ راهنمای نسخه۷ و انتشار نسخه۸
+
+معادل همهٔ مرحله‌های راهنمای انتشار نسخه۷ موجود است. راهنمای مکمل، V8Light و V8Paper را با syntax کامل PowerShell و فرمان‌های یک‌خطی مشترک با Linux دارد؛ مسیر خام دیتاست‌ها، clone در پوشهٔ خالی، pull انتشار، seed دستی، همهٔ دیتاست‌ها و تخمین هزینه را نیز توضیح می‌دهد.
+
+برای رسم history ذخیره‌شده بدون آموزش:
+
+```bash
+python paper_v8.py --stage curves --output ./results_v8/tuned_light --plots
+```
+
+این فرمان، معادل مستقیم `python run_v8.py curves --datasets ml-100k --output ./results_v8/tuned_light` است. برای ساخت منحنی تازهٔ RMSE کامل TRAIN/VAL از `convergence` استفاده کنید؛ curves معیار ثبت‌نشده تولید نمی‌کند.
+
+تخمین زمان از پایلوت همان دستگاه، مثلاً پس از اجرای بخش۴:
+
+```bash
+python estimate_v8.py --profile common --search-jobs-per-method 6 --max-epochs 120 --steps-per-epoch 2 --baseline-max-epochs 200 --calibration ./results_v8/pilot/ml-100k/main/candidate_validation_runs.csv
+```
+
+نسخهٔ انتشار روی شاخهٔ `v8` و ادامهٔ توسعه روی `v8_development` است. نسخهٔ انتشار جدید را در output تازه اجرا کنید. مدل‌ها و تحلیل‌های قبلی نسخه۸ حفظ شده‌اند؛ این اصلاح راهنما و اجرا، بنچمارک دقت تازه‌ای محسوب نمی‌شود.

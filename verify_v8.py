@@ -24,7 +24,8 @@ def verify(root=None,parent_only=False):
     return dict(status='PASS',parent_commit=parent['parent_commit'],
         unchanged_v1_v7_tree_files=len(protected),new_files_verified=len(new),
         previous_release_files_modified=False,explicit_entrypoint='run_v8.py',
-        branch='v8_development',public_methods=[f'Method{i}' for i in range(1,9)])
+        branch='v8',development_branch='v8_development',
+        public_methods=[f'Method{i}' for i in range(1,9)])
 
 
 if __name__=='__main__':
