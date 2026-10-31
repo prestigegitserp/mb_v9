@@ -1,10 +1,11 @@
 {
-  "tests": 24,
+  "tests": 25,
   "failures": 0,
   "errors": 0,
   "skipped": 0,
   "cpu_only": true,
   "torch": "2.6.0+cpu",
   "python": "3.12",
-  "scope": "V8 scientific, workflow, recipe, optimizer resume and rendering contracts"
+  "scope": "V8 scientific, workflow, recipe, optimizer resume and rendering contracts",
+  "includes_windows_cp1252_regression": true
 }

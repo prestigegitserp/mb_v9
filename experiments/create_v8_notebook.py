@@ -84,7 +84,7 @@ if RUN_PAPER_SUITE:
                       language_info=dict(name='python',version='3')))
     target=root/'notebooks/V8_Research_Workflow_FA.ipynb'
     target.parent.mkdir(exist_ok=True)
-    target.write_text(json.dumps(notebook,ensure_ascii=False,indent=1)+'\n')
+    target.write_text(json.dumps(notebook,ensure_ascii=False,indent=1)+'\n',encoding='utf-8')
     for c in cells:
         if c['cell_type']=='code':compile(''.join(c['source']),str(target),'exec')
     import nbformat

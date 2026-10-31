@@ -40,3 +40,15 @@ def test_status_reports_pending_test_without_training(tmp_path):
     result=json.loads((tmp_path/'ml-100k/MANUSCRIPT_CHECKLIST.json').read_text())
     assert result['status']=='TEST_PENDING'
     assert not result['journal_acceptance_or_sota_certified']
+
+
+def test_persian_checklist_is_utf8_with_a_windows_legacy_default(tmp_path,monkeypatch):
+    from v8.readiness import build_checklist
+    original=Path.write_text
+    def legacy_default(path,data,*args,**kwargs):
+        if not args and 'encoding' not in kwargs:
+            kwargs['encoding']='cp1252'
+        return original(path,data,*args,**kwargs)
+    monkeypatch.setattr(Path,'write_text',legacy_default)
+    build_checklist(tmp_path)
+    assert 'وضعیت' in (tmp_path/'MANUSCRIPT_CHECKLIST.md').read_bytes().decode('utf-8')

@@ -8,12 +8,12 @@
 
 ## آزمون‌های فنی
 
-۲۴ آزمون اختصاصی نسخه۸ روی CPU با Python3.12 و PyTorch2.6.0+cpu پاس شده‌اند. فایل‌های قابل بررسی:
+۲۵ آزمون اختصاصی نسخه۸ روی CPU با Python3.12 و PyTorch2.6.0+cpu پاس شده‌اند. فایل‌های قابل بررسی:
 
 - [خلاصهٔ آزمون‌ها](v8_evidence/TEST_SUMMARY.json)
 - [نتیجهٔ JUnit](v8_evidence/TEST_RESULTS.xml)
 
-پوشش اصلی: آموزش هفت مدل با TEST مسموم‌شده، checkpoint دقیق، ثابت‌ماندن ورودی در برابر تغییر ratingهای خارج از context، گرادیان‌پذیری گیت، سازگاری probability mean، ثبت ضریب فعال جهت، fragmentation، محیط بدون procfs، scan→final، بازیابی optimizer و resume بدون آموزش مجدد، recipe ذخیره‌شده، و خروجی واقعی PNG/PDF/SVG.
+پوشش اصلی: آموزش هفت مدل با TEST مسموم‌شده، checkpoint دقیق، ثابت‌ماندن ورودی در برابر تغییر ratingهای خارج از context، گرادیان‌پذیری گیت، سازگاری probability mean، ثبت ضریب فعال جهت، fragmentation، محیط بدون procfs، scan→final، بازیابی optimizer و resume بدون آموزش مجدد، recipe ذخیره‌شده، و خروجی واقعی PNG/PDF/SVG. آزمون نوشتن checklist فارسی با encoding پیش‌فرض cp1252 نیز افزوده شده است؛ خروجی فارسی با UTF-8 صریح نوشته می‌شود تا Windows در پایان گزارش‌سازی متوقف نشود.
 
 برای باگ MBMF، علاوه بر تست کلید، یک scan واقعی با سه initialization برای هر MBMF انجام شده:۹ ردیف scan و۳ ردیف final. optimizer و سایر تنظیمات همچنان در هویت قفل‌شده بررسی می‌شوند؛ قفل برای عبور از خطا خاموش نشده است.
 

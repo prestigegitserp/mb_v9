@@ -61,7 +61,7 @@ def build_checklist(root):
     report=primary_root/'publication'
     figure=report/'figures/selected_test_rmse.png'
     workbook=report/'research_tables.xlsx'
-    modes=[json.loads(p.read_text()).get('quick',False) for p in root.rglob('V8_STUDY_MODE.json')]
+    modes=[json.loads(p.read_text(encoding='utf-8')).get('quick',False) for p in root.rglob('V8_STUDY_MODE.json')]
     smoke=any(modes)
     splits=len({r['split_seed'] for r in final})
     stages={
@@ -91,7 +91,7 @@ def build_checklist(root):
         test_figure_directory=str(report/'figures'),workbook=str(workbook),
         journal_acceptance_or_sota_certified=False,
         note='Completeness only. Baseline strength, novelty, statistical dependence and scientific claims need review.')
-    (root/'MANUSCRIPT_CHECKLIST.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+    (root/'MANUSCRIPT_CHECKLIST.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     lines=['# وضعیت خروجی‌های پژوهش نسخه۸','',f'وضعیت: `{status}`','',
         'این فهرست کامل‌بودن فایل‌ها را بررسی می‌کند؛ تأیید نوآوری، پیروزی بر رقبا یا کفایت داوری ژورنال نیست.','',
         f'- تعداد ردیف TEST: {len(final)}',f'- تعداد split داده: {splits}',
@@ -102,5 +102,5 @@ def build_checklist(root):
     lines += ['', 'شکل‌های search متعلق به VAL هستند. شکل selected_test_rmse و جدول اصلی فقط پس از اجرای موفق TEST ساخته می‌شوند.',
         'یک split شاهد توصیفی است. برای ادعای مقاله، پروتکل ازپیش‌مشخص، baselineهای تنظیم‌شده، تکرار و تحلیل سهم سازوکار لازم‌اند.']
     if errors:lines += ['', 'خطاهای کنترل:']+['- '+e for e in errors]
-    (root/'MANUSCRIPT_CHECKLIST.md').write_text('\n'.join(lines)+'\n')
+    (root/'MANUSCRIPT_CHECKLIST.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     return result
