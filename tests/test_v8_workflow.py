@@ -3,6 +3,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import torch
+
+# Frozen V4 CI collects every generation using its own smaller dependency set.
+# The V8 matrix installs requirements_v8.txt and runs both integrations fully.
+pytest.importorskip('xlsxwriter',reason='V8 publication integrations require requirements_v8.txt')
+
 from v8 import engine,runtime
 from v8.entry import run
 
